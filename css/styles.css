@@ -1,0 +1,29 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
+}
+.container-white {
+	padding:10px 20px;
+	background-color: #fff;
+    border: 1px solid #e5e5e5;
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+       -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+.input-large {
+	font-size:17.5px !important;
+	padding:11px 19px !important;
+}
+
+.small {
+	font-size:0.8em;
+}
+
+#dataset_select_table tr td,
+#papers_missing_datasets_table tr td {
+	cursor: pointer;
+}
