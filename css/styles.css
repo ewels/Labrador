@@ -24,6 +24,37 @@ body {
 }
 
 #dataset_select_table tr td,
-#papers_missing_datasets_table tr td {
+#papers_missing_datasets_table tr td,
+#papers_missing_files_table tr td {
 	cursor: pointer;
+}
+
+
+.file { 
+  cursor: pointer;
+ }
+
+.dataset_div { 
+  border:1px solid #CCC;
+margin-bottom:20px;
+padding: 5px 15px;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;]
+ }
+
+
+.dataset_raw_div,
+.dataset_aligned_div,
+.dataset_derived_div { 
+  width: 30%;
+  float: left;
+  margin-right:3%;
+ }
+
+.dataset_raw_div ul,
+.dataset_aligned_div ul,
+.dataset_derived_div ul {
+  background-color:#F6F6F6;
+  padding: 5px;
 }

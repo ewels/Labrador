@@ -34,7 +34,7 @@ include('includes/header.php');
 			and filling out the details of the individual datasets. If the data you'd like isn't published 
 			or is complicated, please <a href="mailto:phil.ewels@babraham.ac.uk">e-mail us</a> instead.</p>
 		
-                <img src="img/puppies/stupid_puppy_1.jpg" class="pull-left visible-desktop" style="max-height:300px; margin-left:-20px;" title="walkies?!">
+                <img src="img/puppies/stupid_puppy_1.jpg" class="pull-left visible-desktop" style="max-height:300px; margin-left:-20px;">
 		<form class="form-search" onsubmit="return false;" id="geo_search_form">
 			<fieldset>
 				<legend>Fetch Paper from GEO Accession</legend>

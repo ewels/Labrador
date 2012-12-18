@@ -15,7 +15,7 @@ if($_POST['create_dataset_submitted'] == 'submitted') {
 
 include('includes/header.php');
 ?>
-                <img class="pull-right visible-desktop" style="margin-top:-50px;" src="img/puppies/puppy_2.jpg" title="woof!">
+                <img class="pull-right visible-desktop" style="margin-top:-50px;" src="img/puppies/puppy_2.jpg">
 		<p class="lead">This browser is designed for you to find all of the internal and publicly available datasets known to the Reik lab and the Babraham Bioinformatics group.</p>
 		<p>You can search for specific datasets or browse papers and their datasets below.</p>
 		<p>If you would like to access a new dataset not listed here, please use the <a href="#request-dataset">form below</a>.</p>

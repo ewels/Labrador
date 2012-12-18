@@ -1,0 +1,75 @@
+<?php
+
+// Connect to database
+include('../includes/db_login.php');
+
+
+include('includes/admin_header.php');
+?>
+
+                <img class="pull-right visible-desktop" src="../img/puppies/puppy_5.jpg" style="max-height:250px; margin-top:-50px;">
+		<p class="lead">This page enables you to register files in the file system and associate them with datasets.</p>
+		<p>You can also annotate files. For example, you can note down the alignment parameters used.</p>
+		<hr style="clear:both;">
+		<div class="row">
+<div class="span3">
+<h2>Files</h2>
+</div>
+<div class="span9">
+<h2>Datasets</h2>
+		<?php $query = "SELECT * FROM `datasets` WHERE `paper_id` = '".$_GET['paper_id']."' ORDER BY `name`";
+$results = mysql_query($query);
+while($result = mysql_fetch_array($results)): ?>
+
+<div class="dataset_div" id="<?= $result['id'] ?>">
+   <?= $result['name']; ?>
+<div class="row">
+<div class="span3" class="dataset_raw_div">
+<h5>Raw</h5>
+</div>
+<div class="span3" class="dataset_aligned_div">
+<h5>Aligned</h5>
+</div>
+<div class="span3" class="dataset_derived_div">
+<h5>Derived</h5>
+</div>
+</div>
+</div>
+
+<?php  endwhile; // end of dataset mysql while loop  ?>
+
+<?php for ($i = 0; $i < 500; $i++){echo '<div>False name '.$i.'</div>'; } ?>
+		
+</div>
+  </div>
+		
+
+
+
+
+		
+
+		
+		</div> <!-- /container -->
+		
+
+
+		<!-- Le javascript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="../js/jquery-1.8.3.min.js"></script>
+		<script src="../js/bootstrap-transition.js"></script>
+		<script src="../js/bootstrap-alert.js"></script>
+		<script src="../js/bootstrap-modal.js"></script>
+		<script src="../js/bootstrap-dropdown.js"></script>
+		<script src="../js/bootstrap-scrollspy.js"></script>
+		<script src="../js/bootstrap-tab.js"></script>
+		<script src="../js/bootstrap-tooltip.js"></script>
+		<script src="../js/bootstrap-popover.js"></script>
+		<script src="../js/bootstrap-button.js"></script>
+		<script src="../js/bootstrap-collapse.js"></script>
+		<script src="../js/bootstrap-carousel.js"></script>
+		<script src="../js/bootstrap-typeahead.js"></script>
+                <script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
+  </body>
+</html>

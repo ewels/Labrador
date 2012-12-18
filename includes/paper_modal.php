@@ -6,11 +6,7 @@ Displays details of paper and datasets
 ********************************/
 
 // Connect to database
-$dblink = mysql_connect('localhost', 'tallphil_reik','LqfH5UXOfQ3I');
-if (!$dblink) die('Could not connect: ' . mysql_error());
-$db_selected = mysql_select_db('dataset_browser', $dblink);
-if (!$db_selected) die ('Can\'t use database : ' . mysql_error());
-
+include('db_login.php');
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])) : 
 	$papers = mysql_query("SELECT * FROM `papers` WHERE `id` = '".$_GET['id']."'");

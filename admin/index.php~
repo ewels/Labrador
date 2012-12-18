@@ -48,7 +48,7 @@ include('includes/admin_header.php');
                               LEFT JOIN `files_aligned` ON `datasets`.`id` = `files_aligned`.`dataset_id` 
                               LEFT JOIN `files_raw` ON `datasets`.`id` = `files_raw`.`dataset_id` 
                               LEFT JOIN `files_derived` ON `datasets`.`id` = `files_derived`.`dataset_id` 
-                              WHERE `datasets`.`id` IS NOT NULL AND `files_aligned`.`id` IS NULL 
+                              WHERE `files_aligned`.`id` IS NULL 
                                  AND `files_raw`.`id` IS NULL 
                                  AND `files_derived`.`id` IS NULL 
                               ORDER BY `papers`.`first_author`";
@@ -56,9 +56,9 @@ $results = mysql_query($query);
 if(mysql_num_rows($results) > 0 ) {
 ?>
 
-<h3>Papers with datasets but no files</h3>
+<h3>Papers without any files</h3>
 
-<table class="table table-condensed table-bordered table-hover table-striped small" id="papers_missing_files_table">
+<table class="table table-condensed table-bordered table-hover table-striped small">
     <tr>
     <th>First Author</th>
     <th>Year</th>
@@ -118,7 +118,6 @@ while($result = mysql_fetch_array($results)) {
 		<script src="../js/bootstrap-typeahead.js"></script>
 		
 		<script type="text/javascript">
-
 			$('#papers_missing_datasets_table tr td').click(function(){
 				var id = $(this).parent().attr('id');
 				$('#loadingModal').modal({
@@ -127,17 +126,11 @@ while($result = mysql_fetch_array($results)) {
 				});
 				window.location = '../create_dataset.php?paper_id=' + id;
 			});
-
- $('#papers_missing_files_table tr td').click(function(){
-								       var id = $(this).parent().attr('id');
-								       	window.location = 'create_files.php?paper_id=' + id;
-	});
-
+		});
 // hide loading modal when the page changes (to avoid buggy back button behaviour)
 $(window).unload(function(){
 		   $('#loadingModal').modal('hide');
 		 });
-
 		</script>
 	
   </body>

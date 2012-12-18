@@ -25,6 +25,9 @@ $fields = array(
 );
 
 $form = array('last_modified' => time());
+if(isset($_SESSION['email'])){
+  $form['requested_by'] = $_SESSION['email'];
+ }
 
 // echo '<h4>POST Data</h4> <pre>'.print_r($_POST, true).'</pre>';
 

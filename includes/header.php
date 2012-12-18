@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Reik Lab - Dataset Browser</title>
+    <title>Labrador</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -29,15 +30,18 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="index.php">Dataset Browser</a>
+				<a class="brand" href="index.php">Lab<span style="color:#333;">radar</span><sub style="font-size:10px;">BETA</sub></a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li><a href="index.php#search">Search</a></li>
 						<li><a href="index.php#browse">Browse</a></li>
-						<li><a href="create_paper.php">Request Dataset</a></li>
+						<li><a href="create_paper.php" id="request-dataset-nav-link">Request Dataset</a></li>
 					</ul>
 				</div>
+
 				<a href="admin/" class="btn pull-right">Admin</a>
+   <?php if(isset($_SESSION['email'])) { echo '<p class="navbar-text pull-right" style="margin-right:30px;">'.$_SESSION['email'].'</p>'; } ?>
+
 			</div>
 		</div>
 	</div>

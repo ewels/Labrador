@@ -10,6 +10,7 @@
     <!-- Le styles -->
     <link href="../css/bootstrap.css" rel="stylesheet">
 	<link href="../css/styles.css" rel="stylesheet">
+        <link href="../css/smoothness/jquery-ui-1.9.2.custom.min.css" rel="stylesheet">
 	<link href="../css/responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -38,6 +39,7 @@
 					</ul>
 				</div>
 				<a href="index.php" class="btn pull-right">Admin</a>
+    <p class="navbar-text pull-right" style="margin-right:30px;"><?php echo $_SERVER['PHP_AUTH_USER']; ?></p>
 			</div>
 		</div>
 	</div>
