@@ -70,13 +70,31 @@ function get_GEO_GSE ($GEO_accession, $sra_codes = false) {
 				//return false;
 				$results['msg'][] = 'FAIL - SRA error message found';
 			}
+			$sra_accessions = array();
+			$total_bases = 0;
 			foreach($xml_2->DocSum->children() as $child) {
 				if($child->attributes()->Name == 'Runs') {
 					$sra_raw = (string)$child;
-					preg_match('/^.+acc="SRR(\d+)".+$/i ', $sra_raw, $matches);
-					$results['samples'][$acc]['sra'] = 'SRR'.$matches[1];
-				}
-			}
+					$sra_decoded = html_entity_decode($sra_raw);
+					$sra_xml = simplexml_load_string('<document>'.$sra_decoded.'</document>');
+					if($sra_xml){
+					  foreach($sra_xml->children() as $child) {
+					    foreach($child->attributes() as $att => $val) {
+					      switch($att){
+					      case 'acc':
+						$sra_accessions[] = $val;
+						break;
+					      case 'total_bases':
+						$total_bases += $val;
+						break;
+					      } //switch
+					    } // attr foreach
+					  } // child foreach
+					} // xml success check
+					$results['samples'][$acc]['sra'] = implode(' ', $sra_accessions);
+					// $results['samples'][$acc]['bases'] = $total_bases; // HERE IF WANTED IN THE FUTURE - SRA BASE COUNT
+				} // geo sra tag name check
+			} // geo xml foreach
 		}
 	}
 	

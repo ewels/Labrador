@@ -5,54 +5,227 @@ include('../includes/db_login.php');
 
 
 include('includes/admin_header.php');
+
+$query = "SELECT * FROM `papers` WHERE `id` = '".$_GET['paper_id']."'";
+$results = mysql_query($query);
+$paper = mysql_fetch_array($results);
+$directory = "/data/pipeline/public/TIDIED/".$paper['first_author']."_".$paper['year'].'/';
+
+$admins = array(
+		'ewelsp' => 'phil.ewels@babraham.ac.uk',
+		'bigginsl' => 'laura.biggins@babraham.ac.uk',
+		'kruegerf' => 'felix.krueger@babraham.ac.uk',
+		'andrewss' => 'simon.andrews@babraham.ac.uk',
+		'wingets' => 'steven.wingett@babraham.ac.uk',
+		'segondsa' => 'anne.segonds-pichon@babraham.ac.uk'
+);
+
 ?>
 
                 <img class="pull-right visible-desktop" src="../img/puppies/puppy_5.jpg" style="max-height:250px; margin-top:-50px;">
 		<p class="lead">This page enables you to register files in the file system and associate them with datasets.</p>
 		<p>You can also annotate files. For example, you can note down the alignment parameters used.</p>
+		<p>The directory being searched for files is: <code><?= $directory ?></code></p>
+		<p>This page can automate much of this work for you by looking at filenames in relevant directories.</p>
 		<hr style="clear:both;">
+<h3>Sorting Controls</h3>
+<button class="btn btn-primary" id="auto_sort_button">Auto Sort</button> &nbsp; &nbsp;
+<button class="btn" id="reset_page_button">Reset to page load state</button> &nbsp; &nbsp;
+<button class="btn" id="reset_all_button">Reset <em>all</em></button>
+
+
+
+
+<hr>
+
+
+
 		<div class="row">
 <div class="span3">
 <h2>Files</h2>
+
+<h4>Directory 'raw'</h4>
+
+<ul class="unknown_files nav nav-pills nav-stacked">
+<?php
+  $raw_files = array();
+if($fh = opendir($directory.'raw/')) {
+  while (false !== ($entry = readdir($fh))) {
+    if($entry != "." && $entry != ".."){
+      $raw_files[] = $entry;
+    }
+  }
+ }
+closedir($fh);
+natcasesort($raw_files);
+foreach($raw_files as $file){
+echo '<li class="file raw_dir" data-path="raw/"><a>'.$file.'</a></li>';
+}
+if(count($raw_files) == 0 ) { 
+  echo '<li><em class="muted">[ empty ]</em></li>';
+ }
+?>
+</ul>
+
+
+<h4>Directory 'aligned'</h4>
+
+<ul class="unknown_files nav nav-pills nav-stacked">
+<?php
+$aligned_files = array();
+if($fh = opendir($directory.'aligned/')) {
+  while (false !== ($entry = readdir($fh))) {
+    if($entry != "." && $entry != ".."){
+      $aligned_files[] = $entry;
+    }
+  }
+ }
+closedir($fh);
+natcasesort($aligned_files);
+foreach($aligned_files as $file){
+echo '<li class="file aligned_dir" data-path="aligned/"><a>'.$file.'</a></li>';
+}
+if(count($aligned_files) == 0 ) { 
+  echo '<li><em class="muted">[ empty ]</em></li>';
+ }
+?>
+</ul>
+
+
+<h4>Directory 'derived'</h4>
+
+<ul class="unknown_files nav nav-pills nav-stacked">
+<?php
+$derived_files = array();
+if($fh = opendir($directory.'derived/')) {
+  while (false !== ($entry = readdir($fh))) {
+    if($entry != "." && $entry != ".."){
+      $derived_files[] = $entry;
+    }
+  }
+ }
+closedir($fh);
+natcasesort($derived_files);
+foreach($derived_files as $file){
+echo '<li class="file derived_dir" data-path="derived/"><a>'.$file.'</a></li>';
+}
+if(count($derived_files) == 0 ) { 
+  echo '<li><em class="muted">[ empty ]</em></li>';
+ }
+?>
+</ul>
+
+
+
+<h4>Root Directory</h4>
+
+<ul class="unknown_files nav nav-pills nav-stacked">
+<?php
+$root_files = array();
+if($fh = opendir($directory)) {
+  while (false !== ($entry = readdir($fh))) {
+    if($entry != "." && $entry != ".." && $entry != "raw" && $entry != "aligned" && $entry != "derived"){
+      $root_files[] = $entry;
+    }
+  }
+ }
+closedir($fh);
+natcasesort($root_files);
+foreach($root_files as $file){
+echo '<li class="file root_dir" data-path=""><a>'.$file.'</a></li>';
+ }
+if(count($root_files) == 0 ) { 
+  echo '<li><em class="muted">[ empty ]</em></li>';
+ }
+?>
+
+
+
+</ul>
 </div>
 <div class="span9">
 <h2>Datasets</h2>
-		<?php $query = "SELECT * FROM `datasets` WHERE `paper_id` = '".$_GET['paper_id']."' ORDER BY `name`";
+		<?php $query = "SELECT * FROM `datasets` WHERE `paper_id` = '".$_GET['paper_id']."' ORDER BY `geo_accession`";
 $results = mysql_query($query);
 while($result = mysql_fetch_array($results)): ?>
 
 <div class="dataset_div" id="<?= $result['id'] ?>">
-   <?= $result['name']; ?>
-<div class="row">
-<div class="span3" class="dataset_raw_div">
+   <h4><?= $result['name']; ?> &nbsp; &nbsp; 
+       <small>
+           <a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=<?= $result['geo_accession'] ?>" target="_blank" class="geo_accession label label-success"><?= $result['geo_accession'] ?></a> &nbsp; &nbsp; 
+<?php $sras = explode(' ', $result['sra_accession']);
+foreach($sras as $sra){
+  if(!empty($sra)){
+       echo "\n".'<a href="http://www.ncbi.nlm.nih.gov/sra/'.$sra.'" target="_blank" class="sra_accession label label-info">'.$sra.'</a> &nbsp; &nbsp; ';
+    }
+} ?>
+       </small></h4>
+
+<div class="dataset_raw_div">
 <h5>Raw</h5>
+<ul class="nav nav-pills nav-stacked"></ul>
 </div>
-<div class="span3" class="dataset_aligned_div">
+
+<div class="dataset_aligned_div">
 <h5>Aligned</h5>
+<ul class="nav nav-pills nav-stacked"></ul>
 </div>
-<div class="span3" class="dataset_derived_div">
+
+<div class="dataset_derived_div">
 <h5>Derived</h5>
+<ul class="nav nav-pills nav-stacked"></ul>
 </div>
-</div>
+<div class="clearfix"></div>
 </div>
 
 <?php  endwhile; // end of dataset mysql while loop  ?>
-
-<?php for ($i = 0; $i < 500; $i++){echo '<div>False name '.$i.'</div>'; } ?>
 		
 </div>
   </div>
+
+
+
+
+<hr>
+
+<h3>Batch add annotation &nbsp; <small>These fields are optional. Values will overwrite <em>all</em> existing details on change.</small></h3>
+<form class="form-inline">
+<fieldset>
+<legend>Raw Files</legend>
+<label>Read Length: <div class="input-append"><input type="text" class="input-small"><span class="add-on">bp</span></div></legend> &nbsp; &nbsp;
+<label>Number of reads: <div class="input-append"><input type="text" class="input-small"><span class="add-on">million reads</span></div></legend>
+</fieldset>
+<fieldset>
+<legend>Aligned Files</legend>
+<label>Genome Build: <input type="text" class="input-small" placeholder="NCBIM37"></label> &nbsp; &nbsp;
+<label>Parameters: <input type="text" class="input-xlarge" placeholder="bowtie -p 4 -m 1 --chunk-mbs 514"></label> &nbsp; &nbsp;
+<label>Number of reads: <div class="input-append"><input type="text" class="input-small"><span class="add-on">million reads</span></div></label>
+</fieldset>
+<fieldset>
+<legend>Derived Files</legend>
+<label>Type: <input type="text" class="input-small" placeholder="FastQC"></label> &nbsp; &nbsp; 
+<label>Notes: <input type="text" class="input-xxlarge"></label>
+</fieldset>
+<fieldset>
+<legend>Admin-only paper details</legend>
+<label>Processed by: <input type="text" id="batch_processed_by" value="<?= $admins[$_SERVER['PHP_AUTH_USER']] ?>" class="input-xlarge"></label>
+</fieldset>
+</form>
+
+
 		
-
-
-
-
+<div class="form-actions" style="text-align:center;">
+<button class="btn btn-primary btn-large" id="save_button">Save Dataset File Associations</button>
+</div>
 		
 
 		
 		</div> <!-- /container -->
 		
+<!-- POST return vars Modal -->
+<div class="modal hide fade" id="submitModal">
 
+</div>
 
 		<!-- Le javascript
 		================================================== -->
@@ -71,5 +244,112 @@ while($result = mysql_fetch_array($results)): ?>
 		<script src="../js/bootstrap-carousel.js"></script>
 		<script src="../js/bootstrap-typeahead.js"></script>
                 <script src="../js/jquery-ui-1.9.2.custom.min.js"></script>
+
+<script type="text/javascript">
+  $(function() {
+      $('.dataset_raw_div ul, .dataset_aligned_div ul, .dataset_derived_div ul, .unknown_files').sortable({
+	connectWith:  ".nav-pills"
+	    }).disableSelection();
+    });
+
+      $('#auto_sort_button').click(function(){
+				      $('.file').each(function(){						
+							var filename = $(this).text();
+							var number = filename.match(/[0-9]+/);
+							var file = $(this);
+							if(!!number && number.toString().length > 5){
+							  $('.geo_accession').each(function(){
+							    var isFound = $(this).text().indexOf(number);
+							    if(isFound != -1){
+							      var datasetID = $(this).parent().parent().parent().attr('id');
+							      if($(file).hasClass('raw_dir')){
+								$(file).slideUp('fast', function(){
+										  $(file).appendTo('#'+datasetID+' .dataset_raw_div ul');
+										  $(file).slideDown();
+										});
+							      }
+							      if($(file).hasClass('aligned_dir')){
+								$(file).slideUp('fast', function(){
+										  $(file).appendTo('#'+datasetID+' .dataset_aligned_div ul');
+										  $(file).slideDown();
+										});
+							      }
+							      if($(file).hasClass('derived_dir')){
+								$(file).slideUp('fast', function(){
+										  $(file).appendTo('#'+datasetID+' .dataset_derived_div ul');
+										  $(file).slideDown();
+										});
+							      }
+							      if($(file).hasClass('root_dir')){
+								
+							      }
+							    }
+							  });
+							  $('.sra_accession').each(function(){
+							    var isFound = $(this).text().indexOf(number);
+							    if(isFound != -1){
+							      var datasetID = $(this).parent().parent().parent().attr('id');
+							      if($(file).hasClass('raw_dir')){
+								$(file).slideUp('fast', function(){
+										  $(file).appendTo('#'+datasetID+' .dataset_raw_div ul');
+										  $(file).slideDown();
+										});
+							      }
+							      if($(file).hasClass('aligned_dir')){
+								$(file).slideUp('fast', function(){
+										  $(file).appendTo('#'+datasetID+' .dataset_aligned_div ul');
+										  $(file).slideDown();
+										});
+							      }
+							      if($(file).hasClass('derived_dir')){
+								$(file).slideUp('fast', function(){
+										  $(file).appendTo('#'+datasetID+' .dataset_derived_div ul');
+										  $(file).slideDown();
+										});
+							      }
+							      if($(file).hasClass('root_dir')){
+								
+							      }
+							    }
+							  });
+							} // end of if check for numbers
+						 
+				     });
+
+});
+
+$('#save_button').click(function(){
+			  var rawDatasetFiles = {};
+			  var alignedDatasetFiles = {};
+			  var derivedDatasetFiles = {};
+			  $('.dataset_div').each(function(){
+						   var datasetID = $(this).attr('id');
+						   var rawFiles = [];
+						   var alignedFiles = [];
+						   var derivedFiles = [];
+						   $(this).children('.dataset_raw_div').children('ul').children('li').each(function(){
+															     rawFiles.push($(this).attr('data-path')+$(this).text()) 
+															       });
+						   $(this).children('.dataset_aligned_div').children('ul').children('li').each(function(){ 
+																 alignedFiles.push($(this).attr('data-path')+$(this).text()) 
+																   });
+						   $(this).children('.dataset_derived_div').children('ul').children('li').each(function(){
+																 derivedFiles.push($(this).attr('data-path')+$(this).text()) 
+																   });
+						   rawDatasetFiles[datasetID] = rawFiles;
+						   alignedDatasetFiles[datasetID] = alignedFiles;
+						   derivedDatasetFiles[datasetID] = derivedFiles;
+						 });
+
+			  $.post('includes/create_files_post.php', { raw: rawDatasetFiles, aligned: alignedDatasetFiles, derived: derivedDatasetFiles },
+				 function(data) {
+				   $('#submitModal').html(data);
+				   $('#submitModal').modal();
+			         }
+			  );
+
+});
+
+</script>
   </body>
 </html>

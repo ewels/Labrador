@@ -32,7 +32,18 @@ body {
 
 .file { 
   cursor: pointer;
+  background-color:#F6F6F6;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
  }
+.locked,
+.locked a,
+.locked a:hover { 
+  background-color:#CCC !important;
+  color:#666;
+  cursor: auto;
+}
 
 .dataset_div { 
   border:1px solid #CCC;
@@ -57,4 +68,18 @@ border-radius: 10px;]
 .dataset_derived_div ul {
   background-color:#F6F6F6;
   padding: 5px;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+}
+
+.dataset_div .label-info { 
+  background-color: #D9EDF7;
+  color: #3A87AD;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+.dataset_div .label-success { 
+  background-color: rgb(223,240,216);
+  color:rgb(70,136,71);
+  text-shadow:0 1px 0 rgba(255,255,255,0.5);
 }

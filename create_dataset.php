@@ -224,7 +224,7 @@ include('includes/header.php');
     </div> <!-- /container -->
 
 	<!-- Loading Modal -->
-	<div id="loadingModal" class="modal hide fade" tabindex="-1" role="dialog">
+	<div id="loadingModal" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-header">
 			<h3>Loading Page</h3>
 		</div>
@@ -308,7 +308,7 @@ include('includes/header.php');
 			var selected_paper = $('#paper').val();
 			window.location.replace ( 'create_dataset.php?paper_id=' + selected_paper );
 		});
-		});
+
 // hide loading modal when the page changes (to avoid buggy back button behaviour)
 $(window).unload(function(){
 		   $('#loadingModal').modal('hide');
@@ -408,7 +408,7 @@ $(window).unload(function(){
 			});
 			// This won't trigger if GSM is duplicate too, as it'll be disabled already so skipped
 			$('.input-sra_accession').each(function(){
-				if($.inArray($.trim($(this).val()), existing_sra) > -1 && $(this).attr('disabled') != 'disabled') {
+				if($.trim($(this).val()) && $.inArray($.trim($(this).val()), existing_sra) > -1 && $(this).attr('disabled') != 'disabled') {
 					error = true;
 					duplicate_accessions.push($.trim($(this).val()));
 					$(this).parent().parent().removeClass('success');

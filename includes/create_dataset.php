@@ -45,6 +45,13 @@ while (isset($_POST[$i.'_name'])) {
 		$data_type = mysql_real_escape_string(trim( $_POST[$i.'_data_type'] ));
 		$geo_accession = mysql_real_escape_string(trim( $_POST[$i.'_geo_accession'] ));
 		$sra_accession = mysql_real_escape_string(trim( $_POST[$i.'_sra_accession'] ));
+
+		$name = empty($name) ? 'NULL' : "'".$name."'";
+		$species = empty($species) ? 'NULL' : "'".$species."'";
+		$cell_type = empty($cell_type) ? 'NULL' : "'".$cell_type."'";
+		$data_type = empty($data_type) ? 'NULL' : "'".$data_type."'";
+		$geo_accession = empty($geo_accession) ? 'NULL' : "'".$geo_accession."'";
+		$sra_accession = empty($sra_accession) ? 'NULL' : "'".$sra_accession."'";
 		
 		$query = "INSERT INTO `datasets` (
 				`paper_id`,
@@ -56,21 +63,21 @@ while (isset($_POST[$i.'_name'])) {
 				`sra_accession`,
 				`last_modified`
 			) VALUES (
-				'$paper',
-				'$name',
-				'$species',
-				'$cell_type',
-				'$data_type',
-				'$geo_accession',
-				'$sra_accession',
-				'$last_modified'
+				$paper,
+				$name,
+				$species,
+				$cell_type,
+				$data_type,
+				$geo_accession,
+				$sra_accession,
+				$last_modified
 			)";
 			
 		if (mysql_query($query)) {
 			$msg[] = '<strong>Success!</strong><br>Saved new dataset.';
 		} else {
 			$error = true;
-			$msg[] = 'Could not save dataset: '.mysql_error();
+			$msg[] = 'Could not save dataset: '.mysql_error().'<br>Query: '.$query.'<br><br>';
 		}
 		
 	//}

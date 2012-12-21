@@ -30,7 +30,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="../index.php">Dataset Browser</a>
+				<a class="brand" href="../index.php">Lab<span style="color:#333;">radar</span><sub style="font-size:10px;">BETA</sub></a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li><a href="../index.php#search">Search</a></li>
