@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<download>
+	<folder name="SampleFolder">
+		<file name="sampleFile3.zip">
+			<url>http://jdownload.jupload.biz/demo/sample.zip?a=b&amp;c=d</url>
+		</file>
+		<folder name="SubFolder2">
+			<file name="sampleFile1.zip">
+				<url>http://jdownload.jupload.biz/demo/sample.zip</url>
+			</file>
+			<file name="sampleFile2.zip" id="foobar">
+				<url>http://jdownload.jupload.biz/demo/sample.zip</url>
+			</file>
+			<file name="sampleAlwaysNew.zip" forceOverwrite="true">
+				<url>http://jdownload.jupload.biz/demo/sample.zip</url>
+			</file>
+		</folder>
+		<file name="sampleUncompress.zip" uncompress="true" delete="true">
+			<url>http://jdownload.jupload.biz/demo/sample.zip</url>
+		</file>
+	</folder>
+</download>

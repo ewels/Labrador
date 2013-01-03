@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT download (folder,file)>
+<!ELEMENT file (url)>
+<!ATTLIST file
+	name NMTOKEN #REQUIRED
+	id ID #IMPLIED
+	uncompress NMTOKEN #IMPLIED
+	delete NMTOKEN #IMPLIED
+	forceOverwrite NMTOKEN #IMPLIED
+>
+<!ELEMENT folder (file|folder)*>
+<!ATTLIST folder name NMTOKEN #REQUIRED>
+<!ELEMENT url (#PCDATA)>

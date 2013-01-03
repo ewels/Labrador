@@ -1,0 +1,46 @@
+JDownload Changelog History
+---------------------------
+
+Website: http://jdownload.jupload.biz
+
++ new feature       * changed/fixed        - removed/deprecated
+
+v1.0	* Bugfix for URLs containing ampersand
+
+v0.9
+	    * Requires Java 1.4 now (Replaced proprietary XML Parser with Java SAX)
+	    + Supports the "id" attribute for files: In most notification events, the id can be used to reference the file
+	      instead of using the filename
+	    + Supports the "forceOverwrite" attribute for files, where existing files won't
+	      be resumed, but deleted prior to downloading them again from scratch
+
+v0.8    * Bugfix release
+
+v0.7
+		* function onJDownloadEvent(EVENT_TYPE, DATA_NONIE, DATA_IE)
+			has now three arguments (one added, for Internet Explorer, which
+			cannot use Java Objects in Arrays. Silly browser)
+
+v0.6
+		+ integrated mini-xml parser, so applet runs on Java 1.3 (for MacOS X)
+		+ capturing errors with LiveConnect and ignore them
+
+v0.5
+		+ Windows look and feel
+		* Bugfix: files were kept locked after download
+		* Bugfix: supporting relative dataURLs
+
+v0.4
+		+ JavaScript LiveConnect support
+		+ JavaScript API
+		+ Event Notifications
+		+ Documentation
+v0.3
+		+ public beta on http://jdownload.jupload.biz/
+		+ i18n support
+v0.2
+		+ project cleanup, new name
+		- hardcoded customizations removed
+v0.1
+		+ initial prototype for customer
+	

@@ -83,3 +83,35 @@ border-radius: 10px;]
   color:rgb(70,136,71);
   text-shadow:0 1px 0 rgba(255,255,255,0.5);
 }
+
+.table td.icon { 
+  text-align:center;
+}
+.table tr.success td.empty,
+.table tr.error td.empty { 
+  background-color:#EDEDED;
+}
+.table tr.success:hover td.empty,
+.table tr.error:hover td.empty { 
+  background-color:#DEDEDE;
+}
+.table tr.success td.error,
+.table tr.error td.error { 
+  background-color:#f2dede;
+}
+.table tr.success:hover td.error,
+.table tr.error:hover td.error { 
+  background-color:#ebcccc;
+}
+.table tr.success td.success,
+.table tr.error td.success { 
+  background-color:#dff0d8;
+}
+.table tr.success:hover td.success,
+.table tr.error:hover td.success { 
+  background-color:#d0e9c6;
+}
+
+.check {
+	cursor:pointer;
+}

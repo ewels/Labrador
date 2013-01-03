@@ -117,7 +117,7 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])) :
 </div>
 <div class="modal-footer">
 	<a class="btn btn-primary" data-dismiss="modal">Close</a>
-        <a class="btn btn-success pull-left" href="javascript:alert('Sorry, this doesn\'t work yet..');">Download Data</a>
+        <a class="btn btn-success pull-left" href="download.php?paper_id=<?= $_GET['id'] ?>">Download Data</a>
 	<a class="btn pull-left paperModal_add_datasets_button" href="create_dataset.php?paper_id=<?= $_GET['id'] ?>">Add Datasets</a>
 	<a class="btn pull-left" href="edit_paper.php?paper_id=<?= $_GET['id'] ?>">Edit Paper</a>
 </div>

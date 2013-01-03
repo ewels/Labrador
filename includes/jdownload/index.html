@@ -1,0 +1,241 @@
+<html>
+<!--
+ Author: Mike Haller
+ Id: $Id: index.html,v 1.3 2005/04/02 07:56:31 mhaller Exp $
+-->
+<head>
+<title>JDownload - Download multiple files and folders</title>
+
+<meta name="Author" content="Mike Haller">
+<meta name="Publisher" content="Haller Systemservice">
+<meta name="Copyright" content="Mike Haller">
+<meta name="Keywords" content="jdownload, download, jupload, multiple, java, upload, http, html, applet, embed, object, input, type, file, submit, add, remove, queue, rfc 1867, application/x-www-form-urlencoded, POST METHOD, swing, awt, j2se, transfer, files, requests, webserver, apache, asp, jsp, php4, php5, php, multipart, content-disposition, form-data, boundary, attachment, mime headers, transmission, enctype, remote data, browser, internet explorer, mozilla, opera, fileuploader, batch upload, file selection dialog, resuming, resume, continue">
+<meta name="Description" content="JDownload is a Java applet for downloading structured data. Files and folders can be recursively downloaded, zip archives can be uncompressed after successful download to the users local filesystem.">
+<meta name="Page-topic" content="HTTP Multi-Download Applet Component">
+<meta name="Audience" content="Advanced">
+<meta name="Content-language" content="EN">
+<meta name="Page-type" content="Software-Download">
+<meta name="Robots" content="INDEX,FOLLOW">
+
+<script type="text/javascript">
+ <!--
+
+    function onJDownloadEvent(EVENT_TYPE, DATA_NONIE, DATA_IE)
+ 	{
+ 		var DATA;
+ 		
+ 		// Debug: Display the raw DATA object
+ 		// Use this for other Browsers
+		JDownloadMessages.DataRaw.value=DATA_NONIE;
+		// Use this for Internet Explorer
+		JDownloadMessages.DataRaw2.value=DATA_IE;
+		
+		var MSIE = true;
+		if (MSIE) {
+			DATA = DATA_IE.split("|");
+		} else {
+			DATA = DATA_NONIE;
+		}
+		
+		// Display the event type as number and descriptive text
+		JDownloadMessages.EventType.value=EVENT_TYPE;
+ 		var msg = "---";
+		var code = parseInt(EVENT_TYPE);
+		switch(code)
+		{
+			case 0: msg = "Detaching listener"; break;
+			case 1: msg = "Attaching listener"; break;
+			case 2: msg = "Applet initialized"; break;
+			case 3: msg = "Applet waiting"; break;
+			case 4: msg = "Queue status changed"; break;
+			case 5: msg = "Target path changed"; break;
+			case 10: msg = "Download starting"; break;
+			case 11: msg = "Download in progress"; break;
+			case 12: msg = "Download finished"; 
+					JDownloadMessages.btnS.disabled='disabled';
+					JDownloadMessages.btnD.disabled='';
+				break;
+			case 13: msg = "Download stopped"; 
+					JDownloadMessages.btnS.disabled='disabled';
+					JDownloadMessages.btnD.disabled='';
+				break;
+			case 20: msg = "Download item starting"; break;
+			case 21: msg = "Download item in progress"; break;
+			case 22: msg = "Download item finished"; break;
+			case 23: msg = "Download item stopped"; break;
+			case 30: msg = "Uncompress starting"; break;
+			case 31: msg = "Uncompress in progress"; break;
+			case 32: msg = "Uncompress finished"; break;
+			case 33: msg = "Uncompress stopped"; break;
+			default: msg = "Unknown event ["+code+"]"; break;
+		}
+		JDownloadMessages.EventDesc.value=msg;
+
+		/*
+		 * Each event can optionally have some information (data).
+		 * The DATA object is an array of type java.lang.Object.
+		 * The data structure depends on the event type.
+		 * E.g. Some event don't have any data, thus DATA.length=0
+         *
+		 * Example:
+         * EVEN_TYPE 5 is "Target path changed"
+         * In DATA[0] he will send the old path (pre change)
+         * In DATA[1] he will send the new path (post change)
+         *
+		 * The Data in the 'progress' events contains the percentage
+         * as integer, the current download speed in kb/s as floating point decimal,
+         * the filename of the download
+         * and the starting timestamp and current timestamp.
+		 */
+
+
+		if (DATA==null)
+			return;
+
+		// Show the data connected to this event
+		if (DATA.length>0)
+			JDownloadMessages.Data0.value=DATA[0];
+		else
+			JDownloadMessages.Data0.value="---";
+		if (DATA.length>1)
+			JDownloadMessages.Data1.value=DATA[1];
+		else
+			JDownloadMessages.Data1.value="---";
+		if (DATA.length>2)
+			JDownloadMessages.Data2.value=DATA[2];
+		else
+			JDownloadMessages.Data2.value="---";
+		if (DATA.length>3)
+			JDownloadMessages.Data3.value=DATA[3];
+		else
+			JDownloadMessages.Data3.value="---";
+		if (DATA.length>4)
+			JDownloadMessages.Data4.value=DATA[4];
+		else
+			JDownloadMessages.Data4.value="---";
+		if (DATA.length>5)
+			JDownloadMessages.Data5.value=DATA[5];
+		else
+			JDownloadMessages.Data5.value="---";
+	}
+
+	function doDownload()
+	{
+		JDownloadMessages.btnD.disabled='disabled';
+		JDownloadMessages.btnS.disabled='';
+		JDownload.clickDownload();
+		/*
+         * The Download call is non-blocking, so we need to listen for
+	     * events like DOWNLOAD_FINISHED to reenable the buttons.
+         * See above in the switch()-clause
+         */
+	}
+
+	function doStop()
+	{
+		JDownload.clickStop();
+		JDownloadMessages.btnS.disabled='disabled';
+	}
+
+	function doBrowse()
+	{
+		alert('Click OK to search folders');
+		JDownloadMessages.btnB.disabled='disabled';
+		JDownload.clickBrowse();
+		/*
+         * The Browse call is blocking, so after it returns, we can
+	     * reenable the button.
+         */
+		JDownloadMessages.btnB.disabled='';
+	}
+
+ //-->
+</script>
+
+</head>
+
+<body>
+ <h2>JDownload Simple Demo</h2>
+
+This is the data which can be accessed by you, the Webmaster:
+<form name="JDownloadMessages">
+ Event Type: <input type="text" name="EventType" size="4" value="---">
+ Event Description: <input type="text" name="EventDesc" size="40" value="---"><br>
+ Data 0: <input type="text" name="Data0" size="30" value="---">
+ Data 1: <input type="text" name="Data1" size="30" value="---"><br>
+ Data 2: <input type="text" name="Data2" size="30" value="---">
+ Data 3: <input type="text" name="Data3" size="30" value="---"><br>
+ Data 4: <input type="text" name="Data4" size="30" value="---">
+ Data 5: <input type="text" name="Data5" size="30" value="---"><br>
+ Data Raw: <input type="text" name="DataRaw" size="60" value="---"><br>
+ Data Raw 2: <input type="text" name="DataRaw2" size="60" value="---"><br>
+<strong>Remote Control the applet:</strong><br>
+<input type="button" name="btnD" value="Download" onClick="doDownload();">
+<input type="button" name="btnS" disabled value="Stop" onClick="doStop();">
+<input type="button" name="btnB" value="Browse" onClick="doBrowse();">
+</form>
+
+<hr>
+This is what the end-users sees:<br>
+
+ <applet 
+  code="biz.jupload.jdownload.Manager"
+  archive="jdownload.jar"
+  width="60%"
+  height="40%"
+  name="JDownload"
+  mayscript="mayscript"
+  alt="JDownload by www.jupload.biz">
+
+ <!-- Java Plug-In Options -->
+ <param name="progressbar" value="true">
+ <param name="boxmessage" value="Loading JDownload Applet ...">
+
+ <!-- An URL pointing to the data structure containing the list of
+      files and folders to download -->
+ <param name="dataURL" value="download.xml">
+
+ <!-- Show or Hide the controls 
+      If hidden (set all to 'false'), remote control the applet using JavaScript buttons -->
+ <param name="showExplorer" value="true">
+ <param name="showControls" value="true">
+ <param name="showBrowser" value="true">
+ <param name="showStatus" value="true">
+
+ Your browser does not support applets. Or you have disabled applets in your options.
+ To use this applet, please install the newest version of Sun's java.
+ You can get it from <a href="http://www.java.com/">java.com</a>
+
+ </applet>
+</p>
+
+<p>
+The applet can be hidden completely (switching off all gui components via PARAM tags,
+and setting size to 0x0 or 1x1).
+</p>
+
+<hr>
+
+<p>
+<h2>JDownload Official Website</h2>
+The official project website can be found at this place:
+<a href="http://jdownload.jupload.biz/">http://jdownload.jupload.biz/</a>.
+<br>
+Go to <a href="http://jdownload.jupload.biz/files/">Download section</a>.
+</p>
+
+<p>
+<h2>JUpload Official Website</h2>
+The official JUpload project website can be found at this place:
+<a href="http://jupload.biz/">http://jupload.biz/</a>.
+</p>
+
+<hr>
+<address>
+Copyright &copy; 2004,2005 <a href="http://www.haller-systemservice.net/">Haller Systemservice</a><br>
+Mike Haller <a href="mailto:info@jupload.biz?subject=jdownload%20applet">info@jupload.biz</a><br>
+Last modified: 2005-04-02
+</address>
+
+</body>
+</html>
