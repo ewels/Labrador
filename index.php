@@ -13,10 +13,52 @@ if($_POST['create_dataset_submitted'] == 'submitted') {
 	include('includes/create_dataset.php');
 }
 
+// Stats
+$num_papers = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `papers`"));
+$dataset_papers = mysql_fetch_row(mysql_query("SELECT COUNT(DISTINCT `paper_id`) FROM `datasets`"));
+$num_dataset = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `datasets`"));
+$num_files_raw = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_raw`"));
+$num_files_aligned = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_aligned`"));
+$num_files_derived = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_derived`"));
+$num_files = $num_files_raw[0] + $num_files_aligned[0] + $num_files_derived[0];
+
 include('includes/header.php');
 ?>
-                <img class="pull-right visible-desktop" style="margin-top:-50px;" src="img/puppies/puppy_2.jpg" title="woof!">
+        <img class="pull-right visible-desktop" style="margin-top:-50px;" src="img/puppies/puppy_2.jpg" title="woof!">
 		<p class="lead">This browser is designed for you to find all of the internal and publicly available datasets known to the Reik lab and the Babraham Bioinformatics group.</p>
+		<p><strong><?= $num_papers[0] ?></strong> papers have been added, of which <strong><?= $dataset_papers[0] ?></strong> have datasets associated.
+		<strong><?= $num_dataset[0] ?></strong> datasets known. <strong><?= $num_files ?></strong> files / directories recorded.
+		<?php // this is fun, but slows the page load
+		//*
+		$path="/data/pipeline/public/TIDIED/"; 
+		$ar=getDirectorySize($path); 
+
+		function getDirectorySize($path) { 
+		  $totalsize = 0; $totalcount = 0; $dircount = 0; 
+		  if ($handle = opendir ($path)) { 
+			while (false !== ($file = readdir($handle))) { 
+			  $nextpath = $path . '/' . $file; 
+			  if ($file != '.' && $file != '..' && !is_link ($nextpath)) { 
+				if (is_dir ($nextpath)) { 
+				  $dircount++; 
+				  $result = getDirectorySize($nextpath); 
+				  $totalsize += $result['size']; 
+				  $totalcount += $result['count']; 
+				  $dircount += $result['dircount']; 
+				} elseif (is_file ($nextpath)) { 
+				  $totalsize += filesize ($nextpath); 
+				  $totalcount++; 
+				} 
+			  } 
+			} 
+		  } 
+		  closedir ($handle); 
+		  return array('size' => $totalsize, 'count' => $totalcount, 'dircount' => $dircount); 
+		}
+		echo '<strong>'.$ar['count'].'</strong> files found in <strong>'.$ar['dircount'].'</strong> directories on the file system, totalling <strong>'.round($ar['size']/(1024*1024*1024*1024),1).' TB</strong> data stored';
+		//*/
+		?>
+		.</p>
 		<p>You can search for specific datasets or browse papers and their datasets below.</p>
 		<p>If you would like to access a new dataset not listed here, please use the <a href="#request-dataset">form below</a>.</p>
 		

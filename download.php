@@ -12,7 +12,8 @@ if($_GET['action'] == 'download'){
 	$_SESSION['files'] = $_POST['files'];
 	?>
 	<p class="lead">Please use the Java applet interface below to download your files..</p>
-	<p>If you keep having problems please come and tell someone in Bioinformatics so that we can fix it and give you your files on a USB stick...</p>
+	<p>If the applet doesn't work or fails to load you can <a href="#manual_download">manually download</a> the individual files using the links below.
+	If you keep having problems please come and tell someone in Bioinformatics so that we can fix it and give you your files on a USB stick...</p>
 	
 	<applet 
 	  code="biz.jupload.jdownload.Manager"
@@ -46,6 +47,7 @@ if($_GET['action'] == 'download'){
 
 	</applet>
 	
+	<hr id="manual_download">
 	<h3>Manual Download</h3>
 	<table class="table table-condensed"><tbody>
 <?php
@@ -330,13 +332,19 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 				var i = $(this).attr('id').substr(8);
 				if($(this).hasClass('success')){
 					if(!$(this).children('td.raw').hasClass('error')){
-						files.push(datasets[i][0]);
+						$.each(datasets[i][0], function(key, val){
+							files.push(datasets[i][0][key]);
+						});
 					}
 					if(!$(this).children('td.aligned').hasClass('error')){
-						files.push(datasets[i][1]);
+						$.each(datasets[i][1], function(key, val){
+							files.push(datasets[i][1][key]);
+						});
 					}
 					if(!$(this).children('td.derived').hasClass('error')){
-						files.push(datasets[i][2]);
+						$.each(datasets[i][2], function(key, val){
+							files.push(datasets[i][2][key]);
+						});
 					}
 				}
 			});

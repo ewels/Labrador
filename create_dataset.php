@@ -45,13 +45,17 @@ include('includes/header.php');
 							<?php
 							$selected = false;
 							$papers = array();
-							$query = "SELECT `id`, `year`, `first_author`, `geo_accession`, `last_modified` FROM `papers` ORDER BY `first_author`";
+							$this_paper = '';
+							$query = "SELECT * FROM `papers` ORDER BY `first_author`";
 							$results = mysql_query($query);
 							while($result = mysql_fetch_array($results)) {
 								$papers[$result['last_modified']] = array(
 									'id' => $result['id'],
 									'year' => $result['year'],
 									'first_author' => $result['first_author'],
+									'authors' => $result['authors'],
+									'paper_title' => $result['paper_title'],
+									'PMID' => $result['PMID'],
 									'geo_accession' => $result['geo_accession']
 								);
 							}
@@ -67,6 +71,7 @@ include('includes/header.php');
 								echo '<option ';
 								if ($paper_id == $mostrecent['id']) {
 									echo 'selected="selected" ';
+									$this_paper = $mostrecent;
 									$selected = true;
 								}
 								echo 'value="'.$mostrecent['id'].'">'.$mostrecent['first_author'].' '.$mostrecent['year'].'</option>';
@@ -81,6 +86,7 @@ include('includes/header.php');
 								echo '<option ';
 								if ($paper_id == $paper['id'] && !$selected) {
 									echo 'selected="selected" ';
+									$this_paper = $paper;
 									$selected = true;
 								}
 								echo 'value="'.$paper['id'].'">'.$paper['first_author'].' '.$paper['year'].'</option>';
@@ -93,7 +99,15 @@ include('includes/header.php');
 							?>
 						</select>
 					</div>
+					<br><br><br>
+					<p><strong><?= stripslashes($this_paper['paper_title']) ?></strong>
+					<p>
+						<em><?= stripslashes($this_paper['authors']) ?></em> &nbsp; 
+						(<?= $this_paper['year'] ?>) &nbsp;
+						<a href="http://www.ncbi.nlm.nih.gov/pubmed/<?= $this_paper['PMID'] ?>" target="_blank">PMID: <?= $this_paper['PMID'] ?></a>
+					</p>
 				</div>
+				
 			</fieldset>
 			
 			
@@ -175,15 +189,18 @@ include('includes/header.php');
 				?>
 				
 				<table class="table table-bordered table-condensed table-hover" id="dataset_select_table">
-					<tr>
-						<th width="3%" id="select_all_datasets" style="text-align:center;"><i class="icon-remove"></i></th>
-						<th width="27%">Name</th>
-						<th width="15%">Species</th>
-						<th width="15%">Cell Type</th>
-						<th width="15%">Data Type</th>
-						<th width="12.5%"><abbr rel="tooltip" title="Gene Expression Omnibus Accession">GEO</abbr></th>
-						<th width="12.5%"><abbr rel="tooltip" title="Sequence Read Archive Accession">SRA</abbr></th>
-					</tr>
+					<thead>
+						<tr>
+							<th width="3%" id="select_all_datasets" style="text-align:center;"><i class="icon-remove"></i></th>
+							<th width="27%">Name</th>
+							<th width="15%">Species</th>
+							<th width="15%">Cell Type</th>
+							<th width="15%">Data Type</th>
+							<th width="12.5%"><abbr rel="tooltip" title="Gene Expression Omnibus Accession">GEO</abbr></th>
+							<th width="12.5%"><abbr rel="tooltip" title="Sequence Read Archive Accession">SRA</abbr></th>
+						</tr>
+					</thead>
+					<tbody>
 					<?php
 					// Should already have GEO accession from above papers select dropdown
 					$active_datasets = array();
@@ -208,9 +225,12 @@ include('includes/header.php');
 						}
 					}
 					?>
-					<tr>
-						<td colspan="7"><a class="btn" href="javascript:void(0);" id="add_row_button">Add</a> <input type="text" id="add_row_rows" class="span1" value="1"> rows</td>
-					</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="7"><a class="btn" href="javascript:void(0);" id="add_row_button">Add</a> <input type="text" id="add_row_rows" class="span1" value="1"> rows</td>
+						</tr>
+					</tfoot>
 				</table>
 				<input type="hidden" name="active_datasets" value="<?php echo implode(' ', $active_datasets); ?>" id="active_datasets">
 				
@@ -368,7 +388,7 @@ $(window).unload(function(){
 			var new_rows = Number($('#add_row_rows').val());
 			var max_rows = next_row + new_rows; // less than, so no -1 needed
 			for (var i = next_row; i < max_rows; i++) {
-				$('#dataset_select_table tr.dataset_row:last').after('<tr class="success dataset_row" id="' + i + '_dataset_row"><td class="select_dataset_row" style="text-align:center;"><i class="icon-ok" title="select / deselect this row"></i></td><td><input type="text" name="' + i + '_name" class="input-block-level"></td><td><input type="text" name="' + i + '_species" class="input-block-level input-species"></td><td><input type="text" name="' + i + '_cell_type" class="input-block-level input-cell_type"></td><td><input type="text" name="' + i + '_data_type" class="input-block-level input-data_type"></td><td><input type="text" name="' + i + '_name" class="input-block-level"></td><td><input type="text" name="' + i + '_name" class="input-block-level"></td></tr>');
+				$('#dataset_select_table tbody').append('<tr class="success dataset_row" id="' + i + '_dataset_row"><td class="select_dataset_row" style="text-align:center;"><i class="icon-ok" title="select / deselect this row"></i></td><td><input type="text" name="' + i + '_name" class="input-block-level input-name"></td><td><input type="text" name="' + i + '_species" class="input-block-level input-species"></td><td><input type="text" name="' + i + '_cell_type" class="input-block-level input-cell_type"></td><td><input type="text" name="' + i + '_data_type" class="input-block-level input-data_type"></td><td><input type="text" name="' + i + '_geo_accession" class="input-block-level input-geo_accession"></td><td><input type="text" name="' + i + '_sra_accession" class="input-block-level input-sra_accession"></td></tr>');
 			}
 			reset_active_datasets();
 		});
@@ -396,7 +416,7 @@ $(window).unload(function(){
 			var duplicate_accessions = new Array();
 			var error = false;
 			$('.input-geo_accession').each(function(){
-				if($.inArray($.trim($(this).val()), existing_geo) > -1 && $(this).attr('disabled') != 'disabled') {
+				if($(this).val() !== '' && $.inArray($.trim($(this).val()), existing_geo) > -1 && $(this).attr('disabled') != 'disabled') {
 					error = true;
 					duplicate_accessions.push($.trim($(this).val()));
 					$(this).parent().parent().removeClass('success');

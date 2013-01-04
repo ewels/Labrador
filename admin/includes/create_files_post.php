@@ -52,7 +52,7 @@ foreach ($_POST['derived'] as $dataset_raw => $files){
     foreach($error_msg as $msg){ echo "<li>$msg</li>"; }
     echo '</ul></div><div class="modal-footer"><button class="btn btn-primary" data-dismiss="modal">Close</button></div>';
   } else {
-    echo '<div class="modal-header"><h3>File Organisation Saved</h3></div><div class="modal-body"><p>Great success! Everything worked and '.$count.' files were recorded...</p></div><div class="modal-footer"><button class="btn" data-dismiss="modal">Close</button><a class="btn btn-primary" href="index.php">Back to admin homepage</a></div>';
+    echo '<div class="modal-header"><h3>File Organisation Saved</h3></div><div class="modal-body"><p>Great success! Everything worked and '.$count.' files were recorded...</p></div><div class="modal-footer"><a class="btn btn-primary" href="index.php">Back to admin homepage</a></div>';
   }
 
 
