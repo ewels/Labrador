@@ -23,7 +23,7 @@ if($_POST['create_dataset_submitted'] == 'submitted') {
 }
 
 // JSON DATA URL
-// http://localhost/fetch_geo.php?GEO=GSE11523&datasets=true
+// http://bilin1/labrador/fetch_geo.php?GEO=GSE11523&datasets=true
 
 include('includes/header.php');
 
@@ -212,21 +212,26 @@ include('includes/header.php');
 							$active_datasets[] = $i;
 							$disabled = in_array($geo_acc, $existing_datasets) ? 'disabled="disabled"' : '';
 							?>
-					<tr class="<?php echo in_array($geo_acc, $existing_datasets) ? 'error' : 'success'; ?> dataset_row" id="<?=$i?>_dataset_row">
-						<td class="select_dataset_row" style="text-align:center;"><i class="icon-<?php echo in_array($geo_acc, $existing_datasets) ? 'remove' : 'ok'; ?>" title="select / deselect this row"></i></td>
-						<td><input <?= $disabled; ?>type="text" name="<?=$i?>_name" class="input-block-level input-name" value="<?=$dataset['name']?>"></td>
-						<td><input <?= $disabled; ?>type="text" name="<?=$i?>_species" class="input-block-level input-species"></td>
-						<td><input <?= $disabled; ?>type="text" name="<?=$i?>_cell_type" class="input-block-level input-cell_type"></td>
-						<td><input <?= $disabled; ?>type="text" name="<?=$i?>_data_type" class="input-block-level input-data_type"></td>
-						<td><input <?= $disabled; ?>type="text" name="<?=$i?>_geo_accession" class="input-block-level input-geo_accession" value="<?=$geo_acc?>"></td>
-						<td><input <?= $disabled; ?>type="text" name="<?=$i?>_sra_accession" class="input-block-level input-sra_accession" value="<?=$dataset['sra']?>"></td>
-					</tr>
+							<tr class="<?php echo in_array($geo_acc, $existing_datasets) ? 'error' : 'success'; ?> dataset_row" id="<?=$i?>_dataset_row">
+								<td class="select_dataset_row" style="text-align:center;"><i class="icon-<?php echo in_array($geo_acc, $existing_datasets) ? 'remove' : 'ok'; ?>" title="select / deselect this row"></i></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_name" class="input-block-level input-name" value="<?=$dataset['name']?>"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_species" class="input-block-level input-species" value="<?=$dataset['organism']?>"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_cell_type" class="input-block-level input-cell_type"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_data_type" class="input-block-level input-data_type" value="<?=$dataset['methodology']?>"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_geo_accession" class="input-block-level input-geo_accession" value="<?=$geo_acc?>"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_sra_accession" class="input-block-level input-sra_accession" value="<?=$dataset['sra']?>"></td>
+							</tr>
 							<?php
 						}
 					}
 					?>
 					</tbody>
 					<tfoot>
+					<?php /* * / ?>
+						<tr><td colspan="7"><pre><?= print_r($geo_meta['msg']) ?></pre></td></tr>
+					<?php /* * / ?>
+						<tr><td colspan="7"><pre><?= print_r($geo_meta['samples']) ?></pre></td></tr>
+					<?php /* */ ?>
 						<tr>
 							<td colspan="7"><a class="btn" href="javascript:void(0);" id="add_row_button">Add</a> <input type="text" id="add_row_rows" class="span1" value="1"> rows</td>
 						</tr>
