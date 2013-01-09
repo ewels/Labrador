@@ -1,0 +1,1 @@
+mysqldump --user=root --password=PASSWORD labrador > db_backup_DATE.sql
