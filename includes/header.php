@@ -9,9 +9,10 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/bootstrap.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
 	<link href="css/responsive.css" rel="stylesheet">
+	<link href="includes/chosen/chosen.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>

@@ -115,3 +115,8 @@ border-radius: 10px;]
 .check {
 	cursor:pointer;
 }
+
+#search_fields .modal-body,
+#search_filters .modal-body {
+    height: 500px;
+}
