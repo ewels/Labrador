@@ -139,7 +139,7 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 
 		<div id="download_datasets" class="tab-content">
 			<h2>Download by Dataset</h2>
-			<div class="well pull-right" style="width:30%; margin-top: 20px; clear:right;">
+			<div class="well pull-right" style="width:20%; margin-top: 20px; clear:right;">
 				<p>To quickly download datasets, select their rows on the left and the data type you would like.</p>
 				<p>This will download the relevant files in a single .zip file</p>
 				<form action="download.php?action=download" method="post">
@@ -147,7 +147,7 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 					<p><input type="submit" class="btn btn-primary" value="Download"></p>
 				</form>
 			</div>
-			<table class="table table-bordered table-hover table-striped" style="width:60%;" id="datasetDownloadTable">
+			<table class="table table-bordered table-hover table-striped" style="width:70%;" id="datasetDownloadTable">
 			  <thead>
 				<tr>
 					<th width="3%" class="select_all_rows check"><i class="icon-ok"></i></th>
@@ -160,10 +160,10 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 			  <tbody>
 			  <?php
 				foreach($datasets as $dataset){
-					echo '<tr class="success" id="dataset_'.$dataset['id'].'"><td class="select_row check"><i class="icon-ok"></i></td><td>'.$dataset['name'].'</td>';
-					echo (count($dataset['files_raw']) > 0) ? '<td class="icon error raw"><i class="icon-remove"></i></td>' : '<td class="empty"></td>';
-					echo (count($dataset['files_aligned']) > 0) ? '<td class="icon aligned"><i class="icon-ok"></i></td>' : '<td class="empty"></td>';
-					echo (count($dataset['files_derived']) > 0) ? '<td class="icon derived"><i class="icon-ok"></i></td>' : '<td class="empty"></td>';
+					echo '<tr class="success" id="dataset_'.$dataset['id'].'"><td class="select_row check"><i class="icon-ok"></i></td><td class="row_name">'.$dataset['name'].'</td>';
+					echo (count($dataset['files_raw']) > 0) ? '<td class="icon error raw select_cell"><i class="icon-remove"></i></td>' : '<td class="empty"></td>';
+					echo (count($dataset['files_aligned']) > 0) ? '<td class="icon aligned select_cell"><i class="icon-ok"></i></td>' : '<td class="empty"></td>';
+					echo (count($dataset['files_derived']) > 0) ? '<td class="icon error derived select_cell"><i class="icon-remove"></i></td>' : '<td class="empty"></td>';
 					echo '</tr>';
 				}
 			  ?>
@@ -268,6 +268,7 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 				rows.removeClass('success');
 				rows.addClass('error');
 				rows.children().removeClass('success');
+				rows.children().addClass('error');
 				rows.children().children('i').removeClass('icon-ok');
 				rows.children().children('i').addClass('icon-remove');
 				$(this).parent().children('th').children('i').removeClass('icon-ok');
@@ -276,6 +277,7 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 				rows.removeClass('error');
 				rows.addClass('success');
 				rows.children().removeClass('error');
+				rows.children().addClass('success');
 				rows.children().children('i').removeClass('icon-remove');
 				rows.children().children('i').addClass('icon-ok');
 				$(this).parent().children('th').children('i').removeClass('icon-remove');
@@ -302,6 +304,28 @@ while($dataset = mysql_fetch_array($datasets_sql)){
 				cells.children('i').addClass('icon-ok');
 				$(this).children('i').removeClass('icon-remove');
 				$(this).children('i').addClass('icon-ok');
+			}
+			updateDownloadList();
+		});
+		
+		// Select or deselect a single cell
+		$('.select_cell').click(function(){
+			if($(this).children('i').hasClass('icon-ok')) {
+				$(this).removeClass('success');
+				$(this).addClass('error');
+				$(this).children('i').removeClass('icon-ok');
+				$(this).children('i').addClass('icon-remove');
+			} else {
+				$(this).removeClass('error');
+				$(this).addClass('success');
+				$(this).children('i').removeClass('icon-remove');
+				$(this).children('i').addClass('icon-ok');
+				$(this).parent().removeClass('error');
+				$(this).parent().addClass('success');
+				$(this).parent().children('.select_row').children('i').removeClass('icon-remove');
+				$(this).parent().children('.select_row').children('i').addClass('icon-ok');
+				$(this).parent().children('.select_row, .row_name').removeClass('error');
+				$(this).parent().children('.select_row, .row_name').addClass('success');
 			}
 			updateDownloadList();
 		});

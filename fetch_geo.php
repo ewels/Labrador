@@ -47,22 +47,28 @@ if($papers) {
 }
 
 // check if this paper is already in the database
-// Connect to database
-include('includes/db_login.php');
-
-$query = "SELECT `id` FROM `papers` WHERE 
-				`PMID` = '".$results['PMID']."' 
-			 OR `geo_accession` = '".$results['GSE_acc']."' 
-			 OR (`first_author` = '".$papers['first_author']."' AND `year` = '".$papers['year']."')";
-$existing_q = mysql_query($query);
-if (mysql_num_rows($existing_q) > 0) {
-	$existing = mysql_fetch_array($existing_q);
-	$existing_id = $existing['id'];
+if(strlen($results['PMID']) > 1 || strlen($results['GSE_acc']) > 1 || (strlen($results['first_author']) > 1 && strlen($results['year']) == 4)){
+	// Connect to database
+	include('includes/db_login.php');
+	
+	$wheres = array();
+	$query = "SELECT `id` FROM `papers` WHERE ";
+	if(strlen($results['PMID']) > 1) $wheres[] = "`PMID` = '".$results['PMID']." ' ";
+	if(strlen($results['GSE_acc']) > 1) $wheres[] = "`geo_accession` = '".$results['GSE_acc']."' ";
+	if(strlen($results['first_author']) > 1 && strlen($results['year']) == 4) $wheres[] = "(`first_author` = '".$papers['first_author']."' AND `year` = '".$papers['year']."')";
+	$query .= implode(' OR ', $wheres);
+	
+	$existing_q = mysql_query($query);
+	if (mysql_num_rows($existing_q) > 0) {
+		$existing = mysql_fetch_array($existing_q);
+		$existing_id = $existing['id'];
+	} else {
+		$existing_id = '-1';
+	}
+	echo '  "existing_paper": "'.$existing_id.'"'."\n";
 } else {
-	$existing_id = '-1';
+	echo '  "existing_paper": "-1"'."\n";
 }
-echo '  "existing_paper": "'.$existing_id.'"'."\n";
-
 
 echo "}";
 

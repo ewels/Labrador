@@ -34,8 +34,8 @@ include('includes/header.php');
 		<form action="index.php" method="post" id="create-dataset" class="form-horizontal">
 			<input type="hidden" name="create_dataset_submitted" value="submitted" id="create_dataset_submitted">
 			<fieldset>
-                                <img class="pull-right visible-desktop" src="img/puppies/puppy_3.jpg" style="max-height:300px; margin-bottom:-60px;">
 				<legend>Paper</legend>
+				<img class="pull-right visible-desktop" src="img/puppies/puppy_flowers.jpg" style="max-height:300px; margin:-20px 0 -60px;">
 				<p>This is the paper that we're about to add datasets to. You can select another paper from the 
 					drop down box and the page will refresh.</p>
 				<div class="control-group <?php echo in_array('paper', $error_fields) ? 'error' : ''; ?>">

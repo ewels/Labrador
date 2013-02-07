@@ -37,7 +37,7 @@
 					<ul class="nav">
 						<li><a href="index.php#search">Search</a></li>
 						<li><a href="index.php#browse">Browse</a></li>
-						<li><a href="create_paper.php" id="request-dataset-nav-link">Request Dataset</a></li>
+						<li><a href="create_paper.php" class="request-dataset-nav-link">Request Dataset</a></li>
 					</ul>
 				</div>
 

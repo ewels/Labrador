@@ -34,14 +34,25 @@ include('includes/header.php');
 			and filling out the details of the individual datasets. If the data you'd like isn't published 
 			or is complicated, please <a href="mailto:phil.ewels@babraham.ac.uk">e-mail us</a> instead.</p>
 		
-                <img src="img/puppies/stupid_puppy_1.jpg" class="pull-left visible-desktop" style="max-height:300px; margin-left:-20px;" title="walkies?!">
 		<form class="form-search" onsubmit="return false;" id="geo_search_form">
 			<fieldset>
 				<legend>Fetch Paper from GEO Accession</legend>
-                                <p>This system works best if the data you'd like is on the
+				<img src="img/puppies/puppy_3.jpg" class="pull-right visible-desktop" style="max-height:250px; margin:-20px 0 -60px;" title="Felix's Puppy">
+                <p>This system works best if the data you'd like is on the
 					<a href="http://www.ncbi.nlm.nih.gov/geo/" target="_blank">NCBI GEO database</a> - if you know the
 					GEO accession number pop it in below and most of the information will found for you automagically.</p>
 				<div style="text-align:center; margin-top:50px;">
+					<div><p>
+						<label class="radio inline">
+							<input type="radio" name="search_type" value="geo" checked="checked"> GEO Accession
+						</label>
+						<label class="radio inline muted">
+							<input type="radio" name="search_type" value="pmid" disabled="disabled"> PubMed ID
+						</label>
+						<label class="radio inline muted">
+							<input type="radio" name="search_type" value="sra" disabled="disabled"> SRA Accession
+						</label>
+					</p></div>
 					<div class="input-append">
 						<input type="text" id="geo_search" class="span2 search-query input-large" placeholder="GSE00000">
 						<input type="submit" class="btn btn-primary btn-large" id="geo_search_submit" style="font-size:17.5px;" value="Fetch!">
