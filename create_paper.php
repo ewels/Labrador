@@ -47,6 +47,9 @@ include('includes/header.php');
 							<input type="radio" name="search_type" value="geo" checked="checked"> GEO Accession
 						</label>
 						<label class="radio inline muted">
+							<input type="radio" name="search_type" value="ddjb" disabled="disabled"> DDJB Accession
+						</label>
+						<label class="radio inline muted">
 							<input type="radio" name="search_type" value="pmid" disabled="disabled"> PubMed ID
 						</label>
 						<label class="radio inline muted">

@@ -27,6 +27,7 @@ foreach($active_datasets as $i){
 		$data_type = mysql_real_escape_string(trim( $_POST[$i.'_data_type'] ));
 		$geo_accession = mysql_real_escape_string(trim( $_POST[$i.'_geo_accession'] ));
 		$sra_accession = mysql_real_escape_string(trim( $_POST[$i.'_sra_accession'] ));
+		$srx_accession = mysql_real_escape_string(trim( $_POST[$i.'_srx_accession'] ));
 
 		$name = empty($name) ? 'NULL' : "'".$name."'";
 		$species = empty($species) ? 'NULL' : "'".$species."'";
@@ -34,6 +35,7 @@ foreach($active_datasets as $i){
 		$data_type = empty($data_type) ? 'NULL' : "'".$data_type."'";
 		$geo_accession = empty($geo_accession) ? 'NULL' : "'".$geo_accession."'";
 		$sra_accession = empty($sra_accession) ? 'NULL' : "'".$sra_accession."'";
+		$srx_accession = empty($srx_accession) ? 'NULL' : "'".$srx_accession."'";
 		
 		$query = "INSERT INTO `datasets` (
 				`paper_id`,
@@ -43,6 +45,7 @@ foreach($active_datasets as $i){
 				`data_type`,
 				`geo_accession`,
 				`sra_accession`,
+				`srx_accession`,
 				`last_modified`
 			) VALUES (
 				$paper,
@@ -52,6 +55,7 @@ foreach($active_datasets as $i){
 				$data_type,
 				$geo_accession,
 				$sra_accession,
+				$srx_accession,
 				$last_modified
 			)";
 			

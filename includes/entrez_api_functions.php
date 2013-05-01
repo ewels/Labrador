@@ -117,15 +117,23 @@ function get_GEO_GSE ($GEO_accession, $sra_codes = false) {
 						// Find GSM accession for this experiment
 						if($child->attributes()->Name == 'ExpXml') {
 							$sra_raw = (string)$child;
-							if(preg_match('/GSM\d\d\d\d\d\d/', $sra_raw, $matches)){
+							if(preg_match('/GSM\d+/', $sra_raw, $matches)){
 								$gsm_acc = $matches[0];
 								$results['msg'][] = "GSM match - $gsm_acc";
+							}
+							if(preg_match('/SRX\d+/', $sra_raw, $matches)){
+								$srx_acc = $matches[0];
+								$results['msg'][] = "SRX match - $srx_acc";
 							}
 							if(preg_match('#\<LIBRARY_NAME>(.+?)</LIBRARY_NAME>#', $sra_raw, $matches)){
 								$library_name = $matches[1];
 								$results['msg'][] = "library name match - $library_name";
 							}
-							if(preg_match('#\<Organism taxid="\d\d\d\d\d" CommonName="(.+?)"/>#', $sra_raw, $matches)){
+							if(preg_match('#\<Organism taxid="\d+" CommonName="(.+?)"/>#', $sra_raw, $matches)){
+								$organism = $matches[1];
+								$results['msg'][] = "organism name match - $organism";
+							}
+							if(preg_match('#\<Organism taxid="\d+" ScientificName="(.+?)"/>#', $sra_raw, $matches)){
 								$organism = $matches[1];
 								$results['msg'][] = "organism name match - $organism";
 							}
@@ -137,7 +145,7 @@ function get_GEO_GSE ($GEO_accession, $sra_codes = false) {
 						// Find SRA accessions for this experiment
 						if($child->attributes()->Name == 'Runs') {
 							$sra_raw = (string)$child;
-							if(preg_match_all('/SRR\d\d\d\d\d\d/', $sra_raw, $sra_accessions)){
+							if(preg_match_all('/SRR\d+/', $sra_raw, $sra_accessions)){
 								$results['msg'][] = "SRA match - ".implode(" ", $sra_accessions[0]);
 							}
 						} // geo sra tag name check
@@ -173,7 +181,9 @@ function get_GEO_GSE ($GEO_accession, $sra_codes = false) {
 					
 					// Assign values
 					if($this_acc){
-						$results['samples'][$this_acc]['sra'] .= implode(' ', $sra_accessions[0]).' '; // That's right, sometimes there can be multiple SRA results. Because that's sensible. Gah!
+						$results['samples'][$this_acc]['geo'] = $GEO_accession;
+						$results['samples'][$this_acc]['sra'] .= implode(' ', $sra_accessions[0]).' '; // Sometimes there can be multiple SRA results
+						$results['samples'][$this_acc]['srx'] = $srx_acc;
 						$results['samples'][$this_acc]['organism'] = $organism;
 						$results['samples'][$this_acc]['methodology'] = $methodology;
 					}
@@ -233,6 +243,114 @@ function get_GEO_GSE ($GEO_accession, $sra_codes = false) {
 	
 	return $results;
 }
+
+function get_SRA ($SRA_acc, $sra_codes = false) {
+	// Get the first XML file with SRA ID accessions, using the supplied SRA accession
+	// uses eSearch
+	
+	$results = array();
+	$results['samples'] = array();
+	
+	$url_1 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term='.$SRA_acc.'&usehistory=y';
+	$results['msg'][] = "Looking for project SRA codes - $url_1";
+	$xml_1 = simplexml_load_file($url_1);
+	// Check if we have any Ids - if not, accession probably wrong
+	if(!isset($xml_1->IdList->Id)){
+		$error = "No datasets found";
+		$results['msg'][] = "$SRA_acc  - not found in NCBI SRA database";
+		//return false;
+	} else {
+		$WebEnv = $xml_1->WebEnv;
+		$url_2 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&query_key=1&WebEnv='.$WebEnv;
+		$results['msg'][] = "Loading second URL for project SRA codes - $url_2";
+		$xml_2 = simplexml_load_file($url_2);
+		// Check for an error
+		if(isset($xml_2->ERROR)) {
+			//return false;
+			$results['msg'][] = "$SRA_acc - SRA error message found";
+		} else {
+			$total_bases = 0;
+			$sample_counter = 0;
+			foreach($xml_2->children() as $DocSum){
+				$sample_counter++;
+				$sra_accessions = array();
+				$library_name = false;
+				$srx_acc = false;
+				$gsm_acc = false;
+				
+				foreach($DocSum->children() as $child) {
+					// Find GSM accession for this experiment
+					if($child->attributes()->Name == 'ExpXml') {
+						$sra_raw = (string)$child;
+						if(preg_match('#\<Title>(.+?)</Title>#', $sra_raw, $matches)){
+							$sample_name = $matches[1];
+							$results['msg'][] = "sample name match - $sample_name";
+						}
+						
+						if(preg_match('/GSM\d+/', $sra_raw, $matches)){
+							$results['msg'][] = "GSE match - ".$matches[0];
+							$results['GSE_acc'] = $matches[0];
+						}
+						if(preg_match('/GSM\d+/', $sra_raw, $matches)){
+							$gsm_acc = $matches[0];
+							$results['msg'][] = "GSM match - $gsm_acc";
+						}
+						if(preg_match('/SRX\d+/', $sra_raw, $matches)){
+							$srx_acc = $matches[0];
+							$results['msg'][] = "SRX match - $srx_acc";
+						}
+						if(preg_match('#\<LIBRARY_NAME>(.+?)</LIBRARY_NAME>#', $sra_raw, $matches)){
+							$library_name = $matches[1];
+							$results['msg'][] = "library name match - $library_name";
+						}
+						if(preg_match('#\<Organism taxid="\d+" CommonName="(.+?)"/>#', $sra_raw, $matches)){
+							$organism = $matches[1];
+							$results['msg'][] = "organism name match - $organism";
+						}
+						if(preg_match('#\<Organism taxid="\d+" ScientificName="(.+?)"/>#', $sra_raw, $matches)){
+							$organism = $matches[1];
+							$results['msg'][] = "organism name match - $organism";
+						}
+						if(preg_match('#\<LIBRARY_STRATEGY>(.+?)</LIBRARY_STRATEGY>#', $sra_raw, $matches)){
+							$methodology = $matches[1];
+							$results['msg'][] = "methodology match - $methodology";
+						}
+					}
+					// Find SRA accessions for this experiment
+					if($child->attributes()->Name == 'Runs') {
+						$sra_raw = (string)$child;
+						if(preg_match_all('/SRR\d+/', $sra_raw, $sra_accessions)){
+							$srr_accessions = $sra_accessions;
+							$results['msg'][] = "SRA match - ".implode(" ", $srr_accessions);
+						}
+					} // tag name check
+				} // xml foreach
+				
+				// choose accession for each sample
+				if($srx_acc){
+					$this_acc = $srx_acc;
+				} else if($gsm_acc){
+					$this_acc = $gsm_acc;
+				} else {
+					$this_acc = "sample_$sample_counter";
+				}
+				
+				// Assign values
+				if($this_acc){
+					$results['samples'][$this_acc]['name'] = $sample_name;
+					$results['samples'][$this_acc]['geo'] = $GEO_accession;
+					$results['samples'][$this_acc]['sra'] .= implode(' ', $sra_accessions[0]).' '; // Sometimes there can be multiple SRA results
+					$results['samples'][$this_acc]['srx'] = $srx_acc;
+					$results['samples'][$this_acc]['organism'] = $organism;
+					$results['samples'][$this_acc]['methodology'] = $methodology;
+				}
+			}
+		}
+	}
+	
+	return $results;
+}
+
 
 function get_pmid_details ($PMID) {
 	$url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id='.$PMID.'&version=2.0';

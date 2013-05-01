@@ -9,6 +9,7 @@ include('includes/db_login.php');
 if(isset($_GET['paper_id']) && is_numeric($_GET['paper_id'])) {
 	$paper_id = $_GET['paper_id'];
 	$geo_acc = false;
+	$sra_acc = false;
 } else {
 	$paper_id = false;
 	$geo_acc = false;
@@ -56,7 +57,8 @@ include('includes/header.php');
 									'authors' => $result['authors'],
 									'paper_title' => $result['paper_title'],
 									'PMID' => $result['PMID'],
-									'geo_accession' => $result['geo_accession']
+									'geo_accession' => $result['geo_accession'],
+									'sra_accession' => $result['sra_accession']
 								);
 							}
 							echo '<optgroup label="Recently added">';
@@ -92,6 +94,9 @@ include('includes/header.php');
 								echo 'value="'.$paper['id'].'">'.$paper['first_author'].' '.$paper['year'].'</option>';
 								if(!$geo_acc && $paper_id == $paper['id']) {
 									$geo_acc = $paper['geo_accession'];
+								}
+								if(!$sra_acc && $paper_id == $paper['id']) {
+									$sra_acc = $paper['sra_accession'];
 								}
 							}
 							echo '</optgroup>';
@@ -132,7 +137,10 @@ include('includes/header.php');
 						<th>Notes</th>
 					</tr>
 				<?php while ($dataset = mysql_fetch_array($datasets)) :
-					$existing_datasets[$dataset['geo_accession']] = $dataset['sra_accession']; ?>
+					$existing_datasets[] = $dataset['geo_accession'];
+					foreach(explode(' ', $dataset['sra_accession']) as $sra){
+						$existing_datasets[] = $sra; 
+					} ?>
 					<tr>
 						<td><?=$dataset['name']?></td>
 						<td><?=$dataset['cell_type']?></td>
@@ -158,8 +166,13 @@ include('includes/header.php');
 					<a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=<?=$geo_acc?>" title="Click to open the GEO page in a new window" target="_blank"><?=$geo_acc?></a>,
 					below are the associated datasets.</p>
 				<p>Click the icon on the left of each row to select or deselect the dataset.</p>
+				<?php } else if($sra_acc){ ?>
+				<p>The paper specified above has the GEO accession
+					<a href="http://www.ncbi.nlm.nih.gov/sra/<?=$sra_acc?>" title="Click to open the SRA page in a new window" target="_blank"><?=$sra_acc?></a>,
+					below are the associated datasets.</p>
+				<p>Click the icon on the left of each row to select or deselect the dataset.</p>
 				<?php } else { ?>
-				<p>Couldn't find a GEO accession number with the above paper, so datasets will have to be added manually.</p>
+				<p>Couldn't find a GEO or SRA accession number with the above paper, so datasets will have to be added manually.</p>
 				<?php } ?>
 				
 				<hr>
@@ -192,48 +205,58 @@ include('includes/header.php');
 					<thead>
 						<tr>
 							<th width="3%" id="select_all_datasets" style="text-align:center;"><i class="icon-remove"></i></th>
-							<th width="27%">Name</th>
+							<th width="20%">Name</th>
 							<th width="15%">Species</th>
 							<th width="15%">Cell Type</th>
-							<th width="15%">Data Type</th>
+							<th width="10%">Data Type</th>
 							<th width="12.5%"><abbr rel="tooltip" title="Gene Expression Omnibus Accession">GEO</abbr></th>
 							<th width="12.5%"><abbr rel="tooltip" title="Sequence Read Archive Accession">SRA</abbr></th>
+							<th width="12%"><abbr rel="tooltip" title="Sequence Read Archive Experiment Accession">SRX</abbr></th>
 						</tr>
 					</thead>
 					<tbody>
 					<?php
+					
 					// Should already have GEO accession from above papers select dropdown
 					$active_datasets = array();
-					$geo_meta = get_GEO_GSE($geo_acc, true);
+					if($geo_acc){
+						$acc_meta = get_GEO_GSE($geo_acc, true);
+					} else if($sra_acc){
+						$acc_meta = get_SRA($sra_acc, true);
+					} else {
+						$acc_meta = false;
+					}
 					$i = 0;
-					if ($geo_meta && !empty($geo_meta['samples'])) {
-						foreach($geo_meta['samples'] as $geo_acc => $dataset) {
+					if ($acc_meta && !empty($acc_meta['samples'])) {
+						foreach($acc_meta['samples'] as $acc => $dataset) {
 							$i++;
 							$active_datasets[] = $i;
-							$disabled = in_array($geo_acc, $existing_datasets) ? 'disabled="disabled"' : '';
+							$disabled = in_array($acc, $existing_datasets) ? 'disabled="disabled"' : '';
 							?>
-							<tr class="<?php echo in_array($geo_acc, $existing_datasets) ? 'error' : 'success'; ?> dataset_row" id="<?=$i?>_dataset_row">
-								<td class="select_dataset_row" style="text-align:center;"><i class="icon-<?php echo in_array($geo_acc, $existing_datasets) ? 'remove' : 'ok'; ?>" title="select / deselect this row"></i></td>
+							<tr class="<?php echo in_array($acc, $existing_datasets) ? 'error' : 'success'; ?> dataset_row" id="<?=$i?>_dataset_row">
+								<td class="select_dataset_row" style="text-align:center;"><i class="icon-<?php echo in_array($acc, $existing_datasets) ? 'remove' : 'ok'; ?>" title="select / deselect this row"></i></td>
 								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_name" class="input-block-level input-name" value="<?=$dataset['name']?>"></td>
 								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_species" class="input-block-level input-species" value="<?=$dataset['organism']?>"></td>
 								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_cell_type" class="input-block-level input-cell_type"></td>
 								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_data_type" class="input-block-level input-data_type" value="<?=$dataset['methodology']?>"></td>
-								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_geo_accession" class="input-block-level input-geo_accession" value="<?=$geo_acc?>"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_geo_accession" class="input-block-level input-geo_accession" value="<?=$dataset['geo']?>"></td>
 								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_sra_accession" class="input-block-level input-sra_accession" value="<?=$dataset['sra']?>"></td>
+								<td><input <?= $disabled; ?>type="text" name="<?=$i?>_srx_accession" class="input-block-level input-srx_accession" value="<?=$dataset['srx']?>"></td>
 							</tr>
 							<?php
 						}
 					}
+
 					?>
 					</tbody>
 					<tfoot>
 					<?php /* * / ?>
-						<tr><td colspan="7"><pre><?= print_r($geo_meta['msg']) ?></pre></td></tr>
+						<tr><td colspan="7"><pre><?= print_r($acc_meta['msg']) ?></pre></td></tr>
 					<?php /* * / ?>
-						<tr><td colspan="7"><pre><?= print_r($geo_meta['samples']) ?></pre></td></tr>
+						<tr><td colspan="7"><pre><?= print_r($acc_meta['samples']) ?></pre></td></tr>
 					<?php /* */ ?>
 						<tr>
-							<td colspan="7"><a class="btn" href="javascript:void(0);" id="add_row_button">Add</a> <input type="text" id="add_row_rows" class="span1" value="1"> rows</td>
+							<td colspan="8"><a class="btn" href="javascript:void(0);" id="add_row_button">Add</a> <input type="text" id="add_row_rows" class="span1" value="1"> rows</td>
 						</tr>
 					</tfoot>
 				</table>
@@ -393,7 +416,7 @@ $(window).unload(function(){
 			var new_rows = Number($('#add_row_rows').val());
 			var max_rows = next_row + new_rows; // less than, so no -1 needed
 			for (var i = next_row; i < max_rows; i++) {
-				$('#dataset_select_table tbody').append('<tr class="success dataset_row" id="' + i + '_dataset_row"><td class="select_dataset_row" style="text-align:center;"><i class="icon-ok" title="select / deselect this row"></i></td><td><input type="text" name="' + i + '_name" class="input-block-level input-name"></td><td><input type="text" name="' + i + '_species" class="input-block-level input-species"></td><td><input type="text" name="' + i + '_cell_type" class="input-block-level input-cell_type"></td><td><input type="text" name="' + i + '_data_type" class="input-block-level input-data_type"></td><td><input type="text" name="' + i + '_geo_accession" class="input-block-level input-geo_accession"></td><td><input type="text" name="' + i + '_sra_accession" class="input-block-level input-sra_accession"></td></tr>');
+				$('#dataset_select_table tbody').append('<tr class="success dataset_row" id="' + i + '_dataset_row"><td class="select_dataset_row" style="text-align:center;"><i class="icon-ok" title="select / deselect this row"></i></td><td><input type="text" name="' + i + '_name" class="input-block-level input-name"></td><td><input type="text" name="' + i + '_species" class="input-block-level input-species"></td><td><input type="text" name="' + i + '_cell_type" class="input-block-level input-cell_type"></td><td><input type="text" name="' + i + '_data_type" class="input-block-level input-data_type"></td><td><input type="text" name="' + i + '_geo_accession" class="input-block-level input-geo_accession"></td><td><input type="text" name="' + i + '_sra_accession" class="input-block-level input-sra_accession"></td><td><input type="text" name="' + i + '_srx_accession" class="input-block-level input-srx_accession"></td></tr>');
 			}
 			reset_active_datasets();
 		});

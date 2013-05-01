@@ -10,6 +10,20 @@ $query = "SELECT * FROM `papers` WHERE `id` = '".$_GET['paper_id']."'";
 $results = mysql_query($query);
 $paper = mysql_fetch_array($results);
 $directory = "/data/pipeline/public/TIDIED/".$paper['first_author']."_".$paper['year'].'/';
+$dirs_exist = $root_dir_exists = $raw_dir_exists = $aligned_dir_exists = $derived_dir_exists = true;
+if(!file_exists($directory) || !is_dir($directory)){
+	$dirs_exist = $root_dir_exists = $raw_dir_exists = $aligned_dir_exists = $derived_dir_exists = false;
+} else {
+	if(!file_exists($directory.'/raw') || !is_dir($directory.'/raw')){
+		$dirs_exist = $raw_dir_exists = false;
+	}
+	if(!file_exists($directory.'/aligned') || !is_dir($directory.'/aligned')){
+		$dirs_exist = $aligned_dir_exists = false;
+	}
+	if(!file_exists($directory.'/derived') || !is_dir($directory.'/derived')){
+		$dirs_exist = $derived_dir_exists = false;
+	}
+}
 
 $admins = array(
 	'ewelsp' => 'phil.ewels@babraham.ac.uk',
@@ -20,11 +34,72 @@ $admins = array(
 	'segondsa' => 'anne.segonds-pichon@babraham.ac.uk'
 );
 
+if($_GET['mkdir'] == 'true'){
+	$errors = array();
+	if(!$root_dir_exists){
+		if (!mkdir($directory)) {
+			$errors[] = "Could not create $directory";
+		} else {
+			$root_dir_exists = true;
+		}
+	}
+	if(!$raw_dir_exists){
+		if (!mkdir($directory.'/raw')) {
+			$errors[] = "Could not create $directory/raw";
+		} else {
+			$raw_dir_exists = true;
+		}
+	}
+	if(!$aligned_dir_exists){
+		if (!mkdir($directory.'/aligned')) {
+			$errors[] = "Could not create $directory/aligned";
+		} else {
+			$aligned_dir_exists = true;
+		}
+	}
+	if(!$derived_dir_exists){
+		if (!mkdir($directory.'/derived')) {
+			$errors[] = "Could not create $directory/derived";
+		} else {
+			$derived_dir_exists = true;
+		}
+	}
+	if($root_dir_exists && $raw_dir_exists && $aligned_dir_exists && $derived_dir_exists){
+		$dirs_exist = true;
+	}
+	
+	# Write list of SRA filenames and fastq_dump file
+	if(file_exists($directory.'/raw') && is_dir($directory.'/raw')){
+		$lines = array();
+		$datasets = mysql_query("SELECT * FROM `datasets` WHERE `paper_id` = '".$_GET['paper_id']."' ORDER BY `geo_accession`");
+		while($dataset = mysql_fetch_array($datasets)){
+			if($dataset['sra_accession'] !== NULL && $dataset['srx_accession'] !== NULL){
+				$sras = split(" ",$dataset['sra_accession']);
+				foreach($sras as $sra){
+					$lines[] = "wget -nv ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByExp/sra/SRX/".substr($dataset['srx_accession'], 0, 6)."/".$dataset['srx_accession']."/".$sra."/".$sra.".sra";
+				}
+			}
+		}
+		$lines[] = "perl /data/pipeline/public/Phil/fastq-dump-split.pl *.sra";
+		$lines[] = "fastqc *.fastq";
+		$lines[] = "fastq_screen --subset 100000 *.fastq";
+		
+		$fh = fopen($directory.'/raw/download_dump_fastqc_fastqscreen.bash', 'w') or die("can't open file $directory/raw/download_dump_fastqc_fastqscreen.bash");
+		fwrite($fh, implode("\n", $lines));
+		fclose($fh);
+	}
+}
+
+if(count($errors) > 0){
+	echo '<div class="alert alert-error">'.implode("<br>", $errors).'</div>';
+}
+
 ?>
 
 <img class="pull-right visible-desktop" src="../img/puppies/puppy_5.jpg" style="max-height:250px; margin-top:-50px;">
 <p class="lead">This page enables you to register files in the file system and associate them with datasets.</p>
-<p>The directory being searched for files is: <code><?= $directory ?></code></p>
+<p>The directory being searched for files is: <code><?= $directory ?></code> <em>(directory structure <?php echo $dirs_exist ? 'looks good' : 'is missing some directories'; ?>).</em></p>
+<p><a href="create_files.php?paper_id=<?php echo $_GET['paper_id']; ?>&mkdir=true">Click here</a> to create any missing directories and a SRA ftp filename list file (in /raw - will overwrite existing filename list).</p>
 <p>You can add file attributes such as raw file read length, alignment genome build etc once files are in an appropriate column.
 	You can also <a href="#batchAnnotationModal" data-toggle="modal">batch edit these values</a> <em>(use with caution, will overwrite anything already in place).</em></p>
 
