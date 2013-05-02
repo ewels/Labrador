@@ -24,8 +24,46 @@ $num_files = $num_files_raw[0] + $num_files_aligned[0] + $num_files_derived[0];
 
 include('includes/header.php');
 ?>
-        <img class="pull-right visible-desktop" style="margin-top:-50px;" src="img/puppies/puppy_2.jpg" title="woof!">
-		<p class="lead">This browser is designed for you to find all of the internal and publicly available datasets known to the Reik lab and the Babraham Bioinformatics group.</p>
+	
+
+				<div class="sidebar-nav">
+					<h2>Browse Projects</h2>
+					<ul class="nav nav-list">
+						<?php $query = "SELECT * FROM `papers` ORDER BY `first_author`, `year`";
+						$datasets = mysql_query($query);
+						while($result = mysql_fetch_array($datasets)){
+							echo '<li><a href="#" title="'.stripslashes($result['paper_title']).'">'.$result['first_author'].', '.$result['year'].'</a></li>';
+							/*
+							<tr id="paper_<?= $result['id'] ?>" class="paper">
+								<td><?= $result['first_author'] ?></td>
+								<td><?= $result['year'] ?></td>
+								<td><?= stripslashes($result['paper_title']) ?></td>
+								<td><?php // limit the number of authors displayed and underline first and last.
+								$authors_array = explode(',', $result['authors']);
+								//echo $link;
+								echo '<u>'.$authors_array[0].'</u>, ';
+								if(count($authors_array) > 12){
+									echo implode(', ', array_slice($authors_array, 1, 11)) . ' <span style="background-color:#CDCDCD;">...</span> ';
+								} else {
+									echo implode(', ', array_slice($authors_array, 1, -1));
+								}
+								echo ', <u>'.trim($authors_array[count($authors_array) - 1]).'</u>';
+								;?>
+								</td>
+							</tr>
+						<?php */ 
+						} ?>
+					</ul>
+				</div><!--/.well -->
+
+		<div class="sidebar-mainpage">		
+				
+				
+				
+       	<h1>Labrador Dataset Browser <small>An database of datasets processed by the BI Bioinformatics group.</small></h1>
+	
+	 <img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
+		<p class="lead">You can use labrador to find and download data. Datasets are annotated with how they were processed and you can request new datasets.</p>
 		<p><strong><?= $num_papers[0] ?></strong> papers have been added, of which <strong><?= $dataset_papers[0] ?></strong> have datasets associated.
 		<strong><?= $num_dataset[0] ?></strong> datasets known. <strong><?= $num_files ?></strong> files / directories recorded.
 		<?php // this is fun, but slows the page load
@@ -59,10 +97,8 @@ include('includes/header.php');
 		//*/
 		?>
 		</p>
-		<p>You can search for specific datasets or browse papers and their datasets below.</p>
-		<p>If you would like to access a new dataset not listed here, please use the <a href="create_paper.php" class="request-dataset-nav-link">request dataset form</a>.</p>
 		
-		
+	<!--	
 		<form id="search" class="form-search">
 			<fieldset>
 				<legend>Search Datasets</legend>
@@ -82,32 +118,27 @@ include('includes/header.php');
 		</form>
 		
 		<!-- Search results go here -->
+		<!--
 		<div id="ajax_search"></div>
 		
-		<!-- Unsymantic (redundant) html to keep consistent page styling - sorry! -->
-		<p id="browse">&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<form>
-			<fieldset>
-				<legend>Browse Papers</legend>
-			</fieldset>
-		</form>
+		-->
+		
+		<p>You can use the list on the left or the table below to browse the projects and datasets. If you're looking for something specific, try the search 
+		bar at the top of the page.</p>
+		
 		<?php $query = "SELECT * FROM `papers` ORDER BY `first_author`, `year`";
-		$datasets = mysql_query($query);		?>
+		$datasets = mysql_query($query); ?>
 		<div style="width:100%; overflow:auto;">
 			<table id="paper-browser-table" class="table table-striped table-hover table-condensed table-bordered small" style="cursor:pointer;">
 				<tr>
-					<th width="10%">First Author</th>
-					<th width="10%">Year of Publication</th>
-					<th width="40%">Paper Title</th>
+					<th width="10%">Name</th>
+					<th width="50%">Paper Title</th>
 					<th width="40%">Authors</th>
 				</tr>
 				<?php
 				while($result = mysql_fetch_array($datasets)): ?>
 					<tr id="paper_<?= $result['id'] ?>" class="paper">
-						<td><?= $result['first_author'] ?></td>
-						<td><?= $result['year'] ?></td>
+						<td><?php echo $result['first_author'] .', '. $result['year'] ?></td>
 						<td><?= stripslashes($result['paper_title']) ?></td>
 						<td><?php // limit the number of authors displayed and underline first and last.
 						$authors_array = explode(',', $result['authors']);
@@ -244,20 +275,10 @@ include('includes/header.php');
 	================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="js/jquery-1.8.3.min.js"></script>
-	<script src="js/bootstrap-transition.js"></script>
-	<script src="js/bootstrap-alert.js"></script>
-	<script src="js/bootstrap-modal.js"></script>
-	<script src="js/bootstrap-dropdown.js"></script>
-	<script src="js/bootstrap-scrollspy.js"></script>
-	<script src="js/bootstrap-tab.js"></script>
-	<script src="js/bootstrap-tooltip.js"></script>
-	<script src="js/bootstrap-popover.js"></script>
-	<script src="js/bootstrap-button.js"></script>
-	<script src="js/bootstrap-collapse.js"></script>
-	<script src="js/bootstrap-carousel.js"></script>
-	<script src="js/bootstrap-typeahead.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 	<script src="includes/chosen/chosen.jquery.js"></script>
 	<script src="js/jquery.cookie.js"></script>
+	<script src="js/global.js"></script>
 	<script type="text/javascript">
 
 		// tooltip binding that works with dynamic content

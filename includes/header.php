@@ -9,10 +9,11 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
+	<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic' rel='stylesheet' type='text/css'>
 	<link href="css/bootstrap.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
 	<link href="css/responsive.css" rel="stylesheet">
 	<link href="includes/chosen/chosen.css" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -22,28 +23,35 @@
 
   </head>
 
-	<body>
+	<body <?php if(basename($_SERVER['PHP_SELF']) == 'project.php') { ?> style="background-color: #FAFAFA;"<?php } ?>>
 	
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
-			<div class="container">
-				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</a>
-				<a class="brand" href="index.php">Lab<span style="color:#333;">radar</span><sub style="font-size:10px;">BETA</sub></a>
-				<div class="nav-collapse collapse">
-					<ul class="nav">
-						<li><a href="index.php#search">Search</a></li>
-						<li><a href="index.php#browse">Browse</a></li>
-						<li><a href="create_paper.php" class="request-dataset-nav-link">Request Dataset</a></li>
-					</ul>
-				</div>
+			<div class="container-fluid">
+			
+				<a class="brand" href="index.php">Labrador<sub style="font-size:10px;">BETA</sub></a>
+				
+				<ul class="nav">
+					<li><a href="create_paper.php" class="request-dataset-nav-link">Fields</a></li>
+					<li><a href="create_paper.php" class="request-dataset-nav-link">Filters</a></li>
+				</ul>
+				
+				<form class="navbar-search form-search pull-left">
+					<div class="input-append">
+						
+						<input type="text" class="search-query" placeholder="Search">
+						<button class="btn">Search</button>
+					</div>
+				</form>
+				
+				<ul class="nav">
+					<li><a href="create_paper.php" class="request-dataset-nav-link">Create New Project</a></li>
+				</ul>
 
-				<a href="admin/" class="btn pull-right">Admin</a>
-   <?php if(isset($_SESSION['email'])) { echo '<p class="navbar-text pull-right" style="margin-right:30px;">'.$_SESSION['email'].'</p>'; } ?>
-
+				<p class="navbar-text pull-right" style="margin-right:30px;">
+				<?php if(isset($_SESSION['email'])) { echo $_SESSION['email']; } else { echo '<a href="#">Log In</a>'; } ?>
+				</p>
+				
 			</div>
 		</div>
 	</div>
@@ -56,5 +64,4 @@
 	</div>
 	<?php endif; ?>
 
-    <div class="container container-white">
-		<h1>Reik Lab Dataset Browser</h1>
+    <div class="container-fluid">
