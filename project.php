@@ -1,46 +1,42 @@
-<?php
-session_start();
-include('includes/db_login.php');
+<?php include('includes/start.php');
 
-$paper_id = false;
+$project_id = false;
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
-	$new_paper = false;
-	$paper_id = $_GET['id'];
+	$new_project = false;
+	$project_id = $_GET['id'];
 } else {
-	$new_paper = true;
+	$new_project = true;
 }
 
 if(isset($_GET['edit']) && is_numeric($_GET['edit'])){
 	$edit = true;
-	$new_paper = false;
-	$paper_id = $_GET['edit'];
+	$new_project = false;
+	$project_id = $_GET['edit'];
 } else {
 	$edit = false;
 }
 
-if($paper_id){
-	$papers = mysql_query("SELECT * FROM `papers` WHERE `id` = '".$paper_id."'");
-	$paper = mysql_fetch_array($papers);
+if($project_id){
+	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
+	$project = mysql_fetch_array($projects);
 }
 
-include('includes/header.php');
-
-?>
+include('includes/header.php'); ?>
 
 <div class="sidebar-nav">
 	<h3 id="sidebar_project_title">
-	<?php if(!$new_paper){
-		echo $paper['first_author'].'_'.$paper['year'];
+	<?php if(!$new_project){
+		echo $project['name'];
 	} else {
 		echo '<span class="muted">New Project</span>';
 	}?></h3>
 	<ul class="project-tabs">
 		<li class="active">
 			<a href="#">Project Details</a>
-			<?php if(!$new_paper) { ?><span class="subline"><a href="project.php?edit=<?php echo $paper['id']; ?>">Edit</a></span><?php } ?>
+			<?php if(!$new_project) { ?><span class="subline"><a href="project.php?edit=<?php echo $project['id']; ?>">Edit</a></span><?php } ?>
 		</li>
-	<?php if($new_paper){ ?>
+	<?php if($new_project){ ?>
 		<li class="inactive">
 			Datasets
 			<span class="subline">No datasets</span>
@@ -82,57 +78,71 @@ include('includes/header.php');
 // VIEW EXISTING PROJECT DETAILS
 ///////
 
-if(!$new_paper and !$edit){ ?>
+if(!$new_project and !$edit){ ?>
 
 <div class="sidebar-mainpage project-mainpage">
-	<h1><?php echo $paper['id']; ?> <small><?php echo $paper['internal'] ? '(Internal)' : '(External)'; ?></small></h1>
-	<?php if ($paper['internal']) { ?>
+	<h1>
+		<?php echo $project['name']; ?>
+		<?php echo accession_badges ($project['accession_geo'], 'geo'); ?>
+		<?php echo accession_badges ($project['accession_sra'], 'sra'); ?>
+		<?php echo accession_badges ($project['accession_ena'], 'ena'); ?>
+		<?php echo accession_badges ($project['accession_ddjb'], 'ddjb'); ?>
+	</h1>
+
+	<?php $papers = mysql_query("SELECT * from `papers` WHERE `project_id` = '".$project['id']."'");
+	if(mysql_num_rows($papers) > 0) { ?>
+	<fieldset id="project_paper_fieldset">
+		<legend>Publications</legend>
+		<table class="table">
+			<thead>
+				<th>Year</th>
+				<th>Journal</th>
+				<th>Title</th>
+				<th>Authors</th>
+				<th>PMID</th>
+				<th>DOI</th>
+			<thead>
+			<tbody>
+			<?php while($paper = mysql_fetch_array($papers)){
+				echo '<tr>';
+				echo '<td>'.$paper['year'].'</td>';
+				echo '<td>'.$paper['journal'].'</td>';
+				echo '<td>'.$paper['title'].'</td>';
+				echo '<td>'.$paper['authors'].'</td>';
+				echo '<td><a href="http://www.ncbi.nlm.nih.gov/pubmed/'.$paper['pmid'].'" target="_blank">'.$paper['pmid'].'</a></td>';
+				echo '<td><a href="http://dx.doi.org/'.$paper['doi'].'" target="_blank">'.$paper['doi'].'</a></td>';
+				echo '</tr>';
+			} // while ?>
+			</tbody>
+		</table>
+	</fieldset>
+	<?php } // > 0 papers
 	
-	<?php } else { ?>
-	<fieldset>
-		<legend>Paper Details</legend>
-		<p class="lead"><?php echo $paper['paper_title']; ?></p>
-		<p><?php echo $paper['paper_journal'].' ('.$paper['year'].')'; ?></p>
-		<p><?php echo $paper['authors']; ?></p>
-	</fieldset>
-	<?php if( !empty($paper['geo_accession']) || !empty($paper['sra_accession']) || !empty($paper['pmid']) || !empty($paper['doi']) || !empty($paper['accession_ena']) || !empty($paper['accession_ddjb'])){ ?>
-	<fieldset>
-		<legend>Accession Numbers</legend>
-		<dl class="dl-horizontal">
-		<?php if(!empty($paper['geo_accession'])) { ?>
-			<dt><abbr title="Gene Expression Omnibus">GEO</abbr></dt>
-			<dd><a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=<?php echo $paper['geo_accession']; ?>" target="_blank" title="Open in new window"><?php echo $paper['geo_accession']; ?></a></dd>
-		<?php }
-		if(!empty($paper['sra_accession'])) { ?>
-			<dt><abbr title="Sequence Read Archive">SRA</abbr></dt>
-			<dd><?php echo $paper['sra_accession']; ?></dd>
-		<?php }
-		if(!empty($paper['PMID'])) { ?>
-			<dt><abbr title="PubMed ID">PMID</abbr></dt>
-			<dd><a href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $paper['PMID']; ?>" target="_blank" title="Open in new window"><?php echo $paper['PMID']; ?></a></dd>
-		<?php }
-		if(!empty($paper['DOI'])) { ?>
-			<dt><abbr title="Digital Object Identifier">DOI</abbr></dt>
-			<dd><a href="http://dx.doi.org/<?php echo $paper['DOI']; ?>" target="_blank" title="Open in new window"><?php echo $paper['DOI']; ?></a></dd>
-		<?php }
-		if(!empty($paper['accession_ena'])) { ?>
-			<dt><abbr title="European Nucleotide Archive">ENA</abbr></dt>
-			<dd><?php echo $paper['accession_ena']; ?></dd>
-		<?php }
-		if(!empty($paper['accession_ddjb'])) { ?>
-			<dt><abbr title="DNA Data Bank of Japan">DDJB</abbr></dt>
-			<dd><?php echo $paper['accession_ddjb']; ?></dd>
-		<?php } ?>
-		</dl>
-	</fieldset>
-	<?php } // has accessions
-	if(!empty($paper['notes'])){ ?>
+	
+	if(!empty($project['notes'])){ ?>
 	<fieldset>
 		<legend>Comments</legend>
-		<p><?php echo stripslashes($paper['notes']); ?></p>
+		<p><?php echo nl2br(stripslashes($project['notes'])); ?></p>
 	</fieldset>
 	<?php } // has notes
-	} // is external ?>
+	
+	if(!empty($project['contact_name']) || !empty($project['contact_email']) || !empty($project['contact_group'])){ ?>
+	<fieldset>
+		<legend>Contacts</legend>
+		<dl>
+			<?php if(!empty($project['contact_name']) || !empty($project['contact_email']) ){?>
+				<dt>Primary Contact</dt>
+				<?php if(!empty($project['contact_name']) && empty($project['contact_email'])) { echo '<dd>'.$project['contact_name'].'</dd>'; } ?>
+				<?php if(!empty($project['contact_name']) && !empty($project['contact_email'])) { echo '<dd>'.$project['contact_name'].' <em>(<a href="mailto:'.$project['contact_email'].'">'.$project['contact_email'].'</a>)</em></dd>'; } ?>
+				<?php if(empty($project['contact_name']) && !empty($project['contact_email'])) { echo '<dd><a href="mailto:'.$project['contact_email'].'">'.$project['contact_email'].'</a></dd>'; } ?>
+			<?php } ?>
+			<?php if(!empty($project['contact_group'])){?>
+				<dt>Group</dt>
+				<dd><?php echo $project['contact_group']; ?></dd>
+			<?php } ?>
+		</dl>
+	</fieldset>
+	<?php } // has notes ?>
 </div>
 
 <?php 
@@ -140,7 +150,48 @@ if(!$new_paper and !$edit){ ?>
 // ADD OR EDIT A PROJECT
 ///////
 
-} else { ?>
+} else {
+	
+	$names = array ("Chuck Norris", "Albert Einstein", "Charles Darwin", "George Martin", "Galileo Galilei", "Barack Obama", "Margaret Thatcher",
+					"Jean-Claude Van Damme", "Isaac Newton", "Darth Vader", "William Shatner", "Dolly Parton", "David Hasselhoff", "Mr T", "B. A. Baracus", "MC Hammer",
+					"Daenerys Targaryen", "Tin Tin", "James Bond", "Indiana Jones", "Alex Ferguson", "Lord Nelson", "Leonardo da Vinci", "Clark Kent", "Yoda",
+					"Miss Moneypenny", "Harry Houdini", "Edmund Blackadder", "Hannibal Lector", "Evel Knievel", "Dr Evil", "Neil Armstrong", "Alan Partridge", 
+					"John Lennon", "Marilyn Monroe", "Elvis Presley", "Michael Corleone", "Napoleon Bonaparte", "Marie Antoinette", "Oliver Cromwell", "Flash Gordon", 
+					"Kermit the Frog", "Thom Yorke", "George Clooney", "Homer Simpson", "Harry Potter", "Sherlock Holmes", "Bilbo Baggins", "Julius Caesar", "Bruce Lee",
+					"Michael Jackson", "Freddy Mercury", "Winne the Pooh");
+	$name = $names[array_rand($names)];
+	
+	$values = array (
+		"name" => "",
+		"accession_geo" => "",
+		"accession_sra" => "",
+		"accession_ena" => "",
+		"accession_ddjb" => "",
+		"contact_name" => "",
+		"contact_email" => "",
+		"contact_group" => "",
+		"notes" => ""
+	);
+	$papers = array();
+	
+	if($edit){
+		$values = array (
+			"name" => $project['name'],
+			"accession_geo" => $project['accession_geo'],
+			"accession_sra" => $project['accession_sra'],
+			"accession_ena" => $project['accession_ena'],
+			"accession_ddjb" => $project['accession_ddjb'],
+			"contact_name" => $project['contact_name'],
+			"contact_email" => $project['contact_email'],
+			"contact_group" => $project['contact_group'],
+			"notes" => $project['notes']
+		);
+		
+	}
+
+
+
+?>
 
 
 
@@ -149,121 +200,105 @@ if(!$new_paper and !$edit){ ?>
 		<fieldset>
 			<legend>Project Identifier</legend>
 			<p>Every project needs a unique identifier. For an external project, this is typically the first author's surname and year, <em>eg.</em> <code>Ewels_2013</code></p>
-			<p><input type="text" id="project_identifier" placeholder="Norris_<?php echo date("Y"); ?>"></p>
+			<p><input type="text" id="name" placeholder="Surname_<?php echo date("Y"); ?>" value="<?php echo $values['name']; ?>"></p>
+			<p>All of the remaining fields are optional.</p>
 		</fieldset>
-		<fieldset>
-			<legend>Project Type</legend>
-			<p>Projects can be internal or external. If external, they can be associated with a published paper and data accessions.</p>
-			<p><div class="btn-group" data-toggle="buttons-radio">
-				<button type="button" id="project_type_external" class="project_type_button btn active">External</button>
-				<button type="button" id="project_type_internal" class="project_type_button btn">Internal</button>
-			</div></p>
-		</fieldset>
+		
 		<fieldset id="project_accessions_fieldset">
 			<legend>Accessions</legend>
-			<p>External projects can have multiple accession numbers associated with them. Labrador may be able to automatically fetch data using these.</p>
-			<p>Multiple accessions can be entered, separated by spaces.</p>
+			<p>External projects can have multiple accession numbers associated with them. If you click a magnifying glass, Labrador will try to fill in empty fields elsewhere using these.</p>
+			<p>Multiple accessions can be entered, separated by spaces. When auto-completing, fields will be filled in order of accessions.</p>
 			<div class="control-group">
 				<label class="control-label" for="accession_geo"><abbr title="Gene Expression Omnibus">GEO</abbr></label>
 				<div class="controls">
-					<input type="text" id="accession_geo" placeholder="GSE000000">
+					<input type="text" id="accession_geo" placeholder="GSE000000" value="<?php echo $values['accession_geo']; ?>">
 					<span class="help-inline"><a href="#" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="accession_sra"><abbr title="Sequence Read Archive">SRA</abbr></label>
 				<div class="controls">
-					<input type="text" id="accession_sra" placeholder="SRX000000">
+					<input type="text" id="accession_sra" placeholder="SRX000000" value="<?php echo $values['accession_sra']; ?>">
 					<span class="help-inline"><a href="#" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="accession_pmid"><abbr title="PubMed ID">PMID</abbr></label>
-				<div class="controls">
-					<input type="text" id="accession_pmid" placeholder="01234567">
-					<span class="help-inline"><a href="#" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="accession_doi"><abbr title="Digital Object Identifier">DOI</abbr></label>
-				<div class="controls">
-					<input type="text" id="accession_doi" placeholder="10.1016/j.molcel.2012.11.001">
-					<span class="help-block">Use <a href="http://www.pmid2doi.org/" target="_blank">this tool</a> if in doubt</span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="accession_ena"><abbr title="European Nucleotide Archive">ENA</abbr></label>
 				<div class="controls">
-					<input type="text" id="accession_ena">
+					<input type="text" id="accession_ena" placeholder="BN000000" value="<?php echo $values['accession_ena']; ?>">
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="accession_ddjb"><abbr title="DNA Data Bank of Japan">DDJB</abbr></label>
 				<div class="controls">
-					<input type="text" id="accession_ddjb">
+					<input type="text" id="accession_ddjb" placeholder="DRP000000" value="<?php echo $values['accession_ddjb']; ?>">
 				</div>
 			</div>
 		</fieldset>
 		<fieldset id="project_paper_fieldset">
-			<legend>Paper Details</legend>
+			<legend>Publications</legend>
 			<p>If the data is published, please enter the publication details below.</p>
-			<div class="control-group ">
-				<label class="control-label" for="paper_title">Paper Title</label>
-				<div class="controls">
-					<input type="text" name="paper_title" value="" id="paper_title">
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="paper_journal">Journal</label>
-				<div class="controls">
-					<input type="text" name="paper_journal" id="paper_journal" placeholder="Nature">
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="year">Year of Publication</label>
-				<div class="controls">
-					<input type="text" name="year" maxlength="4" id="year" placeholder="<?php echo date("Y"); ?>">
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="authors">Authors</label>
-				<div class="controls">
-					<textarea name="authors" id="authors" rows="2" cols="40"></textarea>
-				</div>
-			</div>
+			<table class="table">
+				<thead>
+					<th>Year</th>
+					<th>Journal</th>
+					<th>Title</th>
+					<th>Authors</th>
+					<th>PMID</th>
+					<th>DOI</th>
+					<th style="width:150px;">Actions</th>
+				<thead>
+				<tbody>
+					<?php if($edit){
+						$papers = mysql_query("SELECT * FROM `papers` WHERE `project_id` = '".$project['id']."'");
+					}
+					if(!$edit || mysql_num_rows($papers) == 0){ ?>
+					<tr>
+						<td colspan="6"><em>No papers found..</em></td>
+					</tr>
+					<?php } else {
+						while ($paper = mysql_fetch_array($papers)){ ?>
+					<tr>
+						<td><?php echo $paper['year']; ?></td>
+						<td><?php echo $paper['journal']; ?></td>
+						<td><?php echo $paper['title']; ?></td>
+						<td><?php echo $paper['authors']; ?></td>
+						<td><a href="http://www.ncbi.nlm.nih.gov/pubmed/<?php echo $paper['pmid']; ?>" target="_blank"><?php echo $paper['pmid']; ?></a></td>
+						<td><a href="http://dx.doi.org/<?php echo $paper['doi']; ?>" target="_blank"><?php echo $paper['doi']; ?></a></td>
+						<td stlye="text-align:center;"><a href="#" class="btn btn-small"><i class="icon-pencil"></i> &nbsp; Edit</a> &nbsp; <a href="#" class="btn btn-small btn-danger"><i class="icon-trash icon-white"></i> &nbsp; Delete</a></td>
+					<?php }
+					} ?>
+				</tbody>
+			</table>
+			<p><a href="#" class="btn">Add Paper</a></p>
 		</fieldset>
-		<fieldset id="project_internal_fieldset" style="display:none;">
-			<legend>Internal Project Details</legend>
+		<fieldset id="project_internal_fieldset">
+			<legend>Project Details</legend>
+			<p>These fields help us track who generated the data (if internal) or who originally requested the data (if external).</p>
 			<div class="control-group ">
-				<label class="control-label" for="internal_description">Description</label>
+				<label class="control-label" for="contact_name">Primary Contact</label>
 				<div class="controls">
-					<textarea name="internal_description" id="internal_description"></textarea>
+					<input type="text" name="contact_name" id="contact_name" placeholder="<?php echo $name; ?>" value="<?php echo $values['contact_name']; ?>">
 				</div>
 			</div>
 			<div class="control-group ">
-				<label class="control-label" for="internal_contact">Primary Contact</label>
+				<label class="control-label" for="contact_email">Contact E-mail</label>
 				<div class="controls">
-					<input type="text" name="internal_contact" id="internal_contact" placeholder="Chuck Norris">
+					<input type="text" name="contact_email" id="contact_email" placeholder="<?php echo preg_replace('/\s+/', '.', strtolower($name)); ?>@babraham.ac.uk" value="<?php echo $values['contact_email']; ?>">
 				</div>
 			</div>
 			<div class="control-group ">
-				<label class="control-label" for="internal_email">Contact E-mail</label>
+				<label class="control-label" for="contact_group">Group</label>
 				<div class="controls">
-					<input type="text" name="internal_email" id="internal_email" placeholder="chuck.norris@babraham.ac.uk">
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="internal_email">Group</label>
-				<div class="controls">
-					<input type="text" name="internal_email" id="internal_group" placeholder="Wolf Reik">
+					<input type="text" name="contact_group" id="contact_group" placeholder="<?php echo $names[array_rand($names)]; ?>" value="<?php echo $values['contact_group']; ?>">
 				</div>
 			</div>
 		</fieldset>
 		
 		<fieldset id="project_notes_fieldset">
 			<legend>Comments</legend>
-			<p>You can add any project-specific notes below:</p>
-			<textarea rows="5" class="input-xxlarge"></textarea>
+			<p><label for="notes">You can add any project-specific notes below:</label></p>
+			<textarea rows="5" class="input-xxlarge" name="notes" id="notes"><?php echo $values['notes']; ?></textarea>
 		</fieldset>
 		
 		<div class="form-actions">
@@ -271,20 +306,8 @@ if(!$new_paper and !$edit){ ?>
 		</div>
 </div>
 
-<?php } // if($new or $edit) ?>
+<?php } // if($new or $edit)
 
-</div>
-
-
-<!-- Le javascript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="js/jquery-1.8.3.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="includes/chosen/chosen.jquery.js"></script>
-<script src="js/jquery.cookie.js"></script>
-<script src="js/project.js"></script>
-
-
-</body>
-</html>
+include('includes/javascript.php'); ?>
+<script src="js/project.js" type="text/javascript"></script>
+<?php include('includes/footer.php'); ?>

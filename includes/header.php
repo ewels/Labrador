@@ -29,7 +29,7 @@
 		<div class="navbar-inner">
 			<div class="container-fluid">
 			
-				<a class="brand" href="index.php">Labrador<sub style="font-size:10px;">BETA</sub></a>
+				<a class="brand" href="index.php">Labrador<sub style="font-size:10px; color:#777;">BETA</sub></a>
 				
 				<ul class="nav">
 					<li><a href="create_paper.php" class="request-dataset-nav-link">Fields</a></li>

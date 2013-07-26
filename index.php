@@ -5,17 +5,9 @@ session_start();
 // Connect to database
 include('includes/db_login.php');
 
-// Handle form submissions
-if($_POST['create_paper_submitted'] == 'submitted') {
-	include('includes/create_paper.php');
-}
-if($_POST['create_dataset_submitted'] == 'submitted') {
-	include('includes/create_dataset.php');
-}
-
 // Stats
 $num_papers = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `papers`"));
-$dataset_papers = mysql_fetch_row(mysql_query("SELECT COUNT(DISTINCT `paper_id`) FROM `datasets`"));
+$dataset_papers = mysql_fetch_row(mysql_query("SELECT COUNT(DISTINCT `project_id`) FROM `datasets`"));
 $num_dataset = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `datasets`"));
 $num_files_raw = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_raw`"));
 $num_files_aligned = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_aligned`"));
@@ -26,35 +18,7 @@ include('includes/header.php');
 ?>
 	
 
-				<div class="sidebar-nav">
-					<h2>Browse Projects</h2>
-					<ul class="nav nav-list">
-						<?php $query = "SELECT * FROM `papers` ORDER BY `first_author`, `year`";
-						$datasets = mysql_query($query);
-						while($result = mysql_fetch_array($datasets)){
-							echo '<li><a href="#" title="'.stripslashes($result['paper_title']).'">'.$result['first_author'].', '.$result['year'].'</a></li>';
-							/*
-							<tr id="paper_<?= $result['id'] ?>" class="paper">
-								<td><?= $result['first_author'] ?></td>
-								<td><?= $result['year'] ?></td>
-								<td><?= stripslashes($result['paper_title']) ?></td>
-								<td><?php // limit the number of authors displayed and underline first and last.
-								$authors_array = explode(',', $result['authors']);
-								//echo $link;
-								echo '<u>'.$authors_array[0].'</u>, ';
-								if(count($authors_array) > 12){
-									echo implode(', ', array_slice($authors_array, 1, 11)) . ' <span style="background-color:#CDCDCD;">...</span> ';
-								} else {
-									echo implode(', ', array_slice($authors_array, 1, -1));
-								}
-								echo ', <u>'.trim($authors_array[count($authors_array) - 1]).'</u>';
-								;?>
-								</td>
-							</tr>
-						<?php */ 
-						} ?>
-					</ul>
-				</div><!--/.well -->
+				
 
 		<div class="sidebar-mainpage">		
 				
@@ -126,34 +90,53 @@ include('includes/header.php');
 		<p>You can use the list on the left or the table below to browse the projects and datasets. If you're looking for something specific, try the search 
 		bar at the top of the page.</p>
 		
-		<?php $query = "SELECT * FROM `papers` ORDER BY `first_author`, `year`";
-		$datasets = mysql_query($query); ?>
 		<div style="width:100%; overflow:auto;">
 			<table id="paper-browser-table" class="table table-striped table-hover table-condensed table-bordered small" style="cursor:pointer;">
 				<tr>
-					<th width="10%">Name</th>
-					<th width="50%">Paper Title</th>
-					<th width="40%">Authors</th>
+					<th>Name</th>
+					<th>Papers</th>
+					<th>Datasets</th>
+					<th>Species</th>
+					<th style="width:30%;">Cell Types</th>
+					<th>Data Types</th>
+					<th>Contact</th>
 				</tr>
-				<?php
-				while($result = mysql_fetch_array($datasets)): ?>
-					<tr id="paper_<?= $result['id'] ?>" class="paper">
-						<td><?php echo $result['first_author'] .', '. $result['year'] ?></td>
-						<td><?= stripslashes($result['paper_title']) ?></td>
-						<td><?php // limit the number of authors displayed and underline first and last.
-						$authors_array = explode(',', $result['authors']);
-						//echo $link;
-						echo '<u>'.$authors_array[0].'</u>, ';
-						if(count($authors_array) > 12){
-							echo implode(', ', array_slice($authors_array, 1, 11)) . ' <span style="background-color:#CDCDCD;">...</span> ';
-						} else {
-							echo implode(', ', array_slice($authors_array, 1, -1));
+				<?php $projects = mysql_query("SELECT * FROM `projects` ORDER BY `name`");
+				while($project = mysql_fetch_array($projects)){
+					$papers_q = mysql_query("SELECT * FROM `papers` WHERE `project_id` = '".$project['id']."'");
+					$papers = array();
+					while($paper = mysql_fetch_array($papers_q)){
+						$authors = explode(' ', $paper['authors']);
+						$papers[] = $authors[0].' '.$paper['journal'].' ('.$paper['year'].')';
+					}
+					
+					$datasets = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '".$project['id']."'");
+					$num_datasets = mysql_num_rows($datasets);
+					$species = array();
+					$cell_types = array();
+					$data_types = array();
+					while($dataset = mysql_fetch_array($datasets)){
+						if(!in_array($dataset['species'], $species)){
+							$species[] = $dataset['species'];
 						}
-						echo ', <u>'.trim($authors_array[count($authors_array) - 1]).'</u>';
-						;?>
-						</td>
+						if(!in_array($dataset['cell_type'], $cell_types)){
+							$cell_types[] = $dataset['cell_type'];
+						}
+						if(!in_array($dataset['data_type'], $data_types)){
+							$data_types[] = $dataset['data_type'];
+						}
+					}
+					?>
+					<tr id="project_<?php echo $project['id']; ?>" class="project">
+						<td><?php echo $project['name']; ?></td>
+						<td><?php echo implode(', ', $papers); ?></td>
+						<td><?php echo $num_datasets; ?></td>
+						<td><?php echo implode(', ', $species); ?></td>
+						<td><?php echo implode(', ', $cell_types); ?></td>
+						<td><?php echo implode(', ', $data_types); ?></td>
+						<td><?php echo $project['contact_name']; ?></td>
 					</tr>
-				<?php endwhile; ?>
+				<?php } // end of while loop ?>
 			</table>
 		</div>
 		
@@ -161,6 +144,41 @@ include('includes/header.php');
 		<img class="pull-right visible-desktop" src="img/puppies/sleepy_puppy_1_300px.jpg" style="margin: 0 -20px -30px 0;">
 		<div class="clearfix"></div>
 		<small>Labrador Dataset Browser made by <a href="mailto:phil.ewels@babraham.ac.uk">Phil Ewels</a>, 2012</small>
+		
+		
+		
+	</div>
+	<div class="sidebar-nav">
+					<h2>Browse Projects</h2>
+					<ul class="nav nav-list">
+						<?php $query = "SELECT * FROM `projects` ORDER BY `name`";
+						$datasets = mysql_query($query);
+						while($result = mysql_fetch_array($datasets)){
+							echo '<li><a href="#" title="'.htmlentities(stripslashes($result['name'])).'">'.$result['name'].'</a></li>';
+							/*
+							<tr id="paper_<?= $result['id'] ?>" class="paper">
+								<td><?= $result['first_author'] ?></td>
+								<td><?= $result['year'] ?></td>
+								<td><?= stripslashes($result['paper_title']) ?></td>
+								<td><?php // limit the number of authors displayed and underline first and last.
+								$authors_array = explode(',', $result['authors']);
+								//echo $link;
+								echo '<u>'.$authors_array[0].'</u>, ';
+								if(count($authors_array) > 12){
+									echo implode(', ', array_slice($authors_array, 1, 11)) . ' <span style="background-color:#CDCDCD;">...</span> ';
+								} else {
+									echo implode(', ', array_slice($authors_array, 1, -1));
+								}
+								echo ', <u>'.trim($authors_array[count($authors_array) - 1]).'</u>';
+								;?>
+								</td>
+							</tr>
+						<?php */ 
+						} ?>
+					</ul>
+				</div><!--/.well -->
+		
+		
 	</div> <!-- /container -->
 	
 	
