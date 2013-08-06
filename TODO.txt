@@ -1,0 +1,31 @@
+=====================
+   TO DO - Labrador
+=====================
+
+-1. Make sure that form inputs aren't being lost when we have errors
+
+0. Look up missing data in Datasets edit page from existing accessions..
+	* Have a tick box to allow overwriting?
+	* Use a big button next to save and delete?
+
+1. Check for empty fields, suggest (but don't force) completion on form submit
+	* Project Details
+	* Datasets - Add
+	* Datasets - Edit
+
+2. Better form validation. Check formats of accession codes
+
+3. Ajax search for duplicates when entering accessions and project names
+
+4. User authentication. Open access for read-only, require auth for editing or adding.
+	* Use Exchange ActiveServer thingy?
+	* Write homebrew solution?
+	* New computing authentication solution?
+
+5. Automated backups
+	* Cron job to back up database to file.
+	* Automated clean ups of old backups?
+
+6. Tidy Up!
+	* Go through and delete all of the files that are not being used
+	* Read through code and see what can be tidied up

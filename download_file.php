@@ -6,6 +6,9 @@
  * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  * THIS SOFTWARE IS PROVIDED BY THE FREEBSD PROJECT "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE FREEBSD PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+require_once('includes/config.php');
+ 
 // get the file request, throw error if nothing supplied
  
 // hide notices
@@ -15,7 +18,7 @@
 @apache_setenv('no-gzip', 1);
 @ini_set('zlib.output_compression', 'Off');
  
-if(!isset($_REQUEST['fn']) || empty($_REQUEST['fn'])) 
+if(!isset($_REQUEST['fn']) || empty($_REQUEST['fn']) || !isset($data_root) || empty($data_root)) 
 {
 	header("HTTP/1.0 400 Bad Request");
 	exit;
@@ -30,7 +33,7 @@ $file_name  = $path_parts['basename'];
 $file_ext   = $path_parts['extension'];
 $file_path  = './myfiles/' . $file_name;
 */
-$file_path = '/data/pipeline/public/TIDIED/'.$_GET['fn'];
+$file_path = $data_root.$_GET['fn'];
  
 // allow a file to be streamed instead of sent as an attachment
 $is_attachment = isset($_REQUEST['stream']) ? false : true;

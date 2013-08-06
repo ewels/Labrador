@@ -1,0 +1,61 @@
+
+
+RENAME TABLE `papers` TO `projects`;
+
+
+ALTER TABLE `projects` ADD `name` VARCHAR(255) AFTER `id`;
+UPDATE `projects` SET `name` = CONCAT(`first_author` , "_", `year`);
+ALTER TABLE `projects` CHANGE `name` `name` VARCHAR(255) NOT NULL;
+ALTER IGNORE TABLE `projects` ADD UNIQUE (`name`);
+
+CREATE TABLE `papers` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `project_id` INT(20) NOT NULL, `year` INT(4), `journal` VARCHAR(200), `title` TEXT, `authors` TEXT, `pmid` VARCHAR(20), `doi` VARCHAR(100) );
+INSERT INTO `papers` (`project_id`, `year`, `title`, `authors`, `pmid`, `doi`) SELECT `id`, `year`, `paper_title`, `authors`, `PMID`, `DOI` FROM `projects`;
+ALTER TABLE `projects` DROP `first_author`;
+ALTER TABLE `projects` DROP `year`;
+ALTER TABLE `projects` DROP `paper_title`;
+ALTER TABLE `projects` DROP `authors`;
+ALTER TABLE `projects` DROP `PMID`;
+ALTER TABLE `projects` DROP `DOI`;
+
+
+ALTER TABLE `projects` CHANGE `geo_accession` `accession_geo` VARCHAR(50);
+ALTER TABLE `projects` CHANGE `sra_accession` `accession_sra` VARCHAR(50);
+ALTER TABLE `projects` ADD `accession_ena` VARCHAR(50) AFTER `accession_sra`;
+ALTER TABLE `projects` ADD `accession_ddjb` VARCHAR(50) AFTER `accession_ena`;
+
+ALTER TABLE `projects` ADD `contact_name` VARCHAR(250) AFTER `accession_ddjb`;
+ALTER TABLE `projects` CHANGE `requested_by` `contact_email` VARCHAR(250);
+ALTER TABLE `projects` DROP `processed_by`;
+ALTER TABLE `projects` ADD `contact_group` VARCHAR(250) AFTER `contact_email`;
+ALTER TABLE `projects` ADD `created` INT(12) AFTER `contact_group`;
+ALTER TABLE `projects` CHANGE `last_modified` `modified` INT(12);
+
+ALTER TABLE `projects` ADD `assigned_to` VARCHAR(250) AFTER `contact_group`;
+ALTER TABLE `projects` ADD `status` VARCHAR(250) DEFAULT 'Not Started' AFTER `assigned_to`;
+
+ALTER TABLE `projects` ADD `title` VARCHAR(250) AFTER `name`;
+ALTER TABLE `projects` ADD `description` TEXT AFTER `title`;
+
+
+ALTER TABLE `projects` CHANGE `notes` `description` TEXT;
+ALTER TABLE `projects` ADD `notes` TEXT AFTER `contact_group`;
+update `projects` SET `notes` = `description`;
+alter table `projects` drop `description`;
+
+ALTER TABLE `datasets` CHANGE `paper_id` `project_id` INT(12);
+ALTER TABLE `datasets` CHANGE `geo_accession` `accession_geo` VARCHAR(250);
+ALTER TABLE `datasets` CHANGE `sra_accession` `accession_sra` VARCHAR(250);
+ALTER TABLE `datasets` DROP `srx_accession`;
+ALTER TABLE `datasets` CHANGE `last_modified` `modified` INT(12);
+
+
+CREATE TABLE `processing` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `project_id` INT(20) NOT NULL, `dataset_id` INT(20), `type` VARCHAR(250), `command` TEXT, `genome` VARCHAR(250), `notes` TEXT, `created` INT(12), `modified` INT(12) );
+
+CREATE TABLE `reports` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `dataset_id` INT(20) NOT NULL, `type` VARCHAR(250), `command` TEXT, `url` TEXT, `notes` TEXT, `created` INT(12), `modified` INT(12));
+
+CREATE TABLE `history` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `project_id` INT(20) NOT NULL, `note` TEXT, `time` INT(12));
+
+DROP TABLE `files_raw`;
+DROP TABLE `files_aligned`;
+DROP TABLE `files_derived`;
+

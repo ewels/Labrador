@@ -6,15 +6,32 @@ Provides a function if included, returns JSON if called directly
 */
 
 function get_pmid_details ($PMID) {
+	
+	$results = array();
+
 	$url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id='.$PMID.'&version=2.0';
 	$xml = simplexml_load_file($url);
 	
+	if($xml === FALSE){
+		$results['status'] = 0;
+		$results['message'] = "Could not load first NCBI API call: $url";
+		return $results;
+	}
+	
 	if(!isset($xml->DocumentSummarySet->DocumentSummary)){
 		// no papers found
-		return $url;
+		$results['status'] = 0;
+		$results['message'] = "Paper not found";
+		return $results;
 	} else {
-		$results = array();
+		
 		$paper = $xml->DocumentSummarySet->DocumentSummary;
+		
+		if(isset($paper->error)){
+			$results['status'] = 0;
+			$results['message'] = "Paper not found: ".$paper->error;
+			return $results;
+		}
 		
 		// First Author
 		$first_author = (string)$paper->Authors->Author->Name;
@@ -49,6 +66,8 @@ function get_pmid_details ($PMID) {
 			}
 		}
 		
+		$results['status'] = 1;
+		$results['message'] = "Success";
 		return $results;
 	}
 	
@@ -60,7 +79,11 @@ if(__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
 		$details = get_pmid_details ($_GET['PMID']);
 		echo json_encode($details, JSON_FORCE_OBJECT);
 	} else {
-		echo '{}';
+		$results = array(
+			'status' => 0,
+			'message' => "No PMID provided"
+		);
+		echo json_encode($results, JSON_FORCE_OBJECT);
 	}
 }
 
