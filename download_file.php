@@ -18,8 +18,7 @@ require_once('includes/config.php');
 @apache_setenv('no-gzip', 1);
 @ini_set('zlib.output_compression', 'Off');
  
-if(!isset($_REQUEST['fn']) || empty($_REQUEST['fn']) || !isset($data_root) || empty($data_root)) 
-{
+if(!isset($_REQUEST['fn']) || empty($_REQUEST['fn']) || !isset($data_root) || empty($data_root)) {
 	header("HTTP/1.0 400 Bad Request");
 	exit;
 }
@@ -34,17 +33,18 @@ $file_ext   = $path_parts['extension'];
 $file_path  = './myfiles/' . $file_name;
 */
 $file_path = $data_root.$_GET['fn'];
+$path_parts = pathinfo($file_path);
+$file_name  = $path_parts['basename'];
+$file_ext   = $path_parts['extension'];
  
 // allow a file to be streamed instead of sent as an attachment
 $is_attachment = isset($_REQUEST['stream']) ? false : true;
  
 // make sure the file exists
-if (is_file($file_path))
-{
+if (is_file($file_path)) {
 	$file_size  = filesize($file_path);
 	$file = @fopen($file_path,"rb");
-	if ($file)
-	{
+	if ($file) {
 		// set the headers, prevent caching
 		header("Pragma: public");
 		header("Expires: -1");
@@ -70,24 +70,18 @@ if (is_file($file_path))
         header("Content-Type: " . $ctype);
  
 		//check if http_range is sent by browser (or download manager)
-		if(isset($_SERVER['HTTP_RANGE']))
-		{
+		if(isset($_SERVER['HTTP_RANGE'])) {
 			list($size_unit, $range_orig) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-			if ($size_unit == 'bytes')
-			{
+			if ($size_unit == 'bytes') {
 				//multiple ranges could be specified at the same time, but for simplicity only serve the first range
 				//http://tools.ietf.org/id/draft-ietf-http-range-retrieval-00.txt
 				list($range, $extra_ranges) = explode(',', $range_orig, 2);
-			}
-			else
-			{
+			} else {
 				$range = '';
 				header('HTTP/1.1 416 Requested Range Not Satisfiable');
 				exit;
 			}
-		}
-		else
-		{
+		} else {
 			$range = '';
 		}
  
@@ -100,13 +94,11 @@ if (is_file($file_path))
 		$seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)),0);
  
 		//Only send partial content header if downloading a piece of the file (IE workaround)
-		if ($seek_start > 0 || $seek_end < ($file_size - 1))
-		{
+		if ($seek_start > 0 || $seek_end < ($file_size - 1)) {
 			header('HTTP/1.1 206 Partial Content');
 			header('Content-Range: bytes '.$seek_start.'-'.$seek_end.'/'.$file_size);
 			header('Content-Length: '.($seek_end - $seek_start + 1));
-		}
-		else
+		} else
 		  header("Content-Length: $file_size");
  
 		header('Accept-Ranges: bytes');
@@ -114,8 +106,7 @@ if (is_file($file_path))
 		set_time_limit(0);
 		fseek($file, $seek_start);
  
-		while(!feof($file)) 
-		{
+		while(!feof($file)) {
 			print(@fread($file, 1024*8));
 			ob_flush();
 			flush();
@@ -130,76 +121,14 @@ if (is_file($file_path))
 		@fclose($file);
 		$_SESSION['download_status'] = 'complete';
 		exit;
-	}
-	else 
-	{
+	} else {
 		// file couldn't be opened
 		header("HTTP/1.0 500 Internal Server Error");
 		exit;
 	}
-}
-else
-{
+} else {
 	// file does not exist
 	header("HTTP/1.0 404 Not Found");
 	exit;
 }
-?>
-
-
-<?php
-/*
-
-ini_set("memory_limit","30720M");
-
-$file = '/data/pipeline/public/TIDIED/'.$_GET['fn'];
-if(strlen($_GET['fn']) > 0 && file_exists($file)){
-	
-	$filesize = filesize($file);
-	$offset = 0;
-	$length = $filesize;
-
-	if ( isset($_SERVER['HTTP_RANGE']) ) {
-		// if the HTTP_RANGE header is set we're dealing with partial content
-		$partialContent = true;
-
-		// find the requested range
-		// this might be too simplistic, apparently the client can request multiple ranges, which can become pretty complex, so ignore it for now
-		preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
-
-		$offset = intval($matches[1]);
-		$length = intval($matches[2]) - $offset;
-	} else {
-		$partialContent = false;
-	}
-	$file = fopen($file, 'r');
-
-	// seek to the requested offset, this is 0 if it's not a partial content request
-	fseek($file, $offset);
-	$data = fread($file, $length);
-	fclose($file);
-
-	if ( $partialContent ) {
-		// output the right headers for partial content
-		header('HTTP/1.1 206 Partial Content');
-		header('Content-Range: bytes ' . $offset . '-' . ($offset + $length) . '/' . $filesize);
-	}
-
-	// output the regular HTTP headers
-	header("Cache-Control: public");
-	header("Content-Description: File Download");
-	header('Content-Type: application/octet-stream');
-	header("Content-Transfer-Encoding: binary");
-	header('Content-Length: ' . $filesize);
-	header('Content-Disposition: attachment; filename="' . rawurldecode($file) . '"');
-	header('Accept-Ranges: bytes');
-
-	// send the data
-	print($data);
-	
-} else {
-	echo 'file not found';
-}
-*/
-
 ?>

@@ -37,13 +37,13 @@ $('.form_validate').validate({
 	}
 });
 
-// Boostrap popover for delete buttons
+// Bootstrap popover for delete buttons
 $('.popover_button').popover().click(function(e){
 	e.preventDefault();
 });
 
 // Select Buttons
-$('.table_form').on('click', '.select-row', function(e){
+$('table').on('click', '.select-row', function(e){
 	if($(this).is(':checked')){
 		$(this).closest('tr').addClass('success');
 	} else {

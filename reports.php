@@ -10,24 +10,14 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	header("Location: index.php");
 }
 
+// Set report type and path
+$active_type = false;
 $report_path = false;
-$show_fastqc = false;
-$show_fastq_screen = false;
-$show_alignment_overview = false;
-$show_m_bias = false;
-$dataset_name = false;
-if(isset($_POST['fastqc']) && isset($_POST['report_type']) && $_POST['report_type'] == 'fastqc'){
-	$report_path = $_POST['fastqc'];
-	$show_fastqc = true;
-} else if(isset($_POST['fastq_screen']) && isset($_POST['report_type']) && $_POST['report_type'] == 'fastq_screen'){
-	$report_path = $_POST['fastq_screen'];
-	$show_fastq_screen = true;
-} else if(isset($_POST['alignment_overview']) && isset($_POST['report_type']) && $_POST['report_type'] == 'alignment_overview'){
-	$report_path = $_POST['alignment_overview'];
-	$show_alignment_overview = true;
-} else if(isset($_POST['m_bias']) && isset($_POST['report_type']) && $_POST['report_type'] == 'm_bias'){
-	$report_path = $_POST['m_bias'];
-	$show_m_bias = true;
+foreach($report_types as $type => $report_name){
+	if(isset($_POST[$type]) && isset($_POST['report_type']) && $_POST['report_type'] == $type){
+		$active_type = $type;
+		$report_path = $_POST[$type];
+	}
 }
 
 
@@ -53,235 +43,72 @@ include('includes/header.php'); ?>
 </div>
 
 <div class="sidebar-mainpage project-mainpage">
-
 	<form action="reports.php?id=<?php echo $project_id; ?>" method="post" class="pull-right reports_form">
-		<input type="hidden" value="fastqc" name="report_type" id="report_type">
+		<input type="hidden" value="" name="report_type" id="report_type">
 		
 	<?php
-	// Find FastQC reports
-	$fastqc_paths = array();
-	$dir = $data_root.$project['name'];
-	$it = new RecursiveDirectoryIterator($dir);
-	foreach(new RecursiveIteratorIterator($it) as $file) {
-		if(basename($file) == 'fastqc_report.html'){
-			$fastqc_paths[] = $file->getPathname();
-		}
-	}
-	sort($fastqc_paths);
-	$fastqc_count = 0;
-	$fastqc = '<option>[ Select Report ]</option>';
-	
-	// Load datasets and match against fastqc reports
-	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
-	$reports = array();
-	if(mysql_num_rows($datasets) > 0){
-		while ($dataset = mysql_fetch_array($datasets)){
-			$fastqc .= '<optgroup label="'.$dataset['name'].'">';
-			$needles = array();
-			$needles[] = $dataset['name'];
-			foreach(split(" ",$dataset['accession_geo']) as $geo){
-				array_push($needles, $geo);
-			}
-			foreach(split(" ",$dataset['accession_sra']) as $sra){
-				array_push($needles, $sra);
-			}
-			foreach($fastqc_paths as $path){
-				$path = substr($path, strlen($data_root));
-				foreach($needles as $needle){
-					if(stripos($path, $needle)){
-						if(!$report_path){
-							$report_path = $path;
-							$show_fastqc = true;
-						}
-						$fastqc .= '<option value="'.$path.'"';
-						if($report_path == $path && $show_fastqc){
-							$fastqc .= ' selected="selected"';
-							$dataset_name = $dataset['name'];
-						}
-						$fastqc .= '>'.substr(basename(dirname($path)), 0, -7).'</option>';
-						$fastqc_count++;
-						break;
-					}
+	// Find reports. Functions are in config.php
+	if(isset($report_types) && count($report_types) > 0){
+		// Setup - work out directory and get search terms
+		$dir = $data_root.$project['name'];
+		$datasets = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
+		$ds_needles = array();
+		if(mysql_num_rows($datasets) > 0){
+			while ($dataset = mysql_fetch_array($datasets)){
+				$ds_needles[$dataset['name']] = array($dataset['name']);
+				foreach(split(" ",$dataset['accession_geo']) as $geo){
+					array_push($ds_needles[$dataset['name']], $geo);
+				}
+				foreach(split(" ",$dataset['accession_sra']) as $sra){
+					array_push($ds_needles[$dataset['name']], $sra);
 				}
 			}
-			$fastqc .= '</optgroup>';
 		}
-	}
-	if($fastqc_count > 0 ){
-		echo '<label>FastQC Reports: <select name="fastqc" class="select_report_dataset" class="input-xlarge" data-type="fastqc">'.$fastqc.'</select></label>';
-	}
-	
-	////////////////////////////
-	// Find Fastq Screen reports
-	////////////////////////////
-	$fastq_screen_paths = array();
-	$dir = $data_root.$project['name'];
-	$it = new RecursiveDirectoryIterator($dir);
-	foreach(new RecursiveIteratorIterator($it) as $file) {
-		if(stripos(basename($file), '_screen.png')){
-			$fastq_screen_paths[] = $file->getPathname();
-		}
-	}
-	sort($fastq_screen_paths);
-	$fastq_screen_count = 0;
-	$fastq_screen = '<option>[ Select Report ]</option>';
-	
-	// Load datasets and match against fastq screen reports
-	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
-	$reports = array();
-	if(mysql_num_rows($datasets) > 0){
-		while ($dataset = mysql_fetch_array($datasets)){
-			$fastq_screen .= '<optgroup label="'.$dataset['name'].'">';
-			$needles = array();
-			$needles[] = $dataset['name'];
-			foreach(split(" ",$dataset['accession_geo']) as $geo){
-				array_push($needles, $geo);
-			}
-			foreach(split(" ",$dataset['accession_sra']) as $sra){
-				array_push($needles, $sra);
-			}
-			foreach($fastq_screen_paths as $path){
-				$path = substr($path, strlen($data_root));
-				foreach($needles as $needle){
-					if(stripos($path, $needle)){
-						if(!$report_path){
-							$report_path = $path;
-							$show_fastq_screen = true;
-						}
-						$fastq_screen .= '<option value="'.$path.'"';
-						if($report_path == $path && $show_fastq_screen){
-							$fastq_screen .= ' selected="selected"';
-							$dataset_name = $dataset['name'];
-						}
-						$fastq_screen .= '>'.substr(basename($path),0, -11).'</option>';
-						$fastq_screen_count++;
-						break;
-					}
+		// Go through each report type
+		foreach($report_types as $type => $report_name){
+			// get matching filenames
+			$paths = array();
+			$it = new RecursiveDirectoryIterator($dir);
+			foreach(new RecursiveIteratorIterator($it) as $file) {
+				if(report_match ($file, $type)){
+					$paths[] = $file->getPathname();
 				}
 			}
-			$fastq_screen .= '</optgroup>';
-		}
-	}
-	if($fastq_screen_count > 0 ){
-		echo '<label>FastQ Screen Reports: <select name="fastq_screen" class="select_report_dataset" class="input-xlarge" data-type="fastq_screen">'.$fastq_screen.'</select></label>';
-	}
-	
-	
-	//////////////////////
-	// Find Bismark Alignmnent Overview Plots
-	//////////////////////
-	$alignment_overview_paths = array();
-	$dir = $data_root.$project['name'];
-	$it = new RecursiveDirectoryIterator($dir);
-	foreach(new RecursiveIteratorIterator($it) as $file) {
-		if(substr($file, -23) == '.alignment_overview.png'){
-			$alignment_overview_paths[] = $file->getPathname();
-		}
-	}
-	sort($alignment_overview_paths);
-	$alignment_overview_count = 0;
-	$alignment_overview = '<option>[ Select Report ]</option>';
-	
-	// Load datasets and match against M bias reports
-	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
-	$reports = array();
-	if(mysql_num_rows($datasets) > 0){
-		while ($dataset = mysql_fetch_array($datasets)){
-			$alignment_overview .= '<optgroup label="'.$dataset['name'].'">';
-			$needles = array();
-			$needles[] = $dataset['name'];
-			foreach(split(" ",$dataset['accession_geo']) as $geo){
-				array_push($needles, $geo);
-			}
-			foreach(split(" ",$dataset['accession_sra']) as $sra){
-				array_push($needles, $sra);
-			}
-			foreach($alignment_overview_paths as $path){
-				$path = substr($path, strlen($data_root));
-				foreach($needles as $needle){
-					if(stripos($path, $needle)){
-						if(!$report_path){
-							$report_path = $path;
-							$show_alignment_overview = true;
+			sort($paths);
+			if(count($paths) > 0){
+				// Match up report filenames to datasets
+				$count = 0;
+				$output = '<option>[ Select Report ]</option>';
+				foreach($ds_needles as $dsname => $needles){
+					$output .= '<optgroup label="'.$dsname.'">';
+					foreach($paths as $path){
+						$path = substr($path, strlen($data_root));
+						foreach($needles as $needle){
+							if(stripos($path, $needle)){
+								if(!$report_path){
+									$report_path = $path;
+									$active_type = $type;
+								}
+								$output .= '<option value="'.$path.'"';
+								if($report_path == $path && $active_type == $type){
+									$output .= ' selected="selected"';
+									$dataset_name = $dsname;
+								}
+								$output .= '>'.report_naming($path, $type).'</option>';
+								$count++;
+								break;
+							}
 						}
-						$alignment_overview .= '<option value="'.$path.'"';
-						if($report_path == $path && $show_alignment_overview){
-							$alignment_overview .= ' selected="selected"';
-							$dataset_name = $dataset['name'];
-						}
-						$alignment_overview .= '>'.substr(basename($path),0, -23).'</option>';
-						$alignment_overview_count++;
-						break;
 					}
+					$output .= '</optgroup>';
+				}
+				if($count > 0 ){
+					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'">'.$output.'</select></label>';
 				}
 			}
-			$alignment_overview .= '</optgroup>';
 		}
 	}
-	if($alignment_overview_count > 0 ){
-		echo '<label>Alignment Overview Plots: <select name="alignment_overview" class="select_report_dataset" class="input-xlarge" data-type="alignment_overview">'.$alignment_overview.'</select></label>';
-	}
 	
-	
-	
-	//////////////////////
-	// Find M-Bias reports
-	//////////////////////
-	$m_bias_paths = array();
-	$dir = $data_root.$project['name'];
-	$it = new RecursiveDirectoryIterator($dir);
-	foreach(new RecursiveIteratorIterator($it) as $file) {
-		if(stripos(basename($file), 'M-bias') && substr($file, -4) == '.png'){
-			$m_bias_paths[] = $file->getPathname();
-		}
-	}
-	sort($m_bias_paths);
-	$m_bias_count = 0;
-	$m_bias = '<option>[ Select Report ]</option>';
-	
-	// Load datasets and match against M bias reports
-	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
-	$reports = array();
-	if(mysql_num_rows($datasets) > 0){
-		while ($dataset = mysql_fetch_array($datasets)){
-			$m_bias .= '<optgroup label="'.$dataset['name'].'">';
-			$needles = array();
-			$needles[] = $dataset['name'];
-			foreach(split(" ",$dataset['accession_geo']) as $geo){
-				array_push($needles, $geo);
-			}
-			foreach(split(" ",$dataset['accession_sra']) as $sra){
-				array_push($needles, $sra);
-			}
-			foreach($m_bias_paths as $path){
-				$path = substr($path, strlen($data_root));
-				foreach($needles as $needle){
-					if(stripos($path, $needle)){
-						if(!$report_path){
-							$report_path = $path;
-							$show_m_bias = true;
-						}
-						$m_bias .= '<option value="'.$path.'"';
-						if($report_path == $path && $show_m_bias){
-							$m_bias .= ' selected="selected"';
-							$dataset_name = $dataset['name'];
-						}
-						$m_bias .= '>'.substr(basename($path),0, -4).'</option>';
-						$m_bias_count++;
-						break;
-					}
-				}
-			}
-			$m_bias .= '</optgroup>';
-		}
-	}
-	if($m_bias_count > 0 ){
-		echo '<label>M-Bias Reports: <select name="m_bias" class="select_report_dataset" class="input-xlarge" data-type="m_bias">'.$m_bias.'</select></label>';
-	}
 	?>
 	
 	<div style="clear:both;"></div>
