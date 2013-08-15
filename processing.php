@@ -1,0 +1,212 @@
+<?php
+
+include('includes/start.php');
+
+if(isset($_GET['id']) && is_numeric($_GET['id'])){
+	$project_id = $_GET['id'];
+	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
+	$project = mysql_fetch_array($projects);
+} else {
+	header("Location: index.php");
+}
+
+include('includes/header.php'); ?>
+
+<div class="sidebar-nav">
+	<h3 id="sidebar_project_title">
+	<?php echo '<a href="project.php?id='.$project_id.'">'.$project['name'].'</a>'; ?></h3>
+	<ul class="project-tabs">
+		<li>
+			<a href="project.php?id=<?php echo $project_id; ?>">Project Details</a>
+		</li>
+		<li>
+			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
+		</li>
+		<li class="active">
+			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
+		</li>
+		<li>
+			<a href="reports.php?id=<?php echo $project_id; ?>">Reports</a>
+		</li>
+	</ul>
+</div>
+
+<div class="sidebar-mainpage project-mainpage">
+		
+	<?php project_header($project); ?>
+	
+	<?php
+	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
+	$datasets = mysql_query($dataset_query);
+	$existing_datasets = array();
+	if(mysql_num_rows($datasets) > 0){
+	?>
+	
+	<form class="form-horizontal" action="processing.php?id=<?php echo $project_id; ?>" method="post">
+		<fieldset>
+			<legend>Step 1: Choose Datasets</legend>
+			<table id="processing_table" class="table table-bordered table-condensed table-striped table-hover">
+				<thead>
+					<tr>
+						<th class="select"><input type="checkbox" class="select-all"></th>
+						<th>Name</th>
+						<th>Species</th>
+						<th>Cell Type</th>
+						<th>Data Type</th>
+						<th style="width:20%;">Accession Codes</th>
+					</tr>
+				</thead>
+				<tbody>
+			<?php while ($dataset = mysql_fetch_array($datasets)){ ?>
+					<tr>
+						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $dataset['id']; ?>" name="check_<?php echo $dataset['id']; ?>"></td>
+						<td><label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
+						<?php if(!empty($dataset['notes'])) { ?>
+							<i class="icon-tag pull-right" title="<?php echo $dataset['notes']; ?>"></i>
+						<?php } ?></td>
+						<td><?php echo $dataset['species']; ?></td>
+						<td><?php echo $dataset['cell_type']; ?></td>
+						<td><?php echo $dataset['data_type']; ?></td>
+						<td><?php 
+						echo accession_badges ($dataset['accession_geo'], 'geo');
+						echo accession_badges ($dataset['accession_sra'], 'sra');
+						?></td>
+					</tr>
+			<?php } // dataset while loop ?>
+				</tbody>
+			</table>
+			
+		</fieldset>
+		<fieldset>
+			<legend>Step 2: Choose Processing</legend>
+			<div class="well">
+				<input type="hidden" name="project_id" id="project_id" value="<?php echo $project_id; ?>">
+				<table class="processing_table">
+					<tr>
+						<th><label for="server">Server:</label></th>
+						<td><select class="server" name="server" id="server">
+							<?php foreach($processing_servers as $server => $vars){ echo '<option value="'.$server.'" data-queueing="'.$vars['queueing'].'">'.$vars['name'].'</option>'; } ?>
+						</select></td>
+						<td>
+							<span class="help-block">Available variables:
+								<code><abbr title="File Name Base">{{fn}}</abbr></code>
+								<code><abbr title="Wait for previous job in script to complete (queueing servers only)">{{hold_prev}}</abbr></code>
+								<code><abbr title="SRA code">{{sra}}</abbr></code>
+								<code><abbr title="SRA download URL">{{sra_url}}</abbr></code>
+								<code><abbr title="Path to Genome Directory (server specific)">{{genome_path}}</abbr></code>
+								<code><abbr title="Primary Contact E-mail">{{contact_email}}</abbr></code>
+								<code><abbr title="Assigned To E-mail">{{assigned_email}}</abbr></code>
+								<code><abbr title="Dataset Name">{{dataset}}</abbr></code>
+								<code><abbr title="Project Name">{{project}}</abbr></code>
+								<code><abbr title="Date and Time when executed">{{time}}</abbr></code>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="genome">Genome:</label></th>
+						<td><select class="genome" name="genome" id="genome" disabled="disabled">
+							<option value="">[ select genome ]</option>
+							<?php foreach($genomes as $genome => $paths){ echo '<option>'.$genome.'</option>'; } ?>
+						</select></td>
+						<td><span class="help-block">Note: many pipelines will have hold commands to wait for assumed previous jobs on the cluster. You may have to change or delete <code>-hold_jid</code></span></td>
+					</tr>
+					<tr>
+						<th>Steps:</th>
+						<td colspan="2">
+							<button class="btn" id="add_processing_step">Add Processing Step</button> &nbsp;
+							<button class="btn" id="delete_processing_step" disabled="disabled">Delete Last Processing Step</button>
+						</td>
+	
+					</tr>
+					<tr>
+						<th>Shortcuts:</th>
+						<td colspan="2">
+						<?php
+						$first = true;
+						foreach ($processing_pipelines as $id => $pipeline){
+							if(!$first){
+								echo ' &nbsp; / &nbsp; ';
+							}
+							$first = false;
+							echo '<a href="#" id="'.$id.'" class="processing_shortcut">'.$pipeline['name'].'</a>';
+						}
+						?>
+						</td>
+					</tr>
+				</table>
+
+				<hr>
+				<table class="processing_steps_table processing_table">
+					<tr> 
+						<th>Step 1:</th>
+						<td class="dropdown">
+							<select class="processing_type" name="processing_type_1" id="processing_type_1">
+								<option value="manual" data-unit="accession_sra" data-genome="true">Manual Text Entry</option>
+								<?php foreach($processing_steps as $type => $step){
+									echo '<optgroup label="'.$type.'">';
+									foreach ($step as $id => $vars){
+										echo '<option value="'.$id.'" data-unit="'.$vars['unit'].'" data-genome="'.$vars['requires_genome'].'">'.$vars['name'].'</option>';
+									}
+									echo '</optgroup>';
+								} ?>
+							</select>
+						</td>
+						<td>
+							<textarea class="processing_step" name="processing_step_1" id="processing_step_1"></textarea>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Step 3: Preview Bash Script</legend>
+			<div class="well" id="bash_preview">
+				<p><em>Select some datasets and pipelines to create your bash script. A preview will show here.</em></p>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Step 4: Save Script</legend>
+			<?php $bash_fn = '/'.$project['name'].'_labrador_bash_'.date('d_m_Y').'.bash'; ?>
+			<p>Script will be saved to <code><?php echo $data_root.$project['name'].$bash_fn; ?></code>
+				<span class="help-block">If this file already exists, it will be overwritten.</span></p>
+			<div class="form-actions">
+				<button type="submit" id="save_run_bash_script" class="btn btn-large btn-primary">Save &amp; Run Bash Script</button> &nbsp; 
+				<button type="submit" id="save_bash_script" class="btn btn-large ">Save Bash Script</button>
+			</div>
+		</fieldset>
+	</form>
+	
+	<div style="clear:both;"></div>
+	
+	<?php } else { ?>
+	<p><em>No datasets found.</em></p>
+	<?php } ?>
+	
+	<?php $processing_pipelines; ?>
+
+</div>
+
+<?php include('includes/javascript.php'); ?>
+<script type="text/javascript">
+	var processing_modules = new Array();
+<?php
+	foreach ($processing_modules as $server => $modules){
+		echo "\tprocessing_modules['$server'] = new Array();\n";
+		foreach($modules as $type => $module){
+			echo "\tprocessing_modules['$server']['$type'] = '$module';\n";
+		}
+	}
+?>
+
+	var processing_pipelines = new Array();
+<?php
+	foreach ($processing_pipelines as $id => $pipeline){
+		echo "\tprocessing_pipelines['$id'] = new Array();\n";
+		foreach ($pipeline['steps'] as $step){
+			echo "\tprocessing_pipelines['$id'].push('$step');\n";
+		}
+	}
+?>
+</script>
+<script src="js/processing.js" type="text/javascript"></script>
+<?php include('includes/footer.php'); ?>

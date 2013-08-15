@@ -246,7 +246,7 @@ include('includes/header.php'); ?>
 			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
 		</li>
 		<li>
-			<a href="#">Processing</a>
+			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
 		</li>
 		<li>
 			<a href="reports.php?id=<?php echo $project_id; ?>">Reports</a>

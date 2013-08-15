@@ -53,10 +53,26 @@ $('.nav-list.filters li a').click(function(e){
 		updateFilters();
 	}
 });
+$('#homepage_text_filter').keyup(function(e){
+	updateFilters();
+});
 
 function updateFilters() {
 	
 	$('#paper-browser-table tbody tr').show();
+	
+	var textFilterText = $('#homepage_text_filter').val().toLowerCase();
+	$.each($('#paper-browser-table tbody tr:visible'), function() {
+		var hideRow = true;
+		$(this).children('td').each(function(){
+			if($(this).text().toLowerCase().indexOf(textFilterText) >= 0){
+				hideRow = false;
+			}
+		});
+		if(hideRow){
+			$(this).hide();
+		}
+	});
 	
 	$.each($('#paper-browser-table tbody tr:visible'), function() {
 		var hideRow = true;

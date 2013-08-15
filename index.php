@@ -2,15 +2,6 @@
 
 include('includes/start.php');
 
-// Stats
-$num_papers = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `papers`"));
-$dataset_papers = mysql_fetch_row(mysql_query("SELECT COUNT(DISTINCT `project_id`) FROM `datasets`"));
-$num_dataset = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `datasets`"));
-$num_files_raw = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_raw`"));
-$num_files_aligned = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_aligned`"));
-$num_files_derived = mysql_fetch_row(mysql_query("SELECT COUNT(*) FROM `files_derived`"));
-$num_files = $num_files_raw[0] + $num_files_aligned[0] + $num_files_derived[0];
-
 include('includes/header.php');
 ?>
 	
@@ -31,12 +22,16 @@ include('includes/header.php');
 	
 	 <img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
 		<p class="lead">You can use labrador to find and download data. Datasets are annotated with how they were processed. You can use the system to request new datasets.</p>
-		<p><strong><?= $num_papers[0] ?></strong> papers have been added, of which <strong><?= $dataset_papers[0] ?></strong> have datasets associated.
-		<strong><?= $num_dataset[0] ?></strong> datasets known. <strong><?= $num_files ?></strong> files / directories recorded.
-		</p>
+		<p>You can use the table below to browse the projects and datasets. 
+		You can filter the visible data using the tools on the left.
+		If you're looking for something really specific, try the search bar at the top of the page.</p>
 		
-		<p>You can use the table below to browse the projects and datasets. If you're looking for something specific, try the search 
-		bar at the top of the page.</p>
+		<p><strong>Key:</strong>
+			<span class="homepage_key"></span> Processing Complete
+			<span class="homepage_key info"></span> Currently Processing 
+			<span class="homepage_key error"></span> Not Started 
+			<span class="homepage_key warning"></span> Directory not found
+		</p>
 		
 		<table id="paper-browser-table" class="table table-hover table-condensed table-bordered">
 			<thead>
@@ -132,7 +127,10 @@ include('includes/header.php');
 	<div class="homepage sidebar-nav">
 		<h2>Filters</h2>
 		<ul class="nav nav-list filters">
-		
+			
+			<li class="nav-header">Text Filter</li>
+			<li class="text-filter"><input type="text" id="homepage_text_filter"></li>
+			
 			<li class="nav-header">Project Name</li>
 			<?php foreach (range('A', 'Z') as $i){
 				echo '<li class="alphabetical-filter"><a href="#">'.$i.'</a></li> ';

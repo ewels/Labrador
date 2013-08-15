@@ -30,10 +30,9 @@
 			
 				<a class="brand" href="index.php">Labrador<sub style="font-size:10px; color:#777; margin-right:30px;">BETA</sub></a>
 				
-				<form class="navbar-search form-search pull-left">
+				<form class="navbar-search form-search pull-left" action="index.php" method="get">
 					<div class="input-append">
-						
-						<input type="text" class="search-query" placeholder="Search">
+						<input type="text" name="s" id="s" class="search-query" placeholder="Search" <?php if(isset($_GET['s'])){ echo 'value="'.$_GET['s'].'"'; } ?>>
 						<button class="btn">Search</button>
 					</div>
 				</form>
