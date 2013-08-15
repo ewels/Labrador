@@ -3,6 +3,22 @@
    Javascript for the Labrador Processing page
 */
 
+// Show / hide more saved processing
+$('.show_more_link').click(function(e){
+	e.preventDefault();
+	var id = $(this).attr('id').substr(10);
+	$(this).hide();
+	$('#more_'+id).show();
+	$('#hide_more_'+id).show();
+});
+$('.hide_more_link').click(function(e){
+	e.preventDefault();
+	var id = $(this).attr('id').substr(10);
+	$(this).hide();
+	$('#more_'+id).hide();
+	$('#show_more_'+id).show();
+});
+
 // Automatically select all datasets on page load
 $(document).ready(function(){
 	$('#processing_table input[type=checkbox]').attr('checked', 'checked');
@@ -237,7 +253,7 @@ function saveBashScript (){
 	var project_id = $('#project_id').val();
 	$.post('ajax/write_bash.php', {'output': output, 'project_id': project_id, 'server': server},  function(data){
 		alert(data);
-		window.location.href = 'project.php?id=' + project_id;
+		window.location.href = 'processing.php?id=' + project_id;
 	});
 }
 

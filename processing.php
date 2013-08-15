@@ -31,6 +31,58 @@ include('includes/header.php'); ?>
 	</ul>
 </div>
 
+<?php if(!isset($_GET['create'])) { ?>
+
+<div class="sidebar-mainpage project-mainpage">
+	
+	<?php if(!empty($msg)): ?>
+		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+			<button type="button" class="close" data-dismiss="alert">×</button>
+			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
+			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
+		</div>
+	<?php endif; ?>
+	
+	<a class="btn btn-primary pull-right" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a>
+	<?php project_header($project); ?>
+	
+	<?php
+	$processing_sql = "SELECT * FROM `processing` WHERE `project_id` = '$project_id' ORDER BY `created` DESC";
+	$processed_q = mysql_query($processing_sql);
+	if(mysql_num_rows($processed_q) > 0){
+	?>
+	<table id="show_processing" class="table table-bordered table-condensed table-hover">
+		<thead>
+			<tr>
+				<th style="width:20%;">Dataset Name</th>
+				<th style="width:10%;">Date Saved</th>
+				<th>Processing Code</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php while($processed = mysql_fetch_array($processed_q)) {
+			$dataset_q = mysql_query("SELECT * FROM `datasets` WHERE `id` = '".$processed['dataset_id']."'");
+			$dataset = mysql_fetch_array($dataset_q);
+			?>
+			<tr>
+				<td><?php echo $dataset['name']; ?></td>
+				<td><?php echo date('H:i, jS M Y', $processed['created']); ?></td>
+				<td><pre><?php echo substr($processed['commands'], 0, 150); 
+					?> <a href="#" class="show_more_link" id="show_more_<?php echo $processed['id']; ?>">[ show more ]</a><?php 
+					?> <span class="more_commands" style="display:none;" id="more_<?php echo $processed['id']; ?>"><?php echo substr($processed['commands'], 150); ?></span><?php
+				?><a href="#" style="display:none;" class="hide_more_link" id="hide_more_<?php echo $processed['id']; ?>">[ hide more ]</a></pre></td>
+			</tr>
+		<?php } // while $processed ?>
+		</tbody>
+	</table>
+	<?php } else { ?>
+	<p><em>No processing records found.</em></p>
+	<?php } ?>
+	
+</div>
+
+<?php } else { // isset($_GET['create'] ?>
+
 <div class="sidebar-mainpage project-mainpage">
 		
 	<?php project_header($project); ?>
@@ -45,7 +97,7 @@ include('includes/header.php'); ?>
 	<form class="form-horizontal" action="processing.php?id=<?php echo $project_id; ?>" method="post">
 		<fieldset>
 			<legend>Step 1: Choose Datasets</legend>
-			<table id="processing_table" class="table table-bordered table-condensed table-striped table-hover">
+			<table id="processing_table" class="table table-bordered table-condensed table-hover">
 				<thead>
 					<tr>
 						<th class="select"><input type="checkbox" class="select-all"></th>
@@ -186,7 +238,11 @@ include('includes/header.php'); ?>
 
 </div>
 
-<?php include('includes/javascript.php'); ?>
+<?php } // isset($_GET['create']) ?>
+
+<?php include('includes/javascript.php');
+
+if(isset($_GET['create'])) { ?>
 <script type="text/javascript">
 	var processing_modules = new Array();
 <?php
@@ -208,5 +264,6 @@ include('includes/header.php'); ?>
 	}
 ?>
 </script>
+<?php } // isset($_GET['create'])  ?>
 <script src="js/processing.js" type="text/javascript"></script>
 <?php include('includes/footer.php'); ?>

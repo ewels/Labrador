@@ -356,6 +356,15 @@ td.select + td {
 /// PROCESSING PAGE
 /////////////////////
 */
+
+#show_processing pre {
+	background-color:transparent;
+	font-size:11px;
+	padding:0;
+	margin:0;
+	border:0;
+}
+
 #bash_preview pre {
 	border:0;
 	padding:0;
