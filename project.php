@@ -1,7 +1,6 @@
 <?php include('includes/start.php');
 
 $project_id = false;
-$error = false;
 $stop_page_after_message = false;
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
@@ -11,7 +10,7 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$new_project = true;
 }
 
-if(isset($_GET['edit']) && is_numeric($_GET['edit'])){
+if(isset($_GET['edit']) && is_numeric($_GET['edit']) && $admin){
 	$edit = true;
 	$new_project = false;
 	$project_id = $_GET['edit'];
@@ -19,7 +18,7 @@ if(isset($_GET['edit']) && is_numeric($_GET['edit'])){
 	$edit = false;
 }
 
-if(isset($_GET['delete']) && is_numeric($_GET['delete'])){
+if(isset($_GET['delete']) && is_numeric($_GET['delete']) && $admin){
 	$delete = true;
 	$new_project = false;
 	$edit = false;
@@ -52,8 +51,8 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 	$msg = array();
 	$values = array (
 		"name" => preg_replace("/[^A-Za-z0-9_]/", '_', $_POST['name']),
-		"status" => $_POST['status'],
-		"assigned_to" => filter_var($_POST['assigned_to'], FILTER_SANITIZE_EMAIL),
+		"status" => isset($_POST['status']) ? $_POST['status'] : '',
+		"assigned_to" => isset($_POST['assigned_to']) ? filter_var($_POST['assigned_to'], FILTER_SANITIZE_EMAIL) : '',
 		"contact_name" => $_POST['contact_name'],
 		"contact_email" => filter_var($_POST['contact_email'], FILTER_SANITIZE_EMAIL),
 		"contact_group" => $_POST['contact_group'],
@@ -73,6 +72,11 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 	// Passed validation - save project
 	if(!$error){
 		if(!isset($project_id) || !is_numeric($project_id)){
+			$new_project = true;
+		} else {
+			$new_project = false;
+		}
+		if($new_project){
 			$query = "INSERT INTO `projects` (";
 			foreach($values as $id => $var) {
 				$query .= "`$id`, ";
@@ -92,9 +96,11 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 			$history = "Edited project.";
 		}
 		if(mysql_query($query)){
+			$project_array = $values;
 			// Saved project - now save papers
 			if(!isset($project_id) || !is_numeric($project_id)){
 				$project_id = mysql_insert_id();
+				$project = $values;
 			}
 			if($project_id > 0){
 				$i = 1;
@@ -110,7 +116,7 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 						"doi" => $_POST['paper_doi_'.$i],
 					);
 					// Build mysql queries
-					if(isset($_POST['paper_id_'.$i]) && is_numeric($_POST['paper_id_'.$i])){
+					if(!$new_project){
 						$query = "UPDATE `papers` SET ";
 						foreach($values as $id => $var) {
 							$query .= "`$id` = '".mysql_real_escape_string($var)."', ";
@@ -149,8 +155,52 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 				} else {
 					$msg[] = '<strong>Successfully saved project.</strong> &nbsp; <a href="datasets.php?add='.$project_id.'">Add datasets</a>.';
 				}
-				$new_project = false;
 				$stop_page_after_message = true;
+				
+				// Email main contact
+				if(strlen($project_array['contact_email']) > 3){
+					if($new_project){
+						mail($project_array['contact_email'], '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
+
+The project ".$project_array['name']." has just been created on Labrador and you are marked as the primary contact. As such, you will receive e-mail notifications if the status of the project is updated.
+
+You can see the project here: ".$labrador_url."project.php?id=$project_id
+
+If you have any queries, please e-mail $support_email
+
+--
+This is an automated e-mail sent from Labrador
+$labrador_url
+", $email_headers);
+					} else {
+						mail($project_array['contact_email'], '[Labrador] Project '.$project_array['name'].' Updated', "Hi there,
+
+The project ".$project_array['name']." has just been updated on Labrador. Its status is now '".$project_array['status']."'
+
+You can see the project here: ".$labrador_url."project.php?id=$project_id
+
+If you have any queries, please e-mail $support_email
+
+--
+This is an automated e-mail sent from Labrador
+$labrador_url
+", $email_headers);
+					}
+				}
+				
+				// Email support if no-one is assigned
+				if(strlen($project_array['assigned_to']) < 3 && $new_project){
+					mail($support_email, '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
+
+The project ".$project_array['name']." has just been created on Labrador by ".$project_array['contact_name']." (".$project_array['contact_email']."). It doesn't have anyone assigned to the project yet.
+
+You can see the project here: ".$labrador_url."project.php?id=$project_id
+
+--
+This is an automated e-mail sent from Labrador
+$labrador_url
+", $email_headers);
+				}
 				
 			} else {
 				$error = true;
@@ -285,7 +335,7 @@ if(!$new_project and !$edit and !$error){ ?>
 	
 	
 	
-	<?php if(!$new_project) { ?><a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a><?php } ?>
+	<?php if(!$new_project && $admin) { ?><a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a><?php } ?>
 	<?php project_header($project); ?>
 
 	<?php $papers = mysql_query("SELECT * from `papers` WHERE `project_id` = '".$project['id']."'");
@@ -379,11 +429,11 @@ if(!$new_project and !$edit and !$error){ ?>
 	
 	$values = array (
 		"name" => "",
-		"status" => "",
-		"assigned_to" => "",
-		"contact_name" => "",
-		"contact_email" => "",
-		"contact_group" => "",
+		"status" => ($user && $admin) ? "Currently Processing" : "",
+		"assigned_to" => ($user && $admin) ? $user['email'] : "",
+		"contact_name" => $user ? $user['firstname'].' '.$user['surname'] : "",
+		"contact_email" => $user ? $user['email'] : "",
+		"contact_group" => $user ? $user['group'] : "",
 		"accession_geo" => "",
 		"accession_sra" => "",
 		"accession_ena" => "",
@@ -466,13 +516,14 @@ if(!$new_project and !$edit and !$error){ ?>
 		
 		<fieldset id="project_status_fieldset">
 			<legend>Project Contacts</legend>
-			
+		
+		<?php if($admin){ ?>
 			<div class="control-group">
 				<label class="control-label" for="assigned_to">Assigned To</label>
 				<div class="controls">
 					<input type="email" id="assigned_to" name="assigned_to" maxlength="250" placeholder="<?php echo preg_replace('/\s+/', '.', strtolower($names[array_rand($names)])); ?>@babraham.ac.uk" value="<?php echo $values['assigned_to']; ?>" />
 					<span class="help-inline">Who is processing the data? <small> &nbsp; 
-						<?php foreach($project_assignQuickFill as $qf_email => $qf_name){
+						<?php foreach($administrators as $qf_email => $qf_name){
 							echo ' / <a href="#" class="assign_quickFill" title="'.$qf_email.'">'.$qf_name.'</a>'; 
 						} ?>
 					</small></span>
@@ -488,6 +539,7 @@ if(!$new_project and !$edit and !$error){ ?>
 					</select>
 				</div>
 			</div>
+		<?php } ?>
 			
 			<div class="control-group ">
 				<label class="control-label" for="contact_name">Primary Contact</label>
@@ -507,7 +559,7 @@ if(!$new_project and !$edit and !$error){ ?>
 				<div class="controls">
 					<input type="text" name="contact_group" id="contact_group" maxlength="250" placeholder="<?php echo $names[array_rand($names)]; ?>" value="<?php echo $values['contact_group']; ?>">
 					<span class="help-inline"><small>
-						<?php foreach($project_groupAssignQuickFill as $qf_name => $qf_display) {
+						<?php foreach($groups as $qf_name => $qf_display) {
 							echo ' / <a href="#" class="groupAssign_quickFill" title="'.$qf_name.'">'.$qf_display.'</a>'; 
 						} ?>
 					</small></span>
@@ -650,6 +702,7 @@ if(!$new_project and !$edit and !$error){ ?>
 				&nbsp; &nbsp; <a href="#" id="delete_project_button" class="btn btn-large btn-danger popover_button" data-toggle="popover" data-html="true" title="Delete Project" data-content="Are you sure? This will delete the project and all papers &amp; datasets associated with it from the database. <strong>This cannot be undone</strong>. Data on the server will not be affected. <br><br> <a href='project.php?delete=<?php echo $project_id; ?>' class='btn btn-danger btn-block'>I'm sure - delete the project</a>" data-original-title="Delete Project">Delete Project</a>
 			<?php } ?>
 		</div>
+	</form>
 </div>
 
 <?php } // if($new or $edit or $delete)

@@ -166,6 +166,7 @@ include('includes/header.php');
 		
 	</div> <!-- /container -->
 	
+	<?php if(function_exists('labrador_login_modal')){ labrador_login_modal(); } ?>
 	
 	<?php include('includes/javascript.php'); ?>
 	<script src="js/jquery.validate.min.js" type="text/javascript"></script>

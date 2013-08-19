@@ -53,6 +53,9 @@ CREATE TABLE `processing` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `pr
 
 CREATE TABLE `history` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `project_id` INT(20) NOT NULL, `note` TEXT, `time` INT(12));
 
+CREATE TABLE `users` (`id` INT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY, `email` VARCHAR(250) NOT NULL UNIQUE, `firstname` VARCHAR(250), `surname` VARCHAR(250), `group` VARCHAR(250), `password` TEXT NOT NULL, `authstring` TEXT NOT NULL, `registered` INT(12), `last_login` INT(12));
+
+
 DROP TABLE `files_raw`;
 DROP TABLE `files_aligned`;
 DROP TABLE `files_derived`;

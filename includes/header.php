@@ -39,12 +39,9 @@
 				
 				<ul class="nav" style="margin-left:20px;">
 					<li><a href="project.php" class="request-dataset-nav-link">Create New Project</a></li>
+					<?php labrador_login_link(); ?>
 				</ul>
 
-				<p class="navbar-text pull-right" style="margin-right:30px;">
-				<?php if(isset($_SESSION['email'])) { echo $_SESSION['email']; } else { echo '<a href="#">Log In</a>'; } ?>
-				</p>
-				
 			</div>
 		</div>
 	</div>

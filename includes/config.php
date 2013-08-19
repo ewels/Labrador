@@ -9,8 +9,25 @@
 
 $labrador_url = 'http://bilin1/labrador_dev/';
 $data_root = '/data/pipeline/new_public/TIDIED/';
+$support_email = 'babraham.bioinformatics@babraham.ac.uk';
 
-$project_groupAssignQuickFill = array(
+
+$db_database = 'labrador_dev';
+$db_user = 'labrador';
+$db_password = false;
+$db_host = 'localhost';
+
+
+$administrators = array(
+	'simon.andrews@babraham.ac.uk' => 'Simon',
+	'felix.krueger@babraham.ac.uk' => 'Felix',
+	'steven.wingett@babraham.ac.uk' => 'Steven',
+	'laura.biggins@babraham.ac.uk' => 'Laura',
+	'anne.segonds-pichon@babraham.ac.uk' => 'Anne',
+	'phil.ewels@babraham.ac.uk' => 'Phil'
+);
+
+$groups = array(
 	'Wolf Reik' => 'Reik',
 	'Peter Fraser' => 'Fraser',
 	'Anne Corcoran' => 'Corcoran',
@@ -19,14 +36,7 @@ $project_groupAssignQuickFill = array(
 	'Sarah Elderkin' => 'Elderkin'
 );
 
-$project_assignQuickFill = array(
-	'simon.andrews@babraham.ac.uk' => 'Simon',
-	'felix.krueger@babraham.ac.uk' => 'Felix',
-	'steven.wingett@babraham.ac.uk' => 'Steven',
-	'laura.biggins@babraham.ac.uk' => 'Laura',
-	'anne.segonds-pichon@babraham.ac.uk' => 'Anne',
-	'phil.ewels@babraham.ac.uk' => 'Phil'
-);
+
 
 //////////////////////
 // DOWNLOADS SETTINGS

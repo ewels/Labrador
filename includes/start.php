@@ -8,11 +8,23 @@
 */
 
 session_start();
-include('db_login.php');
 
-include('config.php');
+require('config.php');
 
-include('functions.php');
+// Log in to the database
+if($db_password){
+	$dblink = mysql_connect($db_host, $db_user, $db_password);
+} else {
+	$dblink = mysql_connect($db_host, $db_user);
+}
+if (!$dblink) die('Could not connect: ' . mysql_error());
+$db_selected = mysql_select_db($db_database, $dblink);
+if (!$db_selected) die ('Can\'t use database : ' . mysql_error());
+
+require('functions.php');
+
+require('auth.php');
+
 
 date_default_timezone_set('Europe/London');
 

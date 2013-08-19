@@ -31,7 +31,7 @@ include('includes/header.php'); ?>
 	</ul>
 </div>
 
-<?php if(!isset($_GET['create'])) { ?>
+<?php if(!isset($_GET['create']) || !$admin) { ?>
 
 <div class="sidebar-mainpage project-mainpage">
 	
@@ -43,8 +43,10 @@ include('includes/header.php'); ?>
 		</div>
 	<?php endif; ?>
 	
-	<a class="btn btn-primary pull-right" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a>
-	<?php project_header($project); ?>
+	<?php if($admin){ ?>
+		<a class="btn btn-primary pull-right" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a>
+	<?php }
+	project_header($project); ?>
 	
 	<?php
 	$processing_sql = "SELECT * FROM `processing` WHERE `project_id` = '$project_id' ORDER BY `created` DESC";

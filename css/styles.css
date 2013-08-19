@@ -59,6 +59,9 @@ body {
 .navbar .brand {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+.navbar .nav > li.authlink > a {
+	color: #0088cc;
+}
 
 footer {
 	color: #999;
@@ -76,6 +79,10 @@ footer a {
 /// GLOBAL STYLES
 /////////////////////
 */
+
+.modal-body .form-horizontal {
+	margin-bottom:0;
+}
 
 .help-inline,
 .help-block,
