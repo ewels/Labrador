@@ -158,7 +158,7 @@ $processing_codes = array(
 	),
 	'fastqc' => array(
 		'rocks1' => 'echo "fastqc  {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_1 -hold_jid dump_{{fn}}'."\n".
-					'qif [ -f {{fn}}_2.fastq ]; then echo "fastqc {{fn}}_2.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_2_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_2 -hold_jid dump_{{fn}}; fi;'."\n",
+					'if [ -f {{fn}}_2.fastq ]; then echo "fastqc {{fn}}_2.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_2_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_2 -hold_jid dump_{{fn}}; fi;'."\n",
 		'bilin1' => 'fastqc {{fn}}_1.fastq'."\n".
 					'if [ -f {{fn}}_2.fastq ]; then fastqc {{fn}}_2.fastq; fi'."\n"
 	),

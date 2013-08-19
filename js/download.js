@@ -1,6 +1,6 @@
 /*
-   project.js
-   Javascript for the Labrador Project page
+   download.js
+   Javascript for the Labrador Downloads page
 */
 
 // Filter downloads by type
@@ -116,3 +116,4 @@ function filter_downloads () {
 		}
 	}
 }
+

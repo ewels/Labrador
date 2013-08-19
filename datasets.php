@@ -204,14 +204,14 @@ include('includes/header.php'); ?>
 		<form class="form-horizontal" action="download.php?id=<?php echo $project_id; ?>" method="post">
 			<input type="submit" name="download_datasets" class="btn pull-right" value="Download Checked Datasets">
 			<p style="margin-bottom:20px;"><label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label></p>
-			<table id="existing_datasets_table" class="table table-bordered table-condensed table-striped table-hover">
+			<table id="existing_datasets_table" class="table table-bordered table-condensed table-hover sortable">
 				<thead>
 					<tr>
 						<th class="select"><input type="checkbox" class="select-all"></th>
-						<th>Name</th>
-						<th>Species</th>
-						<th>Cell Type</th>
-						<th>Data Type</th>
+						<th data-sort="string-ins">Name</th>
+						<th data-sort="string-ins">Species</th>
+						<th data-sort="string-ins">Cell Type</th>
+						<th data-sort="string-ins">Data Type</th>
 						<th style="width:20%;">Accession Codes</th>
 					</tr>
 				</thead>

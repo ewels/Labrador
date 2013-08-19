@@ -75,4 +75,14 @@ function project_header($project) {
 	echo '</p>';
 }
 
+
+function human_filesize($bytes, $decimals = 2) {
+	$sz = ' KMGTP';
+	$factor = floor((strlen($bytes) - 1) / 3);
+	if(@$sz[$factor] == ' '){
+		$decimals = 0;
+	}
+	return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor].'B';
+}
+
 ?>

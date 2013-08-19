@@ -65,3 +65,11 @@ $('.select-all').click(function(e){
 $('.fake_link').click(function(e){
 	e.preventDefault();
 });
+
+// Sortable tables
+$("table.sortable").stupidtable();
+
+// Is a number?
+function isNumber(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}

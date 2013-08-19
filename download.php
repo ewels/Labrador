@@ -105,7 +105,7 @@ include('includes/header.php'); ?>
 			} else {
 				$datasets[$id]['checked'] = false;
 			}
-			$datasets[$id]['paths'] = array();
+			$datasets[$id]['files'] = array();
 		}
 	}
 	// Loop through files and match to datasets
@@ -113,6 +113,7 @@ include('includes/header.php'); ?>
 	$dir = $data_root.$project['name'];
 	$it = new RecursiveDirectoryIterator($dir);
 	foreach(new RecursiveIteratorIterator($it) as $file) {
+		$size = $file->getSize();
 		$path = $file->getPathname();
 		$matched = false;
 		if(substr($path, -1) !== '~' && substr(basename($path), 0, 1) !== '.' && !stripos($path, 'fastqc/')){
@@ -122,7 +123,7 @@ include('includes/header.php'); ?>
 				$accessions = explode(" ", $dataset['accession_sra']);
 				foreach($accessions as $accession){
 					if(stripos($path, $accession)){
-						$datasets[$id]['paths'][] = $path;
+						$datasets[$id]['paths'][$path] = $size;
 						$matched = true;
 						break 2;
 					}
@@ -134,7 +135,7 @@ include('includes/header.php'); ?>
 					$accessions = explode(" ", $dataset['accession_geo']);
 					foreach($accessions as $accession){
 						if(stripos($path, $accession)){
-							$datasets[$id]['paths'][] = $path;
+							$datasets[$id]['paths'][$path] = $size;
 							$matched = true;
 							break;
 						}
@@ -145,7 +146,7 @@ include('includes/header.php'); ?>
 			if(!$matched){
 				foreach ($datasets as $id => $dataset){
 					if(stripos($path, $dataset['name'])){
-						$datasets[$id]['paths'][] = $path;
+						$datasets[$id]['paths'][$path] = $size;
 						$matched = true;
 						break;
 					}
@@ -153,18 +154,19 @@ include('includes/header.php'); ?>
 			}
 			// Can't find this one - an orphan
 			if(!$matched){
-				$orphans[] = $path;
+				$orphans[$path] = $size;
 			}
 		}
 	}	
 	?>
 	
-		<table class="table table-condensed table-bordered table-striped download_table">
+		<table class="table table-condensed table-bordered table-striped sortable download_table">
 			<thead>
 				<tr>
 					<th class="select" style="width:20px;"><input type="checkbox" class="select-all"></th>
-					<th style="width:30%;">Dataset Name</th>
-					<th>Filename</th>
+					<th data-sort="string-ins" style="width:30%;">Dataset Name</th>
+					<th data-sort="int">File Size</th>
+					<th data-sort="string-ins">Filename</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -172,26 +174,28 @@ include('includes/header.php'); ?>
 			foreach($datasets as $dataset){
 				if($checked == 0 || $dataset['checked']){
 					$paths = $dataset['paths'];
-					sort($paths);
-					foreach($paths as $raw_path){
+					ksort($paths);
+					foreach($paths as $raw_path => $size){
 						$j++;
 						$path = substr($raw_path, strlen($dir)); ?>
 					<tr>
 						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
 						<td><?php echo $dataset['name']; ?></td>
+						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
 					</tr>
 			<?php } // if checked
 				} //foreach path
 			} // foreach dataset
-			sort($orphans);
-			foreach ($orphans as $id => $orphan){
+			ksort($orphans);
+			foreach ($orphans as $raw_path => $size){
 				$j++;
-				$path = substr($orphan, strlen($dir)); ?>
+				$path = substr($raw_path, strlen($dir)); ?>
 				<tr>
 					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
 					<td><em>Not matched to any datasets</em></td>
-					<td class="path"><a href="download_file.php?fn=<?php echo substr($orphan, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+					<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
+					<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
 				</tr>
 			<?php } // foreach orhpans ?></tbody>
 		</table>

@@ -33,14 +33,14 @@ include('includes/header.php');
 			<span class="homepage_key warning"></span> Directory not found
 		</p>
 		
-		<table id="paper-browser-table" class="table table-hover table-condensed table-bordered">
+		<table id="paper-browser-table" class="table table-hover table-condensed table-bordered sortable">
 			<thead>
 				<tr>
-					<th style="width:10%;">Name</th>
-					<th style="width:5%;">Datasets</th>
-					<th style="width:15%;">Species</th>
-					<th style="width:40%;">Cell Types</th>
-					<th style="width:30%;">Data Types</th>
+					<th data-sort="string-ins" style="width:10%;">Name</th>
+					<th data-sort="int" style="width:5%;">Datasets</th>
+					<th data-sort="string-ins" style="width:15%;">Species</th>
+					<th data-sort="string-ins" style="width:40%;">Cell Types</th>
+					<th data-sort="string-ins" style="width:30%;">Data Types</th>
 				</tr>
 			</thead>
 			<tbody>

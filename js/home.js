@@ -9,36 +9,6 @@ $('#paper-browser-table tr td').click(function(e){
 	window.location = 'project.php?id='+id;
 });
 
-//////////
-// SORT COLUMN FUNCTIONS
-//////////
-// Modified function from here:
-// http://stackoverflow.com/questions/2694460/sorting-a-table-based-on-which-header-cell-was-clicked
-function OrderBy(a,b,n) {
-    if (n) return a-b;
-    if (a < b) return -1;
-    if (a > b) return 1;
-    return 0;
-}
-$('#paper-browser-table tr th').click(function() {
-    $(this).toggleClass('selected');
-    var isSelected = $(this).hasClass('selected');
-    var column = $(this).index();
-    var $table = $(this).closest('table');
-    var isNum= $table.find('tbody > tr').children('td').eq(column).hasClass('num');
-    var rows = $table.find('tbody > tr').get();
-    rows.sort(function(rowA,rowB) {
-        var keyA = $(rowA).children('td').eq(column).text().toUpperCase();
-        var keyB = $(rowB).children('td').eq(column).text().toUpperCase();
-        if (isSelected) return OrderBy(keyA,keyB,isNum);
-        return OrderBy(keyB,keyA,isNum);
-    });
-    $.each(rows, function(index,row) {
-        $table.children('tbody').append(row);
-    });
-    return false;
-});
-
 
 //////////
 // FILTER LIST FUNCTIONS
@@ -138,63 +108,3 @@ function updateFilters() {
 	
 }
 
-function isNumber(n) {
-	return !isNaN(parseFloat(n)) && isFinite(n);
-}
-
-/*
-// Load ajax search results
-function loadSearchAjax (query){
-	if(typeof query == 'undefined'){
-		var q = '';
-	} else {
-		var q = '?q='+query;
-	}
-	$.get('ajax_search.php'+q, function(data) {
-		$('#ajax_search').html(data);
-	});
-}
-
-
-// Fire search results if user presses enter on search field (keypress rather than keyup)
-$('#labrador_search_string').keypress(function(e){
-	if (e.which == 13) {
-		e.preventDefault();
-		loadSearchAjax($('#labrador_search_string').val());
-	}
-});
-
-// Fire search results each time a key is pressed in the search field
-$('#labrador_search_string').keyup(function(e){
-	e.preventDefault();
-	loadSearchAjax($('#labrador_search_string').val());
-});
-
-// Search field and filter cookie sets
-$('#search_fields_save').click(function(){
-	setFieldsCookie();
-	updateFieldsFilters();
-	$('#search_fields').modal('hide');
-});
-$('#search_filters_save').click(function(){
-	setFiltersCookie();
-	updateFieldsFilters();
-	$('#search_filters').modal('hide');
-});
-
-function selectAll ( selectID ) {
-	$(selectID).children('option').each(function(index) {
-		$(this).attr('selected', 'selected');
-	});
-	$("select").trigger("liszt:updated");
-	return false;
-}
-function selectNone ( selectID ) {
-	$(selectID).children('option').each(function(index) {
-		$(this).removeAttr('selected');
-	});
-	$("select").trigger("liszt:updated");
-	return false;
-}
-
-*/

@@ -94,6 +94,10 @@ td.select + td {
 	border-left:none;
 }
 
+table.sortable th[data-sort] {
+	cursor:pointer;
+}
+
 
 /*
 /////////////////////
