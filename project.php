@@ -285,9 +285,6 @@ include('includes/header.php'); ?>
 		<li class="inactive">
 			<a href="#" class="fake_link">Reports</a>
 		</li>
-		<li class="inactive">
-			<a href="#" class="fake_link">Download</a>
-		</li>
 	<?php } else { ?>
 		<li class="active">
 			<a href="project.php?id=<?php echo $project_id; ?>">Project Details</a>
@@ -327,7 +324,6 @@ if(!$new_project and !$edit and !$error){ ?>
 	if($stop_page_after_message){ ?>
 		</div>
 		<?php include('includes/javascript.php'); ?>
-		<script src="js/jquery.validate.min.js" type="text/javascript"></script>
 		<script src="js/project.js" type="text/javascript"></script>
 		<?php include('includes/footer.php');
 		exit;

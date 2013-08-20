@@ -12,7 +12,7 @@ The results are ridiculous - an XML file with HTML encoded XML within fields.
 Whhhhyyyyy?
 */
 
-require_once('../includes/db_login.php');
+require_once('../includes/start.php');
 
 function get_geo_datasets ($acc) {
 	// Get the first XML file with GEO ID accessions, using the supplied GEO accession

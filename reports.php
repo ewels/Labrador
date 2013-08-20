@@ -5,7 +5,11 @@ include('includes/start.php');
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$project_id = $_GET['id'];
 	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
-	$project = mysql_fetch_array($projects);
+	if(mysql_num_rows($projects) == 1){
+		$project = mysql_fetch_array($projects);
+	} else {
+		header("Location: index.php");
+	}
 } else {
 	header("Location: index.php");
 }

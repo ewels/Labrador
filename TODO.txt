@@ -2,8 +2,6 @@
    TO DO - Labrador
 =====================
 
-0. Check for existing project ID on datasets page etc.
-
 1. Make search work
 
 2. Tidy Up Processing

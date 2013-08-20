@@ -6,7 +6,7 @@ Script to delete a paper from the database with ajax
  - Second field is message
 */
 
-require('../includes/db_login.php');
+require_once('../includes/start.php');
 
 if(isset($_GET['pid']) && is_numeric($_GET['pid'])){
 	$query = sprintf("DELETE FROM `papers` WHERE `id` = '%d'", $_GET['pid']);
