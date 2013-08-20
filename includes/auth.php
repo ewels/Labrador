@@ -238,7 +238,7 @@ function cookie_login(&$user, &$msg, $email, $authstring){
 	global $admin;
 	$admin = false;
 	
-	$sql = sprintf("SELECT * FROM `users` WHERE `email` = '%s' AND `authstring` = '%s' AND `verify` = ''",
+	$sql = sprintf("SELECT * FROM `users` WHERE `email` = '%s' AND `authstring` = '%s' AND `verification` = ''",
 						mysql_real_escape_string($email),
 						mysql_real_escape_string($authstring));
 	$user_q = mysql_query($sql);

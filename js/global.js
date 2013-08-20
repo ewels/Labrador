@@ -73,3 +73,9 @@ $("table.sortable").stupidtable();
 function isNumber(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
+// Help text toggle
+$('.labrador_help_toggle').click(function(e){
+	e.preventDefault();
+	$('.labrador_help').slideToggle();
+});

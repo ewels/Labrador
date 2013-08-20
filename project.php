@@ -332,7 +332,71 @@ if(!$new_project and !$edit and !$error){ ?>
 	
 	
 	<?php if(!$new_project && $admin) { ?><a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a><?php } ?>
+	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
+	
+	<div class="labrador_help" style="display:none;">
+		<div class="well">
+			<h3>The Project Page</h3>
+			<p>Projects are the base of Labrador - each project has a unique name which should correspond to a directory held on the server.</p>
+			<p>This page holds information about a specific project.</p>
+			<dl class="dl-horizontal">
+				<dt>Name</dt>
+				<dd>Project Name - corresponds to a directory on the server <em>(required)</em></dd>
+				
+				<dt>Assigned To</dt>
+				<dd>The e-mail address of the bioinformatician that the project has been assigned to</dd>
+				
+				<dt>Status</dt>
+				<dd>The current status of the project <em>(Not Started / Processing / Complete)</em></dd>
+				
+				<dt>Primary Contact</dt>
+				<dd>The name of the person who requested or generated the data</dd>
+				
+				<dt>Contact E-mail</dt>
+				<dd>E-mail address of the primary contact</dd>
+				
+				<dt>Group</dt>
+				<dd>Group of the primary contact</dd>
+			</dl>
+			
+			<dl class="dl-horizontal">
+				<dt>GEO Accession</dt>
+				<dd><a href="http://www.ncbi.nlm.nih.gov/geo/" target="_blank">NCBI Gene Expression Omnibus</a> accession. Should be the accession for the project not a single dataset <em>(starting GSE, not GSM)</em></dd>
+				
+				<dt>SRA Accession</dt>
+				<dd><a href="http://www.ncbi.nlm.nih.gov/sra" target="_blank">NCBI Sequence Read Archive</a> accession. Should be the accession for the experiment not a single dataset <em>(starting SRX, not SRR)</em></dd>
+				
+				<dt>ENA Accession</dt>
+				<dd><a href="http://www.ebi.ac.uk/ena/" target="_blank">EBI European Nucleotide Archive</a> accession.</dd>
+				
+				<dt>DDJB Accession</dt>
+				<dd><a href="http://www.ddbj.nig.ac.jp/" target="_blank">DNA Data Bank of Japan</a> accession.</dd>
+				
+				<dt>PMID Accession</dt>
+				<dd><a href="http://www.ncbi.nlm.nih.gov/pubmed/" target="_blank">NCBI PubMed</a> accession. Used to automatically retrieve papers.</dd>
+			</dl>
+			
+			<dl class="dl-horizontal">
+				<dt>Publications</dt>
+				<dd>Multiple publications can be added for each project. These can be searched using the search bar at the top.</dd>
+			</dl>
+			
+			<dl class="dl-horizontal">
+				<dt>Project Title</dt>
+				<dd>Long title, can be automatically filled from GEO accession.</dd>
+				
+				<dt>Project Description</dt>
+				<dd>Long description, can be automatically filled from GEO accession.</dd>
+				
+				<dt>Comments</dt>
+				<dd>Any notes about the project.</dd>
+				
+				<dt>History</dt>
+				<dd>A log of events that have happened with Labrador related to the project.</dd>
+			</dl>
+		</div>
+	</div>
 
 	<?php $papers = mysql_query("SELECT * from `papers` WHERE `project_id` = '".$project['id']."'");
 	if(mysql_num_rows($papers) > 0) { ?>
@@ -363,6 +427,16 @@ if(!$new_project and !$edit and !$error){ ?>
 	</fieldset>
 	<?php } // > 0 papers
 	
+	
+	if(!empty($project['title'])){ ?>
+	<fieldset>
+		<legend>Title &amp; Description</legend>
+		<p><?php echo nl2br(stripslashes($project['title'])); ?></p>
+		<?php if(!empty($project['description'])){ ?>
+		<p><small class="muted"><?php echo nl2br(stripslashes($project['description'])); ?></small></p>
+		<?php } ?>
+	</fieldset>
+	<?php } // has title
 	
 	if(!empty($project['notes'])){ ?>
 	<fieldset>
@@ -685,7 +759,7 @@ if(!$new_project and !$edit and !$error){ ?>
 			</div>
 			
 			<div class="control-group ">
-				<label class="control-label" for="notes">Notes</label>
+				<label class="control-label" for="notes">Comments</label>
 				<div class="controls">
 					<textarea name="notes" class="input-xlarge" id="notes"><?php echo $values['notes']; ?></textarea>
 				</div>

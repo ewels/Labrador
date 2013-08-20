@@ -21,7 +21,54 @@ include('includes/header.php');
        	<h1>Labrador Dataset Browser <small>A database of datasets processed by the BI Bioinformatics group.</small></h1>
 	
 	 <img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
-		<p class="lead">You can use labrador to find and download data. Datasets are annotated with how they were processed. You can use the system to request new datasets.</p>
+		<p class="lead">You can use labrador to find and download existing data or request new datasets.
+		Projects are tracked and annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
+		
+		<div class="labrador_help" style="display:none; margin-right:150px;">
+			<div class="well">
+				<h2>Help!</h2>
+				<p>Each page within Labrador has this question mark icon in the top right. Click the icon for contextual help about the page that you are on.</p>
+				
+				<h3>What is Labrador?</h3>
+				<p>Labrador is a web based tool to manage projects and automate the processing of publicly available datasets.</p>
+				<p>Researchers can use it to search through previously processed data, find how it was analysed, read processing reports and download the relevant files to their computers.
+				If a required dataset isn't yet available, they can <a href="project.php">Create a New Project</a> - this information about the required data sets is then passed on to your resident bioinformaticians, who can process it for you.
+				The status of projects is tracked, and everything is kept together in a logical place.</p>
+				<p>Administrators (bioinformaticians) can delegate the process of choosing required data to researchers. Labrador automatically retrieves public data accession numbers and 
+				can write bash scripts to download and process data. This helps to standardise in-house processing and streamline pipelines.</p>
+				
+				<h3>What does this page do?</h3>
+				<p>You're currently viewing the home page of Labrador. Here, you can browse all of the projects in the system. Rows in the table are colour-coded to indicate their current status
+				<em>(complete / currently processing / not started)</em>.</p>
+				<p>You can quickly filter the projects by their species and data type using the tools on the left. Options within a filter group combine as OR, options between groups combine as AND.
+				If you're looking for something specific you can filter by the first letter of the project's name, or just use a free text filter at the top.
+				These tools don't interrogate all of the information held within Labrador - if you would like a more complete search please use the Search Bar at the top.</p>
+				<p>Clicking on a project row will take you to that project's page: here you can find out more information about the project and access it's datasets and reports.</p>
+				
+				<h3>Data structure</h3>
+				<p>Labrador maintains records of each project in a hierarchy, summarised below:</p>
+				<ul>
+					<li>Projects
+						<ul>
+							<li>Description, status, contacts</li>
+							<li>Publications</li>
+							<li>Datasets
+								<ul>
+									<li>Downloads</li>
+									<li>Processing Records</li>
+									<li>Reports</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<p>The name of each project corresponds to a folder with the same name on the server. <em>eg.</em> 'Norris_2013' would correspond to <code><?php echo $data_root; ?>Norris_2013/</code></p>
+			</div>
+		</div>
+		
+		
+		
+		
 		<p>You can use the table below to browse the projects and datasets. 
 		You can filter the visible data using the tools on the left.
 		If you're looking for something really specific, try the search bar at the top of the page.</p>
@@ -169,7 +216,6 @@ include('includes/header.php');
 	<?php if(function_exists('labrador_login_modal')){ labrador_login_modal(); } ?>
 	
 	<?php include('includes/javascript.php'); ?>
-	<script src="js/jquery.validate.min.js" type="text/javascript"></script>
 	<script src="js/home.js" type="text/javascript"></script>
 	</body>
 </html>

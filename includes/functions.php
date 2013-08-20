@@ -45,6 +45,8 @@ function accession_badges ($string, $type){
 }
 
 function project_header($project) {
+	global $data_root;
+	
 	echo '<h1>';
 	echo $project['name'].' ';
 	echo accession_badges ($project['accession_geo'], 'geo').' ';
@@ -72,6 +74,9 @@ function project_header($project) {
 	if($project['assigned_to'] != ''){
 		echo '<small>Assigned to: <a href="mailto:'.$project['assigned_to'].'">'.$project['assigned_to'].'</a></small>';
 	}
+	
+	echo '<small>Location: <code>'.$data_root.$project['name'].'/</code></small>';
+	
 	echo '</p>';
 }
 

@@ -49,8 +49,17 @@ include('includes/header.php'); ?>
 	
 	<?php if($admin){ ?>
 		<a class="btn btn-primary pull-right" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a>
-	<?php }
-	project_header($project); ?>
+	<?php } ?>
+	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
+	<?php project_header($project); ?>
+	<div class="labrador_help" style="display:none;">
+		<div class="well">
+			<h3>Processing Page</h3>
+			<p>This page shows records of any dataset processing held by Labrador. Administrators can use this page to quickly create scripts to process data,
+			these are associated to their respective datasets and presented below for later reference.</p>
+		</div>
+	</div>
+	
 	
 	<?php
 	$processing_sql = "SELECT * FROM `processing` WHERE `project_id` = '$project_id' ORDER BY `created` DESC";

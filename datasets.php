@@ -194,9 +194,25 @@ include('includes/header.php'); ?>
 		</div>
 	<?php endif; ?>
 	
+	<?php if($admin){ ?>
 	<a class="btn pull-right" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a>
 	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
+	<?php } ?>
+	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
+	
+	<div class="labrador_help" style="display:none;">
+		<div class="well">
+			<h3>The Datasets Page</h3>
+			<p>The datasets page shows all datasets associated with a given project. You can download data for specific datasets by selecting their row and clicking 'Download Checked Datasets'.</p>
+			<p>Each dataset has a name, species, cell type, data type and accession codes. These are important as they allow the dataset to be found by other people through Labrador.
+			Accession codes help Labrador to know which file names relate to which datasets and speed up processing as they can be used to automate processing pipelines.
+			Clicking an accession code will load a new window showing that dataset in its respective repository.</p>
+			<p>For projects with many datasets or poorly named datasets, it can be useful to use the 'Filter Datasets' box at the top to quickly find those which you are interested in or would like to download.
+			Ticking the check-box at in the table header will select all currently visible datasets.</p>
+		</div>
+	</div>
+	
 	
 	<?php
 	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";

@@ -57,10 +57,20 @@ include('includes/header.php'); ?>
 </div>
 
 <div class="sidebar-mainpage project-mainpage">
-
+	
+	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
 	
 	<?php if(isset($_POST['java_download_paths']) && $_POST['java_download_paths'] == 'Download Checked Files With Java Applet'){ ?>
+	
+	<div class="labrador_help" style="display:none;">
+		<div class="well">
+			<h3>Downloads with the Java Applet</h3>
+			<p>The Java applet below allows many large files to be downloaded from the server to your computer in succession. This is useful, as trying to download a lot of data through your browser
+			can fail and choke the network. If you are downloading many files, the applet is better as it maintains the directory structure found on the server, so keeping your files organised and not over-writing anything.</p>
+			<p>To use the applet, choose the folder that you would like the files to be downloaded to by clicking 'Browse'. Select the files to be downloaded (these should be those selected in the previos page) and click Download.</p>
+		</div>
+	</div>
 	
 	<applet code="biz.jupload.jdownload.Manager" archive="includes/jdownload/jdownload.jar" width="100%" height="500px" name="JDownload" mayscript="mayscript" alt="JDownload by www.jupload.biz">
 		<!-- Java Plug-In Options -->
@@ -79,6 +89,17 @@ include('includes/header.php'); ?>
 	</applet>
 	
 	<?php } else { ?>
+	
+	<div class="labrador_help" style="display:none;">
+		<div class="well">
+			<h3>Downloads Page</h3>
+			<p>You can use this page to download data from the Bioinformatics server to your computer.</p>
+			<p>Files within the project directory will be matched up to datasets, those associated with the datasets selected on the previous page will be shown below, along with any not matched to a dataset.
+			You can filter the table for files with extensions commonly used for Aligned data, Raw data, Processing Reports and everything else. You can also use the text box to filter the file names. The table can be sorted by column heading.</p>
+			<p>There are two ways to download files: either <strong>click the file name</strong> to download the file through your browser, or select the files you wish to download and press <strong>Download Checked Files With Java Applet</strong>.
+			The Java applet is best for downloading large files and maintains directory struture, useful if downloading many files.</p>
+		</div>
+	</div>
 	
 	<form action="download.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
 		<div class="well">

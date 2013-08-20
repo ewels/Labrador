@@ -117,8 +117,39 @@ include('includes/header.php'); ?>
 	
 	<div style="clear:both;"></div>
 	</form>	
-		
+	
+	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
+	<div class="labrador_help" style="display:none;">
+		<div class="well">
+			<h3>Reports</h3>
+			<p>This page shows you all of the processing reports found within the project directory, associated to the project datasets.</p>
+			<p>Reports can be selected using the drop down boxes in the top right of the screen - clicking a name will refresh the page with that report.</p>
+			<p>Currently, Labrador supports the following report types:</p>
+			
+			<dl  class="dl-horizontal">
+				<dt>FastQC</dt>
+				<dd>Processing reports from <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/" target="_blank">FastQC</a>, gives details about the quality of the raw sequencing data.</dd>
+				
+				<dt>FastQ Screen</dt>
+				<dd>Processing reports from <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/" target="_blank">FastQ Screen</a>, a tool to detect which genome(s) raw sequences align to.</dd>
+				
+				<dt>Bismark Alignment Overview</dt>
+				<dd>Alignment reports from <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">Bismark</a>, a tool to map bisulfite converted sequence reads and determine cytosine methylation states.</dd>
+				
+				<dt>Bismark M-Bias Reports</dt>
+				<dd>Metylation-Bias plots from <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">Bismark</a>, shows the methylation proportion across each possible position in the reads.</dd>
+				
+				<dt>HiCUP Di-Tag Analysis</dt>
+				<dd>Classification of paired end read types by <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">HiCUP</a>, a tool for mapping and performing quality control on Hi-C data.</dd>
+				
+				<dt>HiCUP <em>cis</em>/<em>trans</em> Analysis</dt>
+				<dd>Proportion of read pairs falling in <em>cis</em> and <em>trans</em>, as processed by <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">HiCUP</a>.</dd>
+				
+			</dl>
+		</div>
+	</div>
+	
 	
 	<?php if(!$report_path){ ?>
 	<div class="alert alert-info">No reports found.</div>
