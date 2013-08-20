@@ -401,7 +401,7 @@ $labrador_url
 //////////////////////////
 // VERIFY E-MAIL ADDRESS
 //////////////////////////
-if(!$user && $_GET['a'] == 'verify' && isset($_GET['email']) && isset($_GET['vstr'])){
+if(!$user && isset($_GET['a']) && $_GET['a'] == 'verify' && isset($_GET['email']) && isset($_GET['vstr'])){
 	$login_q = mysql_query(sprintf("SELECT * FROM `users` WHERE `email` = '%s'", mysql_real_escape_string($_GET['email'])));
 	if(mysql_num_rows($login_q) !== 1){
 		$error = true;

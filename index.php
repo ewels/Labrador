@@ -8,7 +8,7 @@ include('includes/header.php');
 
 				
 
-		<div class="homepage sidebar-mainpage">		
+	<div class="homepage sidebar-mainpage">		
 				
 		<?php if(!empty($msg)): ?>
 		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
@@ -20,7 +20,7 @@ include('includes/header.php');
 				
        	<h1>Labrador Dataset Browser <small>A database of datasets processed by the BI Bioinformatics group.</small></h1>
 	
-	 <img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
+		<img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
 		<p class="lead">You can use labrador to find and download existing data or request new datasets.
 		Projects are tracked and annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
 		

@@ -456,6 +456,20 @@ iframe.report {
 
 
 /*
+/////////////////////
+/// SEARCH PAGE
+/////////////////////
+*/
+
+span.h {
+	background-color:#FFFF00;
+}
+h1 span.h {
+	padding:0 10px;
+}
+
+
+/*
 ///////////////
 // RESPONSIVE STYLES
 ///////////////
