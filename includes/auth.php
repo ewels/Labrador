@@ -26,7 +26,7 @@ function labrador_login_link() {
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as <?php echo $user['firstname'].' '.$user['surname']; ?> <b class="caret"></b></a>
 			<ul class="dropdown-menu">
 				<li><a data-toggle="modal" href="#change_password_modal">Change Password</a></li>
-				<li><a data-toggle="modal" href="index.php?a=logout">Log Out</a></li>
+				<li><a href="index.php?a=logout">Log Out</a></li>
 			</ul>
 		</p>
 		<?php
@@ -40,11 +40,16 @@ function labrador_login_link() {
 }
 
 //////////////////////////
-// LOGIN MODAL (optional)
+// LOGIN / REGISTER MODAL
 //////////////////////////
 function labrador_login_modal() {
 	global $user;
 	global $groups;
+	// If we're on the homepage, strip the GET values to avoid munging reverification etc
+	$url = $_SERVER['REQUEST_URI'];
+	if(isset($_GET['a'])){
+		$url = 'index.php';
+	}
 	if(!$user) { ?>	
 	<!-- Register / Login Modal -->
 	<div id="register_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="register_modal_label" aria-hidden="true">
@@ -60,7 +65,7 @@ function labrador_login_modal() {
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="login_tabpane">
-						<form class="form-horizontal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+						<form class="form-horizontal" action="<?php echo $url; ?>" method="post">
 							<div class="control-group">
 								<label class="control-label" for="login_email">E-mail Address</label>
 								<div class="controls">
@@ -77,16 +82,19 @@ function labrador_login_modal() {
 							<!-- hidden submit form to catch people pressing enter and expecting to log in -->
 							<input type="submit" class="btn btn-success" name="login_submit" id="login_submit_hidden" style="position:absolute; left:-1000%;"  value="Log In">
 							
-							<p>Forgotten your password? Enter your e-mail address above and <input class="btn btn-link" type="submit" name="forgotten_password" style="padding:0 0 3px;" value="click here"> to reset it (you will receive an email with a new password).</p>
+							<p>Forgotten your password? Enter your e-mail address above and <input class="btn btn-link" type="submit" name="forgotten_password" style="padding:0 0 3px;" value="click here"> to reset it.</p>
+							
+							<p>Problems with e-mail verification? <a data-toggle="modal" data-dismiss="modal" href="#email_verification_modal">Manually enter code</a>.</p>
 							
 							<div class="modal-footer">
+								<small class="help-block pull-left">Labrador uses cookies. <a href="http://www.whatarecookies.com/enable.asp" target="_blank">Click here for more info</a>.</small>
 								<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 								<input type="submit" class="btn btn-success" name="login_submit" id="login_submit"  value="Log In">
 							</div>
 						</form>
 					</div>
 					<div class="tab-pane" id="register_tabpane">
-						<form class="form-horizontal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+						<form class="form-horizontal" action="<?php echo $url; ?>" method="post">
 							<div class="control-group">
 								<label class="control-label" for="register_firstName">First Name</label>
 								<div class="controls">
@@ -123,6 +131,12 @@ function labrador_login_modal() {
 									<input type="password" name="register_password" id="register_password">
 								</div>
 							</div>
+							<div class="control-group">
+								<label class="control-label" for="register_password_confirm">Confirm Password</label>
+								<div class="controls">
+									<input type="password" name="register_password_confirm" id="register_password_confirm">
+								</div>
+							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 								<input type="submit" class="btn btn-success" name="register_submit" id="register_submit" value="Register">
@@ -131,6 +145,35 @@ function labrador_login_modal() {
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	
+	<!-- E-mail Verification Modal -->
+	<div id="email_verification_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="email_verification_modal_label" aria-hidden="true">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3 id="email_verification_modal_label">Verify E-mail Address</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" action="index.php" method="get">
+				<input type="hidden" name="a" value="verify">
+				<div class="control-group">
+					<label class="control-label" for="verify_email">E-mail Address</label>
+					<div class="controls">
+						<input type="email" name="email" id="verify_email">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="verify_code">Verification Code</label>
+					<div class="controls">
+						<input type="text" name="vstr" id="verify_code">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+					<input type="submit" class="btn btn-success" id="verify_code_submit"  value="Verify E-mail Address">
+				</div>
+			</form>
 		</div>
 	</div>
 
@@ -142,7 +185,7 @@ function labrador_login_modal() {
 			<h3 id="change_password_modal_label">Change Password</h3>
 		</div>
 		<div class="modal-body">
-			<form class="form-horizontal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+			<form class="form-horizontal" action="<?php echo $url; ?>" method="post">
 				<div class="control-group">
 					<label class="control-label" for="login_password">Current Password</label>
 					<div class="controls">
@@ -195,7 +238,7 @@ function cookie_login(&$user, &$msg, $email, $authstring){
 	global $admin;
 	$admin = false;
 	
-	$sql = sprintf("SELECT * FROM `users` WHERE `email` = '%s' AND `authstring` = '%s'",
+	$sql = sprintf("SELECT * FROM `users` WHERE `email` = '%s' AND `authstring` = '%s' AND `verify` = ''",
 						mysql_real_escape_string($email),
 						mysql_real_escape_string($authstring));
 	$user_q = mysql_query($sql);
@@ -228,24 +271,30 @@ if (!$user && isset($_POST['login_submit']) && $_POST['login_submit'] == 'Log In
 			$msg[] = 'E-mail address or password incorrect.';
 		} else {
 			$user = mysql_fetch_array($login_q);
-			if (crypt($_POST['login_password'], $user['password']) == $user['password']) {
-				$authstring = bin2hex(openssl_random_pseudo_bytes(128));
-				if(!mysql_query("UPDATE `users` SET `authstring` = '$authstring', `last_login` = '".time()."' WHERE `id` = '".$user['id']."'")){
-					$error = true;
-					$msg[] = "Couldn't update authstring: ".mysql_error();
-				} else {
-					$msg[] = '<strong>Logged In.</strong> Hi there '.$user['firstname'];
-					// Cookie lasts a week
-					setcookie("email", $user['email'], time()+3600*24*7);
-					setcookie("authstring", $authstring, time()+3600*24*7);
-					// Is admin?
-					if(is_admin()){
-						$admin = true;
+			if($user['verification'] == ''){
+				if (crypt($_POST['login_password'], $user['password']) == $user['password']) {
+					$authstring = bin2hex(openssl_random_pseudo_bytes(128));
+					if(!mysql_query("UPDATE `users` SET `authstring` = '$authstring', `last_login` = '".time()."' WHERE `id` = '".$user['id']."'")){
+						$error = true;
+						$msg[] = "Couldn't update authstring: ".mysql_error();
+					} else {
+						$msg[] = '<strong>Logged In.</strong> Hi there '.$user['firstname'];
+						// Cookie lasts a week
+						setcookie("email", $user['email'], time()+3600*24*7);
+						setcookie("authstring", $authstring, time()+3600*24*7);
+						// Is admin?
+						if(is_admin()){
+							$admin = true;
+						}
 					}
+				} else {
+					$error = true;
+					$msg[] = 'E-mail address or password incorrect';
+					$user = false;
 				}
 			} else {
 				$error = true;
-				$msg[] = 'E-mail address or password incorrect';
+				$msg[] = 'You need to verify your e-mail address before you can log in.';
 				$user = false;
 			}
 		}
@@ -259,7 +308,7 @@ if (!$user && isset($_POST['login_submit']) && $_POST['login_submit'] == 'Log In
 //////////////////////////
 // USER LOG OUT
 //////////////////////////
-if($user && isset($_GET['a']) && $_GET['a'] == 'logout'){
+if($user && isset($_GET['a']) && $_GET['a'] == 'logout' && !isset($_POST['login_submit'])){
 	setcookie ("email", "", time() - 3600);
 	setcookie ("authstring", "", time() - 3600);
 	$user = false;
@@ -281,6 +330,11 @@ if(!$user && isset($_POST['register_submit']) && $_POST['register_submit'] == 'R
 	$salt = '$6$rounds=5000$' . uniqid();
 	$password = crypt($_POST['register_password'], $salt);
 	$authstring = bin2hex(openssl_random_pseudo_bytes(128));
+	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$verificationString = '';
+	for ($i = 0; $i < 8; $i++) {
+	    $verificationString .= $characters[rand(0, strlen($characters) - 1)];
+	}
 	
 	$error = false;
 	if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
@@ -296,28 +350,39 @@ if(!$user && isset($_POST['register_submit']) && $_POST['register_submit'] == 'R
 		$msg[] = 'Password must be at least 6 characters.';
 		$error = true;
 	}
+	if($_POST['register_password'] != $_POST['register_password_confirm']){
+		$msg[] = 'The two passwords you typed did not match.';
+		$error = true;
+	}
 	if(strlen($firstname) < 2 || strlen($surname) < 2 || strlen($email) < 4){
 		$msg[] = 'Name and e-mail address are mandatory.';
 		$error = true;
 	}
 	
 	if(!$error){
-		if(mysql_query(sprintf("INSERT INTO `users` (`email`, `firstname`, `surname`, `group`, `password`, `authstring`, `registered`, `last_login`)
-		 				VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d')",
+		
+		if(mysql_query(sprintf("INSERT INTO `users` (`email`, `firstname`, `surname`, `group`, `password`, `authstring`, `verification`, `registered`, `last_login`)
+		 				VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d')",
 						mysql_real_escape_string($email),
 						mysql_real_escape_string($firstname),
 						mysql_real_escape_string($surname),
 						mysql_real_escape_string($group),
 						mysql_real_escape_string($password),
 						mysql_real_escape_string($authstring),
+						mysql_real_escape_string($verificationString),
 						time(),
 						time() ) ) ){
-			$msg[] = "<strong>Success!</strong> You are now registered and logged in.";
+			$msg[] = "<strong>Success!</strong> You are now registered. Please check your inbox to verify your e-mail address.";
 			mail($_POST['register_email'], '[Labrador] Registration', "Hi $firstname,
 
 You have successfully registered on the Labrador website: $labrador_url
 
-You can now log in with your registered e-mail address ($email) and the password that you just set.
+Before you can use the site, you need to confirm your e-mail address. Please open the following link to do so:
+$labrador_url?a=verify&email=$email&vstr=$verificationString
+
+Alternatively, you can click 'Verify E-mail' in the login window and enter the code $verificationString
+
+You will then be able to log in with your registered e-mail address ($email) and the password that you just set.
 			
 If you have any queries, please e-mail $support_email
 
@@ -325,16 +390,43 @@ If you have any queries, please e-mail $support_email
 This is an automated e-mail sent from Labrador
 $labrador_url
 ", $email_headers);
-			// Cookie lasts a week
-			setcookie("email", $email, time()+3600*24*7);
-			setcookie("authstring", $authstring, time()+3600*24*7);
-			cookie_login($user, $msg, $email, $authstring);
 		} else {
 			$error = true;
 			$msg[] = "Couldn't save registration to database: ".mysql_error();
 		}
 	}
 }
+
+
+//////////////////////////
+// VERIFY E-MAIL ADDRESS
+//////////////////////////
+if(!$user && $_GET['a'] == 'verify' && isset($_GET['email']) && isset($_GET['vstr'])){
+	$login_q = mysql_query(sprintf("SELECT * FROM `users` WHERE `email` = '%s'", mysql_real_escape_string($_GET['email'])));
+	if(mysql_num_rows($login_q) !== 1){
+		$error = true;
+		$msg[] = 'E-mail address for verification not found.';
+	} else {
+		$user_verification = mysql_fetch_array($login_q);
+		if($user_verification['verification'] == ''){
+			$error = true;
+			$msg[] = "This account has already had it's e-mail address verified.";
+		} else {
+			if($user_verification['verification'] == $_GET['vstr']){
+				if(!mysql_query("UPDATE `users` SET `verification` = '' WHERE `id` = '".$user_verification['id']."'")){
+					$error = true;
+					$msg[] = "Couldn't update verification string: ".mysql_error();
+				} else {
+					$msg[] = '<strong>E-mail address verified.</strong> Thanks! You can now <a data-toggle="modal" href="#register_modal">Log In</a>.';
+				}
+			} else {
+				$error = true;
+				$msg[] = "E-mail address verification code incorrect.";
+			}
+		}
+	}
+}
+
 
 
 //////////////////////////

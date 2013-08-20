@@ -12,7 +12,7 @@ function resizeSearch() {
 	});
 	width += $('.navbar-text').width();
 	var total_width = $('.navbar .container-fluid').width();
-	var searchWidth = total_width - width - 50;
+	var searchWidth = total_width - width - 70;
 	$('.navbar .navbar-search').css('width', searchWidth + 'px');
 	$('.navbar .navbar-search').css('width', searchWidth + 'px');
 	$('.navbar .navbar-search .search-query').css('width', searchWidth - 100 + 'px');

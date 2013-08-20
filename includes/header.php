@@ -47,3 +47,12 @@
 	</div>
 
     <div class="container-fluid">
+		<noscript>
+			<div id="no_javascript" class="container alert alert-error">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<h4>Javascript is not enabled!</h4>
+				Warning - Labrador uses Javascript which is currently disabled in your browser.
+				Many parts of Labrador will not work without Javascript.
+				You can find instructions on how to enable Javascript <a href="http://www.enable-javascript.com/" target="_blank">here</a>.
+			</div>
+		</noscript>

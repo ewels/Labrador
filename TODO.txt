@@ -2,13 +2,15 @@
    TO DO - Labrador
 =====================
 
+0. Check for existing project ID on datasets page etc.
+
 1. Make search work
 
 2. Tidy Up Processing
 	* Delete individual steps rather than just the final one
 	* Buttons to move steps up and down in order
 
-3. Make sure that form inputs aren't being lost when we have errors
+3. Make sure that form inputs aren't being lo st when we have errors
 
 4. Look up missing data in Datasets edit page from existing accessions..
 	* Have a tick box to allow overwriting?
