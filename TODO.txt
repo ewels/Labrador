@@ -2,8 +2,6 @@
    TO DO - Labrador
 =====================
 
-1. Make search work
-
 2. Tidy Up Processing
 	* Delete individual steps rather than just the final one
 	* Buttons to move steps up and down in order
