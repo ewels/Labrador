@@ -7,12 +7,12 @@
 *
 */
 
-$labrador_url = 'http://bilin1/labrador_dev/';
+$labrador_url = 'http://bilin1/labrador/';
 $data_root = '/data/pipeline/new_public/TIDIED/';
 $support_email = 'babraham.bioinformatics@babraham.ac.uk';
 
 
-$db_database = 'labrador_dev';
+$db_database = 'labrador';
 $db_user = 'labrador';
 $db_password = false;
 $db_host = 'localhost';
@@ -33,7 +33,8 @@ $groups = array(
 	'Anne Corcoran' => 'Corcoran',
 	'Jon Houseley' => 'Houseley',
 	'Gavin Kelsey' => 'Kelsey',
-	'Sarah Elderkin' => 'Elderkin'
+	'Sarah Elderkin' => 'Elderkin',
+	'Bioinformatics' => 'Bioinformatics'
 );
 
 

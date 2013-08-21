@@ -25,22 +25,16 @@ ALTER TABLE `projects` ADD `accession_ddjb` VARCHAR(50) AFTER `accession_ena`;
 
 ALTER TABLE `projects` ADD `contact_name` VARCHAR(250) AFTER `accession_ddjb`;
 ALTER TABLE `projects` CHANGE `requested_by` `contact_email` VARCHAR(250);
-ALTER TABLE `projects` DROP `processed_by`;
 ALTER TABLE `projects` ADD `contact_group` VARCHAR(250) AFTER `contact_email`;
 ALTER TABLE `projects` ADD `created` INT(12) AFTER `contact_group`;
 ALTER TABLE `projects` CHANGE `last_modified` `modified` INT(12);
 
-ALTER TABLE `projects` ADD `assigned_to` VARCHAR(250) AFTER `contact_group`;
+ALTER TABLE `projects` CHANGE `processed_by` `assigned_to` VARCHAR(250);
 ALTER TABLE `projects` ADD `status` VARCHAR(250) DEFAULT 'Not Started' AFTER `assigned_to`;
 
-ALTER TABLE `projects` ADD `title` VARCHAR(250) AFTER `name`;
+ALTER TABLE `projects` ADD `title` TEXT AFTER `name`;
 ALTER TABLE `projects` ADD `description` TEXT AFTER `title`;
 
-
-ALTER TABLE `projects` CHANGE `notes` `description` TEXT;
-ALTER TABLE `projects` ADD `notes` TEXT AFTER `contact_group`;
-update `projects` SET `notes` = `description`;
-alter table `projects` drop `description`;
 
 ALTER TABLE `datasets` CHANGE `paper_id` `project_id` INT(12);
 ALTER TABLE `datasets` CHANGE `geo_accession` `accession_geo` VARCHAR(250);
@@ -60,3 +54,6 @@ DROP TABLE `files_raw`;
 DROP TABLE `files_aligned`;
 DROP TABLE `files_derived`;
 
+ALTER TABLE `projects` CHANGE `status` `status` VARCHAR(250) after `description`;
+ALTER TABLE `projects` CHANGE `notes` `notes` TEXT after `status`;
+ALTER TABLE `projects` CHANGE `created` `created` INT(12) after `assigned_to`;
