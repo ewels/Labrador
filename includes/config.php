@@ -38,6 +38,10 @@ $groups = array(
 );
 
 
+$homepage_title = 'Labrador Dataset Browser';
+$homepage_subtitle = 'A database of datasets processed by the BI Bioinformatics group.';
+
+
 
 //////////////////////
 // DOWNLOADS SETTINGS
@@ -230,6 +234,7 @@ $processing_codes = array(
 $report_types = array(
 	'fastqc' => 'FastQC Reports',
 	'fastq_screen' => 'FastQ Screen',
+	'bowtie' => 'Bowtie Reports',
 	'alignment_overview' => 'Bismark Alignment Overview Plots',
 	'm_bias' => 'Bismark M-Bias Reports',
 	'ditag_classification' => 'HiCUP Di-Tag Analysis',
@@ -244,7 +249,10 @@ function report_match ($file, $type) {
 			
 		case 'fastq_screen':
 			return substr($file, -11) ==  '_screen.png';
-			
+		
+		case 'bowtie':
+			return (stripos(basename($file), 'bowtie') || stripos(basename($file), 'alignment')) && (substr($file, -4) ==  '.out' || substr($file, -4) ==  '.log');
+
 		case 'alignment_overview':
 			return substr($file, -23) == '.alignment_overview.png';
 			
@@ -271,6 +279,9 @@ function report_naming ($path, $type) {
 		case 'fastq_screen':
 			return substr(basename($path),0, -11);
 			
+		case 'bowtie':
+			return substr(basename($path),0,-4);
+
 		case 'alignment_overview':
 			return substr(basename($path),0, -23);
 			

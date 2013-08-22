@@ -18,7 +18,7 @@ include('includes/header.php');
 		</div>
 		<?php endif; ?>
 				
-       	<h1>Labrador Dataset Browser <small>A database of datasets processed by the BI Bioinformatics group.</small></h1>
+       	<h1><?php echo $homepage_title; ?><small><?php echo $homepage_subtitle; ?></small></h1>
 	
 		<img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
 		<p class="lead">You can use labrador to find and download existing data or request new datasets.
