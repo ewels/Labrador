@@ -73,11 +73,17 @@ include('includes/header.php');
 		You can filter the visible data using the tools on the left.
 		If you're looking for something really specific, try the search bar at the top of the page.</p>
 		
-		<p><strong>Key:</strong>
-			<span class="homepage_key"></span> Processing Complete
-			<span class="homepage_key info"></span> Currently Processing 
-			<span class="homepage_key error"></span> Not Started 
-			<span class="homepage_key warning"></span> Directory not found
+		<p id="filter_status_bar"><strong>Key:</strong>
+		
+			<input type="checkbox" name="filter_status" id="filter_status_pc" value="Processing Complete" checked="checked">
+			<input type="checkbox" name="filter_status" id="filter_status_cp" value="Currently Processing" checked="checked">
+			<input type="checkbox" name="filter_status" id="filter_status_ns" value="Not Started" checked="checked">
+			<input type="checkbox" name="filter_status" id="filter_status_nf" value="Directory not found" checked="checked">
+			
+			<label for="filter_status_pc" class="checked"><span></span> Processing Complete</label>
+			<label for="filter_status_cp" class="checked"><span class=" info"></span> Currently Processing</label>
+			<label for="filter_status_ns" class="checked"><span class=" error"></span> Not Started</label>
+			<label for="filter_status_nf" class="checked"><span class=" warning"></span> Directory not found</label>
 		</p>
 		
 		<table id="paper-browser-table" class="table table-hover table-condensed table-bordered sortable">
@@ -91,7 +97,15 @@ include('includes/header.php');
 				</tr>
 			</thead>
 			<tbody>
-			<?php $projects = mysql_query("SELECT * FROM `projects` ORDER BY `name`");
+			<?php 
+			$sql = "SELECT * FROM `projects`";
+			if(isset($_GET['my_projects'])){
+				$sql .= " WHERE `contact_email` = '".$user['email']."'";
+			} else if(isset($_GET['assigned_projects'])){
+				$sql .= " WHERE `assigned_to` = '".$user['email']."'";
+			}
+			$sql .=  " ORDER BY `name`";
+			$projects = mysql_query($sql);
 			if(mysql_num_rows($projects) > 0){
 				while($project = mysql_fetch_array($projects)){
 					
@@ -128,7 +142,7 @@ include('includes/header.php');
 						}
 					}
 					?>
-					<tr id="project_<?php echo $project['id']; ?>" class="project <?php
+					<tr id="project_<?php echo $project['id']; ?>" data-status="<?php echo $project['status']; ?>" class="project <?php
 						if($project['status'] == 'Not Started'){
 							echo "error";
 						} else if($project['status'] == 'Currently Processing'){

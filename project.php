@@ -41,21 +41,30 @@ if($project_id){
 	}
 }
 
+if(isset($_GET['edit']) && is_numeric($_GET['edit']) && $user['email'] == $project['contact_email']){
+	$edit = true;
+	$new_project = false;
+}
+
 ///////
 // SAVE SUBMITTED FORM
 ///////
-if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
-
+if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
+	
+	if(!isset($project_id) || !is_numeric($project_id)){
+		$new_project = true;
+	} else {
+		$new_project = false;
+	}
+	
 	// Collect and validate the submitted input
 	$error = false;
 	$msg = array();
 	$values = array (
 		"name" => preg_replace("/[^A-Za-z0-9_]/", '_', $_POST['name']),
-		"status" => isset($_POST['status']) ? $_POST['status'] : '',
-		"assigned_to" => isset($_POST['assigned_to']) ? filter_var($_POST['assigned_to'], FILTER_SANITIZE_EMAIL) : '',
-		"contact_name" => $_POST['contact_name'],
-		"contact_email" => filter_var($_POST['contact_email'], FILTER_SANITIZE_EMAIL),
-		"contact_group" => $_POST['contact_group'],
+		"contact_name" => $user['firstname'].' '.$user['surname'],
+		"contact_email" => $user['email'],
+		"contact_group" => $user['group'],
 		"accession_geo" => $_POST['accession_geo'],
 		"accession_sra" => $_POST['accession_sra'],
 		"accession_ena" => $_POST['accession_ena'],
@@ -64,6 +73,14 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 		"description" => $_POST['description'],
 		"notes" => $_POST['notes']
 	);
+	if($admin){
+		$values["status"] = $_POST['status'];
+		$values["assigned_to"] = filter_var($_POST['assigned_to'], FILTER_SANITIZE_EMAIL);
+		$values["contact_name"] = $_POST['contact_name'];
+		$values["contact_email"] = filter_var($_POST['contact_email'], FILTER_SANITIZE_EMAIL);
+		$values["contact_group"] = $_POST['contact_group'];
+	}
+	
 	if(strlen($values['name']) == 0){
 		$error = true;
 		$msg[] = "Project Identifier cannot be blank";
@@ -71,11 +88,6 @@ if(isset($_POST['save_project']) && $_POST['save_project'] == 'Save Project'){
 	
 	// Passed validation - save project
 	if(!$error){
-		if(!isset($project_id) || !is_numeric($project_id)){
-			$new_project = true;
-		} else {
-			$new_project = false;
-		}
 		if($new_project){
 			$query = "INSERT INTO `projects` (";
 			foreach($values as $id => $var) {
@@ -331,7 +343,7 @@ if(!$new_project and !$edit and !$error){ ?>
 	
 	
 	
-	<?php if(!$new_project && $admin) { ?><a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a><?php } ?>
+	<?php if(!$new_project && ($admin || $user['email'] == $project['contact_email'])) { ?><a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a><?php } ?>
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
 	
@@ -486,7 +498,7 @@ if(!$new_project and !$edit and !$error){ ?>
 // ADD OR EDIT A PROJECT
 ///////
 
-} else {
+} else if($user){
 	
 	$names = array ("Chuck Norris", "Albert Einstein", "Charles Darwin", "George Martin", "Galileo Galilei", "Barack Obama", "Margaret Thatcher",
 					"Jean-Claude Van Damme", "Isaac Newton", "Darth Vader", "William Shatner", "Dolly Parton", "David Hasselhoff", "Mr T", "B. A. Baracus", "MC Hammer",
@@ -776,6 +788,16 @@ if(!$new_project and !$edit and !$error){ ?>
 </div>
 
 <?php } // if($new or $edit or $delete)
+else { // creating / editing but not logged in ?>
+
+<div class="sidebar-mainpage project-mainpage">
+	<div class="alert alert-info">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<div style="text-align:center;">To create or edit a project, please <a data-toggle="modal" href="#register_modal">log in or register</a>.</div>
+	</div>
+</div>
+
+<?php }
 
 include('includes/javascript.php'); ?>
 <script src="js/project.js" type="text/javascript"></script>

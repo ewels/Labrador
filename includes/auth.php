@@ -20,11 +20,16 @@ if(!isset($error)){
 //////////////////////////
 function labrador_login_link() {
 	global $user;
+	global $admin;
 	if($user) {
 		?>
 		<li class="dropdown authlink">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as <?php echo $user['firstname'].' '.$user['surname']; ?> <b class="caret"></b></a>
 			<ul class="dropdown-menu">
+				<li><a href="index.php?my_projects">My Projects</a></li>
+			<?php if($admin){ ?>
+				<li><a href="index.php?assigned_projects">Assigned To Me</a></li>
+			<?php } ?>
 				<li><a data-toggle="modal" href="#change_password_modal">Change Password</a></li>
 				<li><a href="index.php?a=logout">Log Out</a></li>
 			</ul>

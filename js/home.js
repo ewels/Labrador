@@ -13,6 +13,20 @@ $('#paper-browser-table tr td').click(function(e){
 //////////
 // FILTER LIST FUNCTIONS
 //////////
+
+// Status checkboxes
+$('#filter_status_bar label').click(function(e){
+	var id = $(this).attr('for');
+	if($('#'+id).is(':checked')){
+		$(this).removeClass('checked');
+	} else {
+		$(this).addClass('checked');
+	}
+});
+$('#filter_status_bar input').change(function(){
+	updateFilters();
+});
+
 $('.nav-list.filters li a').click(function(e){
 	e.preventDefault();
 	if($(this).parent().hasClass('active')){
@@ -99,7 +113,20 @@ function updateFilters() {
 		}
 	});
 	
-	// Show "no datasets message" if we've hidden everythign
+	$.each($('#paper-browser-table tbody tr:visible'), function() {
+		var hideRow = false;
+		var status = $(this).data('status');
+		$('input[name=filter_status]:not(:checked)').each(function(){
+			if($(this).val() == status){
+				hideRow = true;
+			}
+		});
+		if(hideRow){
+			$(this).hide();
+		}
+	});
+	
+	// Show "no datasets message" if we've hidden everything
 	if($('#paper-browser-table tbody tr:visible').length == 0){
 		$('#no_datasets').show();
 	} else {
