@@ -78,7 +78,7 @@ include('includes/header.php');
 			<input type="checkbox" name="filter_status" id="filter_status_pc" value="Processing Complete" checked="checked">
 			<input type="checkbox" name="filter_status" id="filter_status_cp" value="Currently Processing" checked="checked">
 			<input type="checkbox" name="filter_status" id="filter_status_ns" value="Not Started" checked="checked">
-			<input type="checkbox" name="filter_status" id="filter_status_nf" value="Directory not found" checked="checked">
+			<input type="checkbox" name="filter_status" id="filter_status_nf" value="Directory Not Found" checked="checked">
 			
 			<label for="filter_status_pc" class="checked"><span></span> Processing Complete</label>
 			<label for="filter_status_cp" class="checked"><span class=" info"></span> Currently Processing</label>
@@ -114,6 +114,7 @@ include('includes/header.php');
 						$file_exists = true;
 					} else {
 						$file_exists = false;
+						$project['status'] = 'Directory Not Found';
 					}
 					
 					// Find papers

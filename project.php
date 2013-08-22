@@ -10,7 +10,7 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$new_project = true;
 }
 
-if(isset($_GET['edit']) && is_numeric($_GET['edit']) && $admin){
+if(isset($_GET['edit']) && is_numeric($_GET['edit'])){
 	$edit = true;
 	$new_project = false;
 	$project_id = $_GET['edit'];
@@ -41,9 +41,10 @@ if($project_id){
 	}
 }
 
-if(isset($_GET['edit']) && is_numeric($_GET['edit']) && $user['email'] == $project['contact_email']){
-	$edit = true;
+if(isset($_GET['edit']) && is_numeric($_GET['edit']) && !$admin && $user['email'] != $project['contact_email']){
 	$new_project = false;
+	$edit = false;
+	header("Location: index.php");
 }
 
 ///////
@@ -62,9 +63,6 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 	$msg = array();
 	$values = array (
 		"name" => preg_replace("/[^A-Za-z0-9_]/", '_', $_POST['name']),
-		"contact_name" => $user['firstname'].' '.$user['surname'],
-		"contact_email" => $user['email'],
-		"contact_group" => $user['group'],
 		"accession_geo" => $_POST['accession_geo'],
 		"accession_sra" => $_POST['accession_sra'],
 		"accession_ena" => $_POST['accession_ena'],
@@ -79,6 +77,10 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 		$values["contact_name"] = $_POST['contact_name'];
 		$values["contact_email"] = filter_var($_POST['contact_email'], FILTER_SANITIZE_EMAIL);
 		$values["contact_group"] = $_POST['contact_group'];
+	} else {
+		$values["contact_name"] = $user['firstname'].' '.$user['surname'];
+		$values["contact_email"] = $user['email'];
+		$values["contact_group"] = $user['group'];
 	}
 	
 	if(strlen($values['name']) == 0){
@@ -184,7 +186,7 @@ If you have any queries, please e-mail $support_email
 This is an automated e-mail sent from Labrador
 $labrador_url
 ", $email_headers);
-					} else {
+					} else if($admin) {
 						mail($project_array['contact_email'], '[Labrador] Project '.$project_array['name'].' Updated', "Hi there,
 
 The project ".$project_array['name']." has just been updated on Labrador. Its status is now '".$project_array['status']."'
@@ -595,11 +597,10 @@ if(!$new_project and !$edit and !$error){ ?>
 			<p><input type="text" id="name" name="name" maxlength="255" required placeholder="Surname_<?php echo date("Y"); ?>" value="<?php echo $values['name']; ?>"></p>
 			<p>All of the remaining fields are optional.</p>
 		</fieldset>
-		
+
+	<?php if($admin){ ?>		
 		<fieldset id="project_status_fieldset">
 			<legend>Project Contacts</legend>
-		
-		<?php if($admin){ ?>
 			<div class="control-group">
 				<label class="control-label" for="assigned_to">Assigned To</label>
 				<div class="controls">
@@ -621,7 +622,6 @@ if(!$new_project and !$edit and !$error){ ?>
 					</select>
 				</div>
 			</div>
-		<?php } ?>
 			
 			<div class="control-group ">
 				<label class="control-label" for="contact_name">Primary Contact</label>
@@ -648,6 +648,7 @@ if(!$new_project and !$edit and !$error){ ?>
 				</div>
 			</div>
 		</fieldset>
+	<?php } // if is admin ?>
 		
 		<fieldset id="project_accessions_fieldset">
 			<legend>Accessions</legend>
