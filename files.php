@@ -97,6 +97,7 @@ include('includes/header.php'); ?>
 		<div class="well">
 			<h3>Files Page</h3>
 			<p>You can use this page to download data from the Bioinformatics server to your computer.</p>
+			<p>File size and Genome is dynamically generated from the files themselves - BAM/SAM and SeqMonk files record the genome that they use within their file headers, which is extracted below.</p>
 			<p>Files within the project directory will be matched up to datasets, those associated with the datasets selected on the previous page will be shown below, along with any not matched to a dataset.
 			You can filter the table for files with extensions commonly used for Aligned data, Raw data, Processing Reports and everything else. You can also use the text box to filter the file names. The table can be sorted by column heading.</p>
 			<p>There are two ways to download files: either <strong>click the file name</strong> to download the file through your browser, or select the files you wish to download and press <strong>Download Checked Files With Java Applet</strong>.

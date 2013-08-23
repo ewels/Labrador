@@ -253,7 +253,6 @@ function saveBashScript (){
 	var project_id = $('#project_id').val();
 	$.post('ajax/write_bash.php', {'output': output, 'project_id': project_id, 'server': server},  function(data){
 		alert(data);
-		window.location.href = 'processing.php?id=' + project_id;
 	});
 }
 

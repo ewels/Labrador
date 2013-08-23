@@ -14,6 +14,23 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	header("Location: index.php");
 }
 
+if($admin && isset($_POST['delete_processing'])){
+	$processed_q = mysql_query("SELECT * FROM `processing` WHERE `project_id` = '$project_id'");
+	if(mysql_num_rows($processed_q) > 0){
+		while($processed = mysql_fetch_array($processed_q)){
+			if(isset($_POST['check_'.$processed['id']]) && $_POST['check_'.$processed['id']] == 'on'){
+				if(!mysql_query("DELETE FROM `processing` WHERE `id` = '".$processed['id']."'")){
+					$error = true;
+					$msg[] = 'Could not delete processing record: '.mysql_error();
+				}
+			}
+		}
+		if(!$error){
+			$msg[] = 'Processing records deleted';
+		}
+	}
+}
+
 include('includes/header.php'); ?>
 
 <div class="sidebar-nav">
@@ -41,7 +58,6 @@ include('includes/header.php'); ?>
 <?php if(!isset($_GET['create']) || !$admin) { ?>
 
 <div class="sidebar-mainpage project-mainpage">
-	
 	<?php if(!empty($msg)): ?>
 		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
@@ -69,9 +85,15 @@ include('includes/header.php'); ?>
 	$processed_q = mysql_query($processing_sql);
 	if(mysql_num_rows($processed_q) > 0){
 	?>
+	<?php if($admin) { ?>
+	<form action="processing.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
+	<?php } ?>
 	<table id="show_processing" class="table table-bordered table-condensed table-hover">
 		<thead>
 			<tr>
+			<?php if($admin) { ?>
+				<th class="select"><input type="checkbox" class="select-all"></th>
+			<?php } ?>
 				<th style="width:20%;">Dataset Name</th>
 				<th style="width:10%;">Date Saved</th>
 				<th>Processing Code</th>
@@ -83,6 +105,9 @@ include('includes/header.php'); ?>
 			$dataset = mysql_fetch_array($dataset_q);
 			?>
 			<tr>
+			<?php if($admin) { ?>
+				<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $processed['id']; ?>" name="check_<?php echo $processed['id']; ?>"></td>
+			<?php } ?>
 				<td><?php echo $dataset['name']; ?></td>
 				<td><?php echo date('H:i, jS M Y', $processed['created']); ?></td>
 				<td><pre><?php echo substr($processed['commands'], 0, 150); 
@@ -93,10 +118,16 @@ include('includes/header.php'); ?>
 		<?php } // while $processed ?>
 		</tbody>
 	</table>
+	<?php if($admin) { ?>
+		<div class="form-actions">
+			<a class="btn btn-large btn-primary" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a> &nbsp; 
+			<input type="submit" class="btn btn-large btn-danger" name="delete_processing" value="Delete Checked Processing Records">
+		</div>
+	</form>	
+	<?php } ?>
 	<?php } else { ?>
 	<p><em>No processing records found.</em></p>
-	<?php } ?>
-	
+	<?php } ?>	
 </div>
 
 <?php } else { // isset($_GET['create'] ?>
