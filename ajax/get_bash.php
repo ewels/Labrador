@@ -28,34 +28,37 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 		$assigned_email = $project['assigned_to'];
 		
 		foreach($sras as $sra){
-			$fn = $sra."_".$dataset_fn;
-			$sra_url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/SRR/".substr($sra,0,6)."/".$sra."/".$sra.".sra -O ".$fn.".sra";
-			
-			$output = $_POST['template'];
-			
-			$patterns = array(
-				'/{{fn}}/',
-				'/{{sra}}/',
-				'/{{sra_url}}/',
-				'/{{genome_path}}/',
-				'/{{contact_email}}/',
-				'/{{assigned_email}}/',
-				'/{{dataset}}/',
-				'/{{project}}/',
-				'/{{time}}/'
-			);
-			$replacements = array(
-				$fn,
-				$sra,
-				$sra_url,
-				$genomes[$_POST['genome']][$_POST['server']],
-				$contact_email,
-				$assigned_email,
-				$dataset['name'],
-				$project['name'],
-				date('H:i, l \t\h\e jS F Y')
-			);
-			$printout .= preg_replace($patterns, $replacements, $output);
+			$sra = trim($sra);
+			if(strlen($sra) > 0){
+				$fn = $sra."_".$dataset_fn;
+				$sra_url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/SRR/".substr($sra,0,6)."/".$sra."/".$sra.".sra -O ".$fn.".sra";
+				
+				$output = $_POST['template'];
+				
+				$patterns = array(
+					'/{{fn}}/',
+					'/{{sra}}/',
+					'/{{sra_url}}/',
+					'/{{genome_path}}/',
+					'/{{contact_email}}/',
+					'/{{assigned_email}}/',
+					'/{{dataset}}/',
+					'/{{project}}/',
+					'/{{time}}/'
+				);
+				$replacements = array(
+					$fn,
+					$sra,
+					$sra_url,
+					$genomes[$_POST['genome']][$_POST['server']],
+					$contact_email,
+					$assigned_email,
+					$dataset['name'],
+					$project['name'],
+					date('H:i, l \t\h\e jS F Y')
+				);
+				$printout .= preg_replace($patterns, $replacements, $output);
+			}
 		}
 	}
 	
