@@ -47,6 +47,19 @@ $homepage_subtitle = 'A database of datasets processed by the BI Bioinformatics 
 // DOWNLOADS SETTINGS
 //////////////////////
 
+$project_filename_filters = array(
+	'.smk',
+	'.smk.gz'
+);
+
+$aligned_filename_filters = array(
+	'.bam',
+	'.sam',
+	'.bowtie',
+	'.bowtie.gz',
+	'.txt.gz'
+);
+
 $raw_filename_filters = array(
 	'.fastq',
 	'.fastq.gz',
@@ -55,15 +68,6 @@ $raw_filename_filters = array(
 	'.sra'
 );
 
-$aligned_filename_filters = array(
-	'.bam',
-	'.sam',
-	'.bowtie',
-	'.bowtie.gz',
-	'.txt.gz',
-	'.smk',
-	'.smk.gz'
-);
 
 $reports_filename_filters = array(
 	'.log',

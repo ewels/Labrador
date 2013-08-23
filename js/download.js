@@ -5,6 +5,11 @@
 
 // Filter downloads by type
 // Takes search needles from PHP printed variables in download.php
+$('#filter_projects').click(function(e){
+	e.preventDefault();
+	$(this).toggleClass('active');
+	filter_downloads();
+});
 $('#filter_raw').click(function(e){
 	e.preventDefault();
 	$(this).toggleClass('active');
@@ -31,6 +36,7 @@ $('.filter_text').keyup(function(e){
 
 function filter_downloads () {
 	if(!$('#filter_raw').hasClass('active') && 
+			!$('#filter_projects').hasClass('active') && 
 			!$('#filter_aligned').hasClass('active') && 
 			!$('#filter_reports').hasClass('active') && 
 			!$('#filter_other').hasClass('active') &&
@@ -38,6 +44,17 @@ function filter_downloads () {
 		$('.download_table tbody tr').show();
 	} else {
 		$('.download_table tbody tr').hide();
+		if($('#filter_projects').hasClass('active')){
+			$.each(project_filename_filters, function(index, filterText){
+				$('.download_table tbody tr td.path').filter(function(i){
+					if($(this).text().substr(filterText.length * -1) == filterText){
+						return true;
+					} else {
+						return false;
+					}
+				}).parent().show();
+			});
+		}
 		if($('#filter_raw').hasClass('active')){
 			$.each(raw_filename_filters, function(index, filterText){
 				$('.download_table tbody tr td.path').filter(function(i){

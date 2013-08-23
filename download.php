@@ -106,6 +106,7 @@ include('includes/header.php'); ?>
 			<input type="submit" name="java_download_paths" class="btn btn-primary pull-right" value="Download Checked Files With Java Applet">
 			Filter downloads: &nbsp; 
 			<div class="btn-group">
+				<button class="btn" id="filter_projects">Projects</button>
 				<button class="btn" id="filter_aligned">Aligned</button>
 				<button class="btn" id="filter_raw">Raw</button>
 				<button class="btn" id="filter_reports">Reports</button>
@@ -190,12 +191,45 @@ include('includes/header.php'); ?>
 				<tr>
 					<th class="select" style="width:20px;"><input type="checkbox" class="select-all"></th>
 					<th data-sort="string-ins" style="width:30%;">Dataset Name</th>
-					<th data-sort="int">File Size</th>
+					<th data-sort="int" style="width:10%;">File Size</th>
+					<th data-sort="string-ins" style="width:15%;">Genome</th>
 					<th data-sort="string-ins">Filename</th>
 				</tr>
 			</thead>
 			<tbody>
-			<?php $j = 0;
+			<?php
+			function find_genome($path){
+				$genome = '';
+				// Find genome from BAM or SAM files
+				if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
+					$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+					$bam_headers = explode("\n", $bam_header);
+					foreach($bam_headers as $header){
+						if(stripos($header, 'Genomes/')){
+							$genomes = explode(" ", substr($header, stripos($header, 'Genomes/') + 8));
+							$genomes2 = split("/", $genomes[0]);
+							$genome = $genomes2[0].'/'.$genomes2[1];
+						}
+					}
+				}
+				// Find genome from SeqMonk projects
+				if(substr($path, -4) == '.smk' || substr($path, -7) == '.smk.gq'){
+					$type = shell_exec (escapeshellcmd ('file '.$path));
+					$types = explode(": ", $type);
+					$type = $types[1];
+					if(substr($type,0,4) == 'gzip'){
+						$header = shell_exec ('zcat '.$path.' | head');
+					} else {
+						$header = shell_exec (escapeshellcmd ('head '.$path));
+					}
+					$headers = explode("\n", $header);
+					$genomes = explode("\t", $headers[1]);
+					$genome = $genomes[1].' - '.$genomes[2];
+				}
+				return $genome;
+			}
+			
+			$j = 0;
 			foreach($datasets as $dataset){
 				if($checked == 0 || $dataset['checked']){
 					$paths = $dataset['paths'];
@@ -207,6 +241,7 @@ include('includes/header.php'); ?>
 						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
 						<td><?php echo $dataset['name']; ?></td>
 						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
+						<td><?php echo find_genome($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
 					</tr>
 			<?php } // if checked
@@ -220,6 +255,7 @@ include('includes/header.php'); ?>
 					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
 					<td><em>Not matched to any datasets</em></td>
 					<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
+					<td><?php echo find_genome($raw_path); ?></td>
 					<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
 				</tr>
 			<?php } // foreach orhpans ?></tbody>
@@ -237,6 +273,7 @@ include('includes/header.php'); ?>
 
 <?php include('includes/javascript.php'); ?>
 <script type="text/javascript">
+	var project_filename_filters = new Array("<?php echo implode('", "', $project_filename_filters); ?>");
 	var raw_filename_filters = new Array("<?php echo implode('", "', $raw_filename_filters); ?>");
 	var aligned_filename_filters = new Array("<?php echo implode('", "', $aligned_filename_filters); ?>");
 	var reports_filename_filters = new Array("<?php echo implode('", "', $reports_filename_filters); ?>");
