@@ -174,6 +174,9 @@ include('includes/header.php'); ?>
 			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
 		</li>
 		<li>
+			<a href="files.php?id=<?php echo $project_id; ?>">Files</a>
+		</li>
+		<li>
 			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
 		</li>
 		<li>
@@ -221,43 +224,35 @@ include('includes/header.php'); ?>
 	if(mysql_num_rows($datasets) > 0){
 	?>
 
-		<form class="form-horizontal" action="download.php?id=<?php echo $project_id; ?>" method="post">
-			<input type="submit" name="download_datasets" class="btn pull-right" value="Download Checked Datasets">
-			<p style="margin-bottom:20px;"><label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label></p>
-			<table id="existing_datasets_table" class="table table-bordered table-condensed table-hover sortable">
-				<thead>
-					<tr>
-						<th class="select"><input type="checkbox" class="select-all"></th>
-						<th data-sort="string-ins">Name</th>
-						<th data-sort="string-ins">Species</th>
-						<th data-sort="string-ins">Cell Type</th>
-						<th data-sort="string-ins">Data Type</th>
-						<th style="width:20%;">Accession Codes</th>
-					</tr>
-				</thead>
-				<tbody>
-			<?php while ($dataset = mysql_fetch_array($datasets)){ ?>
-					<tr>
-						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $dataset['id']; ?>" name="check_<?php echo $dataset['id']; ?>"></td>
-						<td><label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
-						<?php if(!empty($dataset['notes'])) { ?>
-							<i class="icon-tag pull-right" title="<?php echo $dataset['notes']; ?>"></i>
-						<?php } ?></td>
-						<td><?php echo $dataset['species']; ?></td>
-						<td><?php echo $dataset['cell_type']; ?></td>
-						<td><?php echo $dataset['data_type']; ?></td>
-						<td><?php 
-						echo accession_badges ($dataset['accession_geo'], 'geo');
-						echo accession_badges ($dataset['accession_sra'], 'sra');
-						?></td>
-					</tr>
-			<?php } // dataset while loop ?>
-				</tbody>
-			</table>
-			<div class="form-actions">
-				<input class="btn btn-large btn-primary" type="submit" name="download_datasets" value="Download Checked Datasets">
-			</div>
-		</form>
+	<p style="margin-bottom:20px;"><label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label></p>
+	<table id="existing_datasets_table" class="table table-bordered table-condensed table-hover sortable">
+		<thead>
+			<tr>
+				<th data-sort="string-ins">Name</th>
+				<th data-sort="string-ins">Species</th>
+				<th data-sort="string-ins">Cell Type</th>
+				<th data-sort="string-ins">Data Type</th>
+				<th style="width:20%;">Accession Codes</th>
+			</tr>
+		</thead>
+		<tbody>
+	<?php while ($dataset = mysql_fetch_array($datasets)){ ?>
+			<tr>
+				<td><label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
+				<?php if(!empty($dataset['notes'])) { ?>
+					<i class="icon-tag pull-right" title="<?php echo $dataset['notes']; ?>"></i>
+				<?php } ?></td>
+				<td><?php echo $dataset['species']; ?></td>
+				<td><?php echo $dataset['cell_type']; ?></td>
+				<td><?php echo $dataset['data_type']; ?></td>
+				<td><?php 
+				echo accession_badges ($dataset['accession_geo'], 'geo');
+				echo accession_badges ($dataset['accession_sra'], 'sra');
+				?></td>
+			</tr>
+	<?php } // dataset while loop ?>
+		</tbody>
+	</table>
 
 	<?php } //check for existing datasets ?>
 </div>

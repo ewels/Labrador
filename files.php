@@ -44,8 +44,11 @@ include('includes/header.php'); ?>
 		<li>
 			<a href="project.php?id=<?php echo $project_id; ?>">Project Details</a>
 		</li>
-		<li class="active">
+		<li>
 			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
+		</li>
+		<li class="active">
+			<a href="files.php?id=<?php echo $project_id; ?>">Files</a>
 		</li>
 		<li>
 			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
@@ -92,7 +95,7 @@ include('includes/header.php'); ?>
 	
 	<div class="labrador_help" style="display:none;">
 		<div class="well">
-			<h3>Downloads Page</h3>
+			<h3>Files Page</h3>
 			<p>You can use this page to download data from the Bioinformatics server to your computer.</p>
 			<p>Files within the project directory will be matched up to datasets, those associated with the datasets selected on the previous page will be shown below, along with any not matched to a dataset.
 			You can filter the table for files with extensions commonly used for Aligned data, Raw data, Processing Reports and everything else. You can also use the text box to filter the file names. The table can be sorted by column heading.</p>
@@ -101,10 +104,11 @@ include('includes/header.php'); ?>
 		</div>
 	</div>
 	
-	<form action="download.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
+	<form action="files.php" method="get" class="form-horizontal">
+		<input type="hidden" name="id" value="<?php echo $project_id; ?>">
 		<div class="well">
 			<input type="submit" name="java_download_paths" class="btn btn-primary pull-right" value="Download Checked Files With Java Applet">
-			Filter downloads: &nbsp; 
+			Filter files: &nbsp; 
 			<div class="btn-group">
 				<button class="btn" id="filter_projects">Projects</button>
 				<button class="btn" id="filter_aligned">Aligned</button>
@@ -113,24 +117,38 @@ include('includes/header.php'); ?>
 				<button class="btn" id="filter_other">Other</button>
 			</div> &nbsp; 
 			<input type="text" class="input-small filter_text" id="name" placeholder="Filename">
+			<select name="ds" id="filter_dataset" class="span4">
+				<option value="all">All Datasets</option>
+				<option value="none" <?php if(isset($_GET['ds']) && $_GET['ds'] == 'none') { echo 'selected="selected"'; } ?>>Unmatched</option>
+				<?php
+				$dataset_query = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
+				if(mysql_num_rows($dataset_query) > 0){
+					while($dataset = mysql_fetch_array($dataset_query)){
+						echo '<option value="'.$dataset['id'].'"';
+						if(isset($_GET['ds']) && $_GET['ds'] == $dataset['id']){
+							echo ' selected="selected"';
+						}
+						echo '>'.$dataset['name'].'</option>';
+					}
+				}
+				?>
+			</select>
 			<span class="help-block" style="margin:10px 0 0;"><?php echo $download_instructions; ?></span>
 		</div>
-	
+	</form>
+	<form action="files.php?id=<?php echo $project_id; ?>" method="post">
 	<?php // Get dataset details for filename search needles
 	$datasets = array();
 	$orphans = array();
-	$checked = 0;
-	$dataset_query = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
+	$sql = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
+	if(isset($_GET['ds']) && is_numeric($_GET['ds'])){
+		$sql .= " AND `id` = '".$_GET['ds']."'";
+	}
+	$dataset_query = mysql_query($sql);
 	if(mysql_num_rows($dataset_query) > 0){
 		while ($dataset = mysql_fetch_array($dataset_query)){
 			$id = $dataset['id'];
 			$datasets[$id] = $dataset;
-			if(isset($_POST["check_$id"]) && $_POST["check_$id"] == 'on'){
-				$datasets[$id]['checked'] = true;
-				$checked++;
-			} else {
-				$datasets[$id]['checked'] = false;
-			}
 			$datasets[$id]['files'] = array();
 		}
 	}
@@ -179,11 +197,16 @@ include('includes/header.php'); ?>
 				}
 			}
 			// Can't find this one - an orphan
-			if(!$matched){
+			if(!$matched && (!isset($_GET['ds']) || $_GET['ds'] == 'all' || $_GET['ds'] == 'none')){
 				$orphans[$path] = $size;
 			}
+			
 		}
-	}	
+	}
+	// Kill matched dataset paths if filtering for unmatched
+	if(isset($_GET['ds']) && $_GET['ds'] == 'none'){
+		$datasets = array();
+	}
 	?>
 	
 		<table class="table table-condensed table-bordered table-striped sortable download_table">
@@ -208,7 +231,7 @@ include('includes/header.php'); ?>
 						if(stripos($header, 'Genomes/')){
 							$genomes = explode(" ", substr($header, stripos($header, 'Genomes/') + 8));
 							$genomes2 = split("/", $genomes[0]);
-							$genome = $genomes2[0].'/'.$genomes2[1];
+							$genome = $genomes2[0].' - '.$genomes2[1];
 						}
 					}
 				}
@@ -231,20 +254,19 @@ include('includes/header.php'); ?>
 			
 			$j = 0;
 			foreach($datasets as $dataset){
-				if($checked == 0 || $dataset['checked']){
-					$paths = $dataset['paths'];
-					ksort($paths);
-					foreach($paths as $raw_path => $size){
-						$j++;
-						$path = substr($raw_path, strlen($dir)); ?>
-					<tr>
-						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
-						<td><?php echo $dataset['name']; ?></td>
-						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
-						<td><?php echo find_genome($raw_path); ?></td>
-						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
-					</tr>
-			<?php } // if checked
+				$paths = $dataset['paths'];
+				ksort($paths);
+				foreach($paths as $raw_path => $size){
+					$j++;
+					$path = substr($raw_path, strlen($dir)); ?>
+				<tr>
+					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
+					<td><?php echo $dataset['name']; ?></td>
+					<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
+					<td><?php echo find_genome($raw_path); ?></td>
+					<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+				</tr>
+			<?php 
 				} //foreach path
 			} // foreach dataset
 			ksort($orphans);
@@ -278,5 +300,5 @@ include('includes/header.php'); ?>
 	var aligned_filename_filters = new Array("<?php echo implode('", "', $aligned_filename_filters); ?>");
 	var reports_filename_filters = new Array("<?php echo implode('", "', $reports_filename_filters); ?>");
 </script>
-<script src="js/download.js" type="text/javascript"></script>
+<script src="js/files.js" type="text/javascript"></script>
 <?php include('includes/footer.php'); ?>

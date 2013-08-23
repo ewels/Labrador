@@ -26,6 +26,9 @@ include('includes/header.php'); ?>
 		<li>
 			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
 		</li>
+		<li>
+			<a href="files.php?id=<?php echo $project_id; ?>">Files</a>
+		</li>
 		<li class="active">
 			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
 		</li>

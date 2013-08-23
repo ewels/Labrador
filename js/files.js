@@ -3,6 +3,11 @@
    Javascript for the Labrador Downloads page
 */
 
+// Submit dataset filter on change
+$('#filter_dataset').change(function(e){
+	$(this).closest('form').submit();
+});
+
 // Filter downloads by type
 // Takes search needles from PHP printed variables in download.php
 $('#filter_projects').click(function(e){
