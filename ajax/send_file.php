@@ -25,7 +25,7 @@ if(in_array($fileinfo['extension'], $allowed_extensions)){
 
 	$file = file_get_contents($path);
 	
-	$file = preg_replace('/src=\"/', 'src="send_file.php?path='.$dir, $file);
+	$file = preg_replace('/src=\"((?!data:))/', 'src="send_file.php?path='.$dir, $file);
 	
 	echo $file;
 	

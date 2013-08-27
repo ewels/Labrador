@@ -39,7 +39,6 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 					'/{{fn}}/',
 					'/{{sra}}/',
 					'/{{sra_url}}/',
-					'/{{genome_path}}/',
 					'/{{contact_email}}/',
 					'/{{assigned_email}}/',
 					'/{{dataset}}/',
@@ -50,13 +49,18 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 					$fn,
 					$sra,
 					$sra_url,
-					$genomes[$_POST['genome']][$_POST['server']],
 					$contact_email,
 					$assigned_email,
 					$dataset['name'],
 					$project['name'],
 					date('H:i, l \t\h\e jS F Y')
 				);
+				if(in_array($_POST['genome'], array_keys($genomes))){
+					if(in_array($_POST['server'], array_keys($genomes[$_POST['genome']]))){
+						$patterns[] = '/{{genome_path}}/';
+						$replacements[] = $genomes[$_POST['genome']][$_POST['server']];
+					}
+				}
 				$printout .= preg_replace($patterns, $replacements, $output);
 			}
 		}

@@ -90,6 +90,7 @@ include('includes/header.php'); ?>
 					$output .= '<optgroup label="'.$dsname.'">';
 					foreach($paths as $path){
 						$path = substr($path, strlen($data_root));
+						$matched = false;
 						foreach($needles as $needle){
 							if(stripos($path, $needle)){
 								if(!$report_path){
@@ -103,6 +104,7 @@ include('includes/header.php'); ?>
 								}
 								$output .= '>'.report_naming($path, $type).'</option>';
 								$count++;
+								$matched = true;
 								break;
 							}
 						}

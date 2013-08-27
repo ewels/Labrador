@@ -172,20 +172,16 @@ $processing_codes = array(
 		'bilin1' => 'wget -nv {{sra_url}}'."\n"
 	),
 	'sra_dump' => array(
-		'rocks1' => 'echo "perl /bi/scratch/scripts/fastq-dump-split.pl {{fn}}.sra" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_fqdump.out -j y -m as -M {{assigned_email}} -N dump_{{fn}} -hold_jid download_{{fn}}'."\n",
-		'bilin1' => 'perl /data/pipeline/new_public/Phil/fastq-dump-split.pl {{fn}}.sra'."\n"
+		'rocks1' => 'echo "fastq-dump --split-files ./{{fn}}.sra" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_fqdump.out -j y -m as -M {{assigned_email}} -N dump_{{fn}} -hold_jid download_{{fn}}'."\n",
+		'bilin1' => 'fastq-dump --split-files ./{{fn}}.sra'."\n"
 	),
 	'fastqc' => array(
-		'rocks1' => 'echo "fastqc  {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_1 -hold_jid dump_{{fn}}'."\n".
-					'if [ -f {{fn}}_2.fastq ]; then echo "fastqc {{fn}}_2.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_2_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_2 -hold_jid dump_{{fn}}; fi;'."\n",
-		'bilin1' => 'fastqc {{fn}}_1.fastq'."\n".
-					'if [ -f {{fn}}_2.fastq ]; then fastqc {{fn}}_2.fastq; fi'."\n"
+		'rocks1' => 'echo "fastqc  {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_1 -hold_jid dump_{{fn}}'."\n",
+		'bilin1' => 'fastqc {{fn}}_1.fastq'."\n"
 	),
 	'fastq_screen' => array(
-		'rocks1' => 'echo "fastq_screen --subset 100000 {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fqscreen.out -j y -m as -M {{assigned_email}} -N screen_{{fn}}_1 -hold_jid dump_{{fn}}'."\n".
-					'if [ -f {{fn}}_2.fastq ]; then echo "fastq_screen --subset 100000 {{fn}}_2.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_fqscreen_2.out -j y -m as -M {{assigned_email}} -N screen_{{fn}}_2 -hold_jid dump_{{fn}}; fi;'."\n",
-		'bilin1' => 'fastq_screen --subset 100000 {{fn}}_1.fastq'."\n".
-					'if [ -f {{fn}}_2.fastq ]; then fastq_screen --subset 100000 {{fn}}_2.fastq; fi'."\n"
+		'rocks1' => 'echo "fastq_screen --subset 100000 {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fqscreen.out -j y -m as -M {{assigned_email}} -N screen_{{fn}}_1 -hold_jid dump_{{fn}}'."\n",
+		'bilin1' => 'fastq_screen --subset 100000 {{fn}}_1.fastq'."\n"
 	),
 	'trim_galore_se' => array(
 		'rocks1' => 'echo "trim_galore --fastqc --gzip {{fn}}.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}'."\n",
@@ -196,10 +192,8 @@ $processing_codes = array(
 		'bilin1' => 'trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq'
 	),
 	'bowtie1' => array(
-		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid dump_{{fn}}'."\n".
-					'if [ -f {{fn}}_2.fastq ]; then echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid dump_{{fn}}; fi;'."\n",
-		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie'."\n".
-					'if [ -f {{fn}}_2.fastq ]; then bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie; fi;'."\n"
+		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid dump_{{fn}}'."\n",
+		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie'."\n"
 	),
 	'bowtie2' => array(
 		'rocks1' => '',
@@ -239,6 +233,7 @@ $report_types = array(
 	'fastqc' => 'FastQC Reports',
 	'fastq_screen' => 'FastQ Screen',
 	'bowtie' => 'Bowtie Reports',
+	'bowtie_report' => 'Bowtie Overview',
 	'alignment_overview' => 'Bismark Alignment Overview Plots',
 	'm_bias' => 'Bismark M-Bias Reports',
 	'ditag_classification' => 'HiCUP Di-Tag Analysis',
@@ -256,6 +251,9 @@ function report_match ($file, $type) {
 		
 		case 'bowtie':
 			return (stripos(basename($file), 'bowtie') || stripos(basename($file), 'alignment')) && (substr($file, -4) ==  '.out' || substr($file, -4) ==  '.log');
+		
+		case 'bowtie_report':
+			return stripos(basename($file), 'bowtie_report') && substr($file, -5) ==  '.html';
 
 		case 'alignment_overview':
 			return substr($file, -23) == '.alignment_overview.png';
@@ -285,6 +283,9 @@ function report_naming ($path, $type) {
 			
 		case 'bowtie':
 			return substr(basename($path),0,-4);
+			
+		case 'bowtie_report':
+			return substr(basename($path),0,-5);
 
 		case 'alignment_overview':
 			return substr(basename($path),0, -23);
