@@ -157,7 +157,7 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 				}
 				
 				// Save history message
-				$query = sprintf("INSERT INTO `history` (`project_id`, `note`, `time`) VALUES ('%d', '%s', '%d')", $project_id, mysql_real_escape_string($history), time());
+				$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string($history), time());
 				if(!mysql_query($query)){
 					$error = true;
 					$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
@@ -490,9 +490,10 @@ if(!$new_project and !$edit and !$error){ ?>
 	<fieldset>
 		<legend>History</legend>
 		<dl class="dl-horizontal muted">
-			<?php while($history = mysql_fetch_array($histories)){ ?>
+			<?php while($history = mysql_fetch_array($histories)){ 
+				$history_user = mysql_fetch_array(mysql_query("SELECT * FROM `users` WHERE `id` = '".$history['user_id']."'")); ?>
 			<dt><small><?php echo date("j/m/Y, G:i", $history['time']); ?></small></dt>
-			<dd><small><?php echo $history['note']; ?></small></dd>
+			<dd><small><a href="mailto:<?php echo $history_user['email']; ?>"><?php echo $history_user['firstname'].' '.$history_user['surname']; ?></a> - <?php echo $history['note']; ?></small></dd>
 			<?php } ?>
 		</dl>
 	</fieldset>

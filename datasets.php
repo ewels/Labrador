@@ -54,7 +54,7 @@ if(!empty($_POST['delete_datasets_submit']) && $_POST['delete_datasets_submit'] 
 		}
 	}
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `note`, `time`) VALUES ('%d', '%s', '%d')", $project_id, mysql_real_escape_string("Deleted $counter datasets."), time());
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Deleted $counter datasets."), time());
 	if(!mysql_query($query)){
 		$error = true;
 		$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
@@ -98,7 +98,7 @@ if(!empty($_POST['edit_datasets']) && $_POST['edit_datasets'] == 'Edit Datasets'
 		}
 	}
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `note`, `time`) VALUES ('%d', '%s', '%d')", $project_id, mysql_real_escape_string("Edited datasets."), time());
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Edited datasets."), time());
 	if(!mysql_query($query)){
 		$error = true;
 		$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
@@ -144,7 +144,7 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 	}
 	
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `note`, `time`) VALUES ('%d', '%s', '%d')", $project_id, mysql_real_escape_string("Added $i datasets."), time());
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Added $i datasets."), time());
 	if(!mysql_query($query)){
 		$error = true;
 		$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";

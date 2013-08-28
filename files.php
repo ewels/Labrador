@@ -108,7 +108,7 @@ include('includes/header.php'); ?>
 	<form action="files.php" method="get" class="form-horizontal">
 		<input type="hidden" name="id" value="<?php echo $project_id; ?>">
 		<div class="well">
-			<input type="submit" name="java_download_paths" class="btn btn-primary pull-right" value="Download Checked Files With Java Applet">
+			<!-- <input type="submit" name="java_download_paths" class="btn btn-primary pull-right" value="Download Checked Files With Java Applet"> -->
 			Filter files: &nbsp; 
 			<div class="btn-group">
 				<button class="btn" id="filter_projects">Projects</button>
@@ -252,6 +252,18 @@ include('includes/header.php'); ?>
 				}
 				return $genome;
 			}
+			function find_parameters($path){
+				// BAM and SAM files
+				if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
+					$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+					$bam_headers = explode("\n", $bam_header);
+					foreach($bam_headers as $header){
+						if(stripos($header, 'Genomes/')){
+							return '<i class="icon-info-sign" title="'.htmlspecialchars ($header).'"></i>';
+						}
+					}
+				}
+			}
 			
 			$j = 0;
 			foreach($datasets as $dataset){
@@ -264,7 +276,7 @@ include('includes/header.php'); ?>
 					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
 					<td><?php echo $dataset['name']; ?></td>
 					<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
-					<td><?php echo find_genome($raw_path); ?></td>
+					<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
 					<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
 				</tr>
 			<?php 

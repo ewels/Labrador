@@ -17,7 +17,7 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 // Set report type and path
 $active_type = false;
 $report_path = false;
-foreach($report_types as $type => $report_name){
+foreach(array_merge($project_report_types, $dataset_report_types) as $type => $report_name){
 	if(isset($_POST[$type]) && isset($_POST['report_type']) && $_POST['report_type'] == $type){
 		$active_type = $type;
 		$report_path = $_POST[$type];
