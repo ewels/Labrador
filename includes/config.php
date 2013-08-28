@@ -229,11 +229,15 @@ $processing_codes = array(
 // CUSTOM REPORT TYPES
 //////////////////////
 
-$report_types = array(
+$project_report_types = array(
+	'bowtie_report' => 'Bowtie Overview'
+);
+
+$dataset_report_types = array(
 	'fastqc' => 'FastQC Reports',
 	'fastq_screen' => 'FastQ Screen',
 	'bowtie' => 'Bowtie Reports',
-	'bowtie_report' => 'Bowtie Overview',
+	
 	'alignment_overview' => 'Bismark Alignment Overview Plots',
 	'm_bias' => 'Bismark M-Bias Reports',
 	'ditag_classification' => 'HiCUP Di-Tag Analysis',
@@ -253,7 +257,7 @@ function report_match ($file, $type) {
 			return (stripos(basename($file), 'bowtie') || stripos(basename($file), 'alignment')) && (substr($file, -4) ==  '.out' || substr($file, -4) ==  '.log');
 		
 		case 'bowtie_report':
-			return stripos(basename($file), 'bowtie_report') && substr($file, -5) ==  '.html';
+			return substr($file, -18) ==  'bowtie_report.html';
 
 		case 'alignment_overview':
 			return substr($file, -23) == '.alignment_overview.png';

@@ -54,8 +54,43 @@ include('includes/header.php'); ?>
 		<input type="hidden" value="" name="report_type" id="report_type">
 		
 	<?php
-	// Find reports. Functions are in config.php
-	if(isset($report_types) && count($report_types) > 0){
+	// Find overview reports. Functions are in config.php
+	if(isset($project_report_types) && count($project_report_types) > 0){
+		$dir = $data_root.$project['name'];
+		// Go through each report type
+		$count = 0;
+		$output = '<option>[ Select Report ]</option>';
+		foreach($project_report_types as $type => $report_name){
+			// get matching filenames
+			$paths = array();
+			
+			$it = new RecursiveDirectoryIterator($dir);
+			foreach(new RecursiveIteratorIterator($it) as $file) {
+				$path = substr($file, strlen($data_root));
+				if(report_match ($file, $type)){
+					$paths[] = $file->getPathname();
+					$count++;
+					if(!$report_path){
+						$report_path = $path;
+						$active_type = 'overview';
+					}
+					$output .= '<option value="'.$path.'"';
+					if($report_path == $path && $active_type == 'overview'){
+						$output .= ' selected="selected"';
+					}
+					$output .= '>'.$report_name.'</option>';
+					$count++;
+					break;
+				}
+			}
+		}
+		if($count > 0 ){
+			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview">'.$output.'</select></label>';
+		}
+	}
+	
+	// Find dataset-specific reports. Functions are in config.php
+	if(isset($dataset_report_types) && count($dataset_report_types) > 0){
 		// Setup - work out directory and get search terms
 		$dir = $data_root.$project['name'];
 		$datasets = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
@@ -72,7 +107,7 @@ include('includes/header.php'); ?>
 			}
 		}
 		// Go through each report type
-		foreach($report_types as $type => $report_name){
+		foreach($dataset_report_types as $type => $report_name){
 			// get matching filenames
 			$paths = array();
 			$it = new RecursiveDirectoryIterator($dir);
@@ -90,7 +125,6 @@ include('includes/header.php'); ?>
 					$output .= '<optgroup label="'.$dsname.'">';
 					foreach($paths as $path){
 						$path = substr($path, strlen($data_root));
-						$matched = false;
 						foreach($needles as $needle){
 							if(stripos($path, $needle)){
 								if(!$report_path){
@@ -104,7 +138,6 @@ include('includes/header.php'); ?>
 								}
 								$output .= '>'.report_naming($path, $type).'</option>';
 								$count++;
-								$matched = true;
 								break;
 							}
 						}
