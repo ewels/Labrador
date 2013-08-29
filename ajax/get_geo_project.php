@@ -5,10 +5,22 @@ Script to handle NCBI GEO lookups using GSE accessions
 Provides a function if included, returns JSON if called directly
 */
 
+require_once('../includes/start.php');
+
 function get_geo_project ($acc) {
 	// Get the first XML file with GEO ID accessions, using the supplied GEO accession
 	// Only get the info we want for the Project
 	// uses eSearch
+	
+	if(substr($acc, 0, 3) == 'GSM'){
+		$results['status'] = 0;
+		$results['message'] = "Accession is a GEO sample, not series. Needs to start GSE not GSM.";
+		return $results;
+	} else if(substr($acc, 0, 3) !== 'GSE'){
+		$results['status'] = 0;
+		$results['message'] = "Accession does not start with GSE. ";
+		return $results;
+	}
 	
 	$results = array();
 	
@@ -66,8 +78,19 @@ function get_geo_project ($acc) {
 		
 		}
 	}
+	
+	$results['message'] = "";
 	$results['status'] = 1;
-	$results['message'] = "Success";
+	
+	// Check to see if we already have this accession
+	$sql = sprintf("SELECT `id`, `name` FROM `projects` WHERE `accession_geo` LIKE '%%%s%%'", mysql_real_escape_string($acc));
+	$projects = mysql_query($sql);
+	if(mysql_num_rows($projects) > 0){
+		$project = mysql_fetch_array($projects);
+		$results['message'] = '<strong>WARNING:</strong> There is already a project with this accession: <a href="project.php?id='.$project['id'].'">'.$project['name'].'</a>';
+	}
+	
+	
 	return $results;
 }
 

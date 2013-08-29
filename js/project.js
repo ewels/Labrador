@@ -190,6 +190,7 @@ $('#geo_lookup').click(function(e){
 					});
 				
 					icon.removeClass('icon-refresh icon-rotate-animate').addClass('icon-ok');
+					icon.parent().after('<span id="geo_message"> &nbsp; '+data['message']+'</span>');
 					
 				} else {
 					// Something went wrong
