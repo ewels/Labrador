@@ -197,7 +197,7 @@ include('includes/header.php'); ?>
 		</div>
 	<?php endif; ?>
 	
-	<?php if($admin){ ?>
+	<?php if($admin || $user['email'] == $project['contact_email']){ ?>
 	<a class="btn pull-right" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a>
 	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
 	<?php } ?>
