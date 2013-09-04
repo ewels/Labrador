@@ -11,6 +11,12 @@ body {
 
 .navbar .brand {
 	color:#333;
+	padding:5px 20px 15px;
+}
+.navbar .brand sub {
+	font-size:10px;
+	color:#777;
+	margin-right:10px;
 }
 .sidebar-nav {
 	padding: 9px 0;
@@ -123,6 +129,13 @@ small.muted {
 /////////////////////
 */
 
+.home-lab {
+	margin-bottom:20px;
+}
+
+#filter_status_bar {
+	margin-top:20px;
+}
 #filter_status_bar label {
 	display:inline-block;
 	position:relative;
@@ -170,15 +183,6 @@ small.muted {
 }
 #filter_status_bar span.warning {
 	background-color:#fcf8e3;
-}
-
-@media screen and (max-width: 850px){
-	.homepage.sidebar-nav {
-		display: none;
-	}
-	.homepage.sidebar-mainpage {
-		margin-left:0;
-	}
 }
 
 .text-filter {
@@ -500,6 +504,14 @@ h1 span.h {
 	.navbar-fixed-top .navbar-inner {
 		padding-top:15px;
 	}
+	
+	.homepage.sidebar-nav {
+		display: none;
+	}
+	.homepage.sidebar-mainpage {
+		margin-left:0;
+	}
+	
 	.project-mainpage {
 		margin-left:0;
 	}

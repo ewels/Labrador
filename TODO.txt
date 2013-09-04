@@ -2,6 +2,9 @@
    TO DO - Labrador
 =====================
 
+1. Put in message about requesting datasets
+	* Make people click a button to say they understand before adding datasets
+
 2. Tidy Up Processing
 	* Delete individual steps rather than just the final one
 	* Buttons to move steps up and down in order

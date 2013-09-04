@@ -55,6 +55,8 @@ $project_filename_filters = array(
 $aligned_filename_filters = array(
 	'.bam',
 	'.sam',
+	'.bam.gz',
+	'.sam.gz',
 	'.bowtie',
 	'.bowtie.gz',
 	'.txt.gz'
@@ -185,15 +187,15 @@ $processing_codes = array(
 	),
 	'trim_galore_se' => array(
 		'rocks1' => 'echo "trim_galore --fastqc --gzip {{fn}}.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'trim_galore --fastqc --gzip {{fn}}.fastq'
+		'bilin1' => 'trim_galore --fastqc --gzip {{fn}}.fastq'."\n"
 	),
 	'trim_galore_pe' => array(
 		'rocks1' => 'echo "trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq'
+		'bilin1' => 'trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq'."\n"
 	),
 	'bowtie1' => array(
-		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 {{genome_path}} {{fn}}_1.fastq {{fn}}.bowtie'."\n"
+		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid dump_{{fn}}'."\n",
+		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam'."\n"
 	),
 	'bowtie2' => array(
 		'rocks1' => '',

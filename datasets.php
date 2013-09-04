@@ -347,7 +347,7 @@ if($add) { ?>
 	
 	<?php project_header($project); ?>
 	
-	<div class="alert alert-error" style="display:none;" id="lookup_error">
+	<div class="alert alert-warning" style="display:none;" id="lookup_error">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<div class="msg_content">
 		
@@ -401,7 +401,7 @@ if($add) { ?>
 			</tbody>
 		</table>
 		
-		<div class="alert alert-info" style="display:none;" id="lookup_warning">
+		<div class="alert alert-error" style="display:none;" id="lookup_warning">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<strong>Please remember to remove any datasets that you don't need.</strong>
 			Adding additional datasets will delay the processing of your project.

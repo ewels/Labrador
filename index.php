@@ -18,13 +18,13 @@ include('includes/header.php');
 		</div>
 		<?php endif; ?>
 				
-       	<h1><?php echo $homepage_title; ?><small><?php echo $homepage_subtitle; ?></small></h1>
+       	<img class="pull-right visible-desktop home-lab" src="img/labrador_logo.png" title="woof!">
+		<h1><?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
 	
-		<img class="pull-right visible-desktop" style="margin-top:-50px; height:200px;" src="img/puppies/puppy_2.jpg" title="woof!">
-		<p class="lead">You can use labrador to find and download existing data or request new datasets.
-		Projects are tracked and annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
+		<p class="lead">You can use labrador to find and download processed data or request new datasets.
+		Projects are annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
 		
-		<div class="labrador_help" style="display:none; margin-right:150px;">
+		<div class="labrador_help" style="display:none;">
 			<div class="well">
 				<h2>Help!</h2>
 				<p>Each page within Labrador has this question mark icon in the top right. Click the icon for contextual help about the page that you are on.</p>

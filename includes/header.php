@@ -28,7 +28,7 @@
 		<div class="navbar-inner">
 			<div class="container-fluid">
 			
-				<a class="brand" href="index.php">Labrador<sub style="font-size:10px; color:#777; margin-right:30px;">BETA</sub></a>
+				<a class="brand" href="index.php">Labrador<sub>BETA</sub> <img src="img/labrador_logo_tiny.png"></a>
 				
 				<form class="navbar-search form-search pull-left" action="search.php" method="get">
 					<div class="input-append">
