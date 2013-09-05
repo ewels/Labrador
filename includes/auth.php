@@ -29,6 +29,7 @@ function labrador_login_link() {
 				<li><a href="index.php?my_projects">My Projects</a></li>
 			<?php if($admin){ ?>
 				<li><a href="index.php?assigned_projects">Assigned To Me</a></li>
+				<li><a href="index.php?unassigned">Not Assigned</a></li>
 			<?php } ?>
 				<li><a data-toggle="modal" href="#change_password_modal">Change Password</a></li>
 				<li><a href="index.php?a=logout">Log Out</a></li>

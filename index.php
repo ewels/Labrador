@@ -103,6 +103,8 @@ include('includes/header.php');
 				$sql .= " WHERE `contact_email` = '".$user['email']."'";
 			} else if(isset($_GET['assigned_projects'])){
 				$sql .= " WHERE `assigned_to` = '".$user['email']."'";
+			} else if(isset($_GET['unassigned'])){
+				$sql .= " WHERE `assigned_to` IS NULL";
 			}
 			$sql .=  " ORDER BY `name`";
 			$projects = mysql_query($sql);
