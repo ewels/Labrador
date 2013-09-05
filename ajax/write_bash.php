@@ -15,8 +15,8 @@ if(isset($_POST['output']) && isset($_POST['project_id']) && is_numeric($_POST['
 	$fn = $dir.$bash_fn;
 	
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `note`, `time`) VALUES ('%d', '%s', '%d')",
-		$project['id'], mysql_real_escape_string("Saved bash script $bash_fn"), time());
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')",
+		$project['id'], $user['id'], mysql_real_escape_string("Saved bash script $bash_fn"), time());
 	mysql_query($query);
 	
 	// Write file contents

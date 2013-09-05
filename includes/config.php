@@ -100,7 +100,7 @@ Raw files contain the original sequence read data.";
 
 $processing_servers = array(
 	'rocks1' => array('name' => 'The Cluster', 'queueing' => 'true'),
-	'bilin1' => array('name' => 'Bilin 1', 'queueing' => 'true')
+	'bilin1' => array('name' => 'Bilin 1', 'queueing' => 'false')
 );
 
 // Written to the javascript in the base of processing.php
@@ -110,8 +110,11 @@ $processing_modules = array(
 		'fastqc' => 'module load fastqc',
 		'fastq_screen' => 'module load fastq_screen',
 		'trim_galore' => 'module load trim_galore',
-		'bowtie1' => 'module load bowtie',
+		'bowtie1_se' => 'module load bowtie',
+		'bowtie1_pe' => 'module load bowtie',
 		'bowtie2' => 'module load bowtie2',
+		'tophat_se' => 'module load tophat',
+		'tophat_pe' => 'module load tophat',
 		'bismark_se' => 'module load bismark',
 		'bismark_pe' => 'module load bismark',
 		'bismark_pbat' => 'module load bismark',
@@ -131,9 +134,21 @@ $genomes = array (
 );
 
 $processing_pipelines = array(
-	'sra_to_bowtie1' => array(
-		'name' => 'SRA &raquo; Bowtie 1',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'bowtie1'),
+	'sra_to_bowtie1_se' => array(
+		'name' => 'SRA &raquo; Bowtie 1 SE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'bowtie1_se'),
+	),
+	'sra_to_bowtie1_pe' => array(
+		'name' => 'SRA &raquo; Bowtie 1 PE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'bowtie1_pe'),
+	),
+	'sra_to_tophat_se' => array(
+		'name' => 'SRA &raquo; Tophat SE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'tophat_se'),
+	),
+	'sra_to_tophat_pe' => array(
+		'name' => 'SRA &raquo; Tophat PE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'tophat_pe'),
 	),
 	'sra_to_bismark_se' => array(
 		'name' => 'SRA &raquo; Bismark SE',
@@ -155,8 +170,11 @@ $processing_steps = array(
 		'trim_galore_pe' => array( 'name' => 'Trim Galore, Paired End', 'unit' => 'accession_sra', 'requires_genome' => 'false' )
 	),
 	'Alignment' => array(
-		'bowtie1' => array( 'name' => 'Bowtie 1', 'unit' => 'accession_sra', 'requires_genome' => 'true' ), 
+		'bowtie1_se' => array( 'name' => 'Bowtie 1 SE', 'unit' => 'accession_sra', 'requires_genome' => 'true' ), 
+		'bowtie1_pe' => array( 'name' => 'Bowtie 1 PE', 'unit' => 'accession_sra', 'requires_genome' => 'true' ), 
 		'bowtie2' => array( 'name' => 'Bowtie 2', 'unit' => 'accession_sra', 'requires_genome' => 'true' ),
+		'tophat_se' => array( 'name' => 'Tophat SE', 'unit' => 'accession_sra', 'requires_genome' => 'true' ), 
+		'tophat_pe' => array( 'name' => 'Tophat PE', 'unit' => 'accession_sra', 'requires_genome' => 'true' ), 
 		'bismark_se' => array( 'name' => 'Bismark, Single End', 'unit' => 'accession_sra', 'requires_genome' => 'true' ),
 		'bismark_pe' => array( 'name' => 'Bismark, Paired End', 'unit' => 'accession_sra', 'requires_genome' => 'true' ),
 		'bismark_pbat' => array( 'name' => 'Bismark, PBAT', 'unit' => 'accession_sra', 'requires_genome' => 'true' ),
@@ -167,59 +185,71 @@ $processing_steps = array(
 	)
 );
 
-// Remember to add trailing newline characters
+
 $processing_codes = array(
 	'get_sra' => array(
-		'rocks1' => 'echo "wget -nv {{sra_url}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{fn}}_download.out -j y -m as -M {{assigned_email}} -N download_{{fn}}'."\n",
-		'bilin1' => 'wget -nv {{sra_url}}'."\n"
+		'rocks1' => 'echo "wget -nv {{sra_url}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{fn}}_download.out -j y -m as -M {{assigned_email}} -N download_{{fn}}',
+		'bilin1' => 'wget -nv {{sra_url}}'
 	),
 	'sra_dump' => array(
-		'rocks1' => 'echo "fastq-dump --split-files ./{{fn}}.sra" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_fqdump.out -j y -m as -M {{assigned_email}} -N dump_{{fn}} -hold_jid download_{{fn}}'."\n",
-		'bilin1' => 'fastq-dump --split-files ./{{fn}}.sra'."\n"
+		'rocks1' => 'echo "fastq-dump --split-files ./{{fn}}.sra" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_fqdump.out -j y -m as -M {{assigned_email}} -N dump_{{fn}} -hold_jid download_{{fn}}',
+		'bilin1' => 'fastq-dump --split-files ./{{fn}}.sra'
 	),
 	'fastqc' => array(
-		'rocks1' => 'echo "fastqc  {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_1 -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'fastqc {{fn}}_1.fastq'."\n"
+		'rocks1' => 'echo "fastqc  {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fastqc.out -j y -m as -M {{assigned_email}} -N fastqc_{{fn}}_1 -hold_jid dump_{{fn}}',
+		'bilin1' => 'fastqc {{fn}}_1.fastq'
 	),
 	'fastq_screen' => array(
-		'rocks1' => 'echo "fastq_screen --subset 100000 {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fqscreen.out -j y -m as -M {{assigned_email}} -N screen_{{fn}}_1 -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'fastq_screen --subset 100000 {{fn}}_1.fastq'."\n"
+		'rocks1' => 'echo "fastq_screen --subset 100000 {{fn}}_1.fastq" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_1_fqscreen.out -j y -m as -M {{assigned_email}} -N screen_{{fn}}_1 -hold_jid dump_{{fn}}',
+		'bilin1' => 'fastq_screen --subset 100000 {{fn}}_1.fastq'
 	),
 	'trim_galore_se' => array(
-		'rocks1' => 'echo "trim_galore --fastqc --gzip {{fn}}.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'trim_galore --fastqc --gzip {{fn}}.fastq'."\n"
+		'rocks1' => 'echo "trim_galore --fastqc --gzip {{fn}}.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}',
+		'bilin1' => 'trim_galore --fastqc --gzip {{fn}}.fastq'
 	),
 	'trim_galore_pe' => array(
-		'rocks1' => 'echo "trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq'."\n"
+		'rocks1' => 'echo "trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}',
+		'bilin1' => 'trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq'
 	),
-	'bowtie1' => array(
-		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid dump_{{fn}}'."\n",
-		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam'."\n"
+	'bowtie1_se' => array(
+		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam'
+	),
+	'bowtie1_pe' => array(
+		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --chunkmbs 2048 -S {{genome_path}} -1 {{fn}}_1.fastq -2 {{fn}}_2.fastq | samtools view -bS - > {{fn}}.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bowtie -q -m 1 -p 4 --chunkmbs 512 -S {{genome_path}} -1 {{fn}}_1.fastq -2 {{fn}}_2.fastq | samtools view -bS - > {{fn}}.bam'
 	),
 	'bowtie2' => array(
 		'rocks1' => '',
 		'bilin1' => ''
 	),
+	'tophat_se' => array(
+		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq'
+	),
+	'tophat_pe' => array(
+		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq {{fn}}_2.fastq'
+	),
 	'bismark_se' => array(
-		'rocks1' => 'echo "bismark --bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}'."\n",
-		'bilin1' => 'bismark --bam {{genome_path}} {{fn}}.fq.gz'."\n"
+		'rocks1' => 'echo "bismark --bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bismark --bam {{genome_path}} {{fn}}.fq.gz'
 	),
 	'bismark_pe' => array(
-		'rocks1' => 'echo "bismark --bam {{genome_path}} -1 {{fn}}_1.fq.gz -2 {{fn}}_2.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}'."\n",
-		'bilin1' => 'bismark --bam {{genome_path}} -1 {{fn}}_1.fq.gz -2 {{fn}}_2.fq.gz'."\n"
+		'rocks1' => 'echo "bismark --bam {{genome_path}} -1 {{fn}}_1.fq.gz -2 {{fn}}_2.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bismark --bam {{genome_path}} -1 {{fn}}_1.fq.gz -2 {{fn}}_2.fq.gz'
 	),
 	'bismark_pbat' => array(
-		'rocks1' => 'echo "bismark --pbat –bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}'."\n",
-		'bilin1' => 'bismark --pbat –bam {{genome_path}} {{fn}}.fq.gz'."\n"
+		'rocks1' => 'echo "bismark --pbat –bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bismark --pbat –bam {{genome_path}} {{fn}}.fq.gz'
 	),
 	'email_contact' => array(
-		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{contact_email}} {{hold_prev}}'."\n",
-		'bilin1' => 'echo "{{project}} Processing Completed at {{time}}" | mail -s "{{project}} Processing Complete" {{contact_email}}'."\n"
+		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{contact_email}} {{hold_prev}}',
+		'bilin1' => 'echo "{{project}} Processing Completed at {{time}}" | mail -s "{{project}} Processing Complete" {{contact_email}}'
 	),
 	'email_assigned' => array(
-		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{assigned_email}} {{hold_prev}}'."\n",
-		'bilin1' => 'echo "{{project}} Processing Completed at {{time}}" | mail -s "{{project}} Processing Complete" {{assigned_email}}'."\n"
+		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{assigned_email}} {{hold_prev}}',
+		'bilin1' => 'echo "{{project}} Processing Completed at {{time}}" | mail -s "{{project}} Processing Complete" {{assigned_email}}'
 	)
 );
 

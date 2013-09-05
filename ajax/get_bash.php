@@ -33,7 +33,7 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 				$fn = $sra."_".$dataset_fn;
 				$sra_url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/SRR/".substr($sra,0,6)."/".$sra."/".$sra.".sra -O ".$fn.".sra";
 				
-				$output = $_POST['template'];
+				$output = $_POST['template']."\n";
 				
 				$patterns = array(
 					'/{{fn}}/',
@@ -94,7 +94,7 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 	$contact_email = $project['contact_email'];
 	$assigned_email = $project['assigned_to'];
 	
-	$output = $_POST['template'];
+	$output = $_POST['template']."\n";
 			
 	$patterns = array(
 		'/{{genome_path}}/',

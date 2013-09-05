@@ -144,10 +144,10 @@ function updateBashPreview () {
 			var unit  = selected.data('unit');
 			
 			if(unit == 'accession_sra'){
-				sra_template += $(this).val();
+				sra_template += $(this).val() + "\n";
 			}
 			if(unit == 'project'){
-				project_template += $(this).val();
+				project_template += $(this).val() + "\n";
 			}
 		});
 		
