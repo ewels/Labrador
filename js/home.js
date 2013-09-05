@@ -14,6 +14,11 @@ $('#paper-browser-table tr td').click(function(e){
 // FILTER LIST FUNCTIONS
 //////////
 
+// Filter on page load
+$(document).ready(function(){
+	updateFilters();
+});
+
 // Status checkboxes
 $('#filter_status_bar label').click(function(e){
 	var id = $(this).attr('for');

@@ -75,12 +75,12 @@ include('includes/header.php');
 		
 		<p id="filter_status_bar"><strong>Key:</strong>
 		
-			<input type="checkbox" name="filter_status" id="filter_status_pc" value="Processing Complete" checked="checked">
+			<input type="checkbox" name="filter_status" id="filter_status_pc" value="Processing Complete" <?php if(!isset($_GET['assigned_projects'])) { echo 'checked="checked"'; } ?>>
 			<input type="checkbox" name="filter_status" id="filter_status_cp" value="Currently Processing" checked="checked">
 			<input type="checkbox" name="filter_status" id="filter_status_ns" value="Not Started" checked="checked">
 			<input type="checkbox" name="filter_status" id="filter_status_nf" value="Directory Not Found" checked="checked">
 			
-			<label for="filter_status_pc" class="checked"><span></span> Processing Complete</label>
+			<label for="filter_status_pc" <?php if(!isset($_GET['assigned_projects'])) { echo 'class="checked"'; } ?>><span></span> Processing Complete</label>
 			<label for="filter_status_cp" class="checked"><span class=" info"></span> Currently Processing</label>
 			<label for="filter_status_ns" class="checked"><span class=" error"></span> Not Started</label>
 			<label for="filter_status_nf" class="checked"><span class=" warning"></span> Directory not found</label>

@@ -362,7 +362,15 @@ if($add) { ?>
 		&nbsp; &nbsp; 
 		<?php if(strlen($project['accession_geo']) > 0) {
 			$geo_accessions = explode(" ",$project['accession_geo']);
-			foreach($geo_accessions as $acc) { ?>
+			foreach($geo_accessions as $acc) {
+				$acc = trim($acc); ?>
+			<button class="btn geo_accession_lookup" type="button" data-accession="<?php echo $acc; ?>">Look up accession <?php echo $acc; ?> &nbsp; <i class="icon-search"></i></button>
+		<?php }
+		}
+		if(strlen($project['accession_sra']) > 0) {
+			$sra_accessions = explode(" ",$project['accession_sra']);
+			foreach($sra_accessions as $acc) {
+				$acc = trim($acc); ?>
 			<button class="btn geo_accession_lookup" type="button" data-accession="<?php echo $acc; ?>">Look up accession <?php echo $acc; ?> &nbsp; <i class="icon-search"></i></button>
 		<?php }
 		} ?>

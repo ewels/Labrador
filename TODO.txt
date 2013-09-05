@@ -2,6 +2,10 @@
    TO DO - Labrador
 =====================
 
+0. Make Delete paper work.
+
+0.5. Form checking for empty cell types / data type etc.
+
 1. Put in message about requesting datasets
 	* Make people click a button to say they understand before adding datasets
 
