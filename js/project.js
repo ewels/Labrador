@@ -47,40 +47,45 @@ $('#paper_add_paper').click(function(e){
 // Paper delete button
 $('.edit_publications').on('click', '.paper_delete', function(e){
 	e.preventDefault();
-	var id = $(this).attr('id').substr(13);
-	var success = false;
+	var row_id = $(this).attr('id').substr(13);
 	if($(this).hasClass('paper_delete_nodb')){
 		// This paper was dynamically generated on this page load and hasn't been saved yet
-		success = true;
+		removePaper(row_id);
 	} else {
-		$.getJSON('ajax/delete_paper.php?pid='+id, function(data) {
+		var paper_id = $('#paper_id_'+row_id).val();
+		$.getJSON('ajax/delete_paper.php?pid='+paper_id, function(data) {
 			if(data[0] == 1){
-				success = true;
+				// Deleted from database, remove from page..
+				alert(data[1]);
+				removePaper(row_id);
 			} else {
 				alert(data[1]);
 			}
 		});
 	}
-	if(success){
-		$('#paper_row_'+id).slideUp(500, function(){
-			$('#paper_row_'+id).remove();
-			alert(data[1]);
-			// Re-do all of the paper IDs
-			$.each($('.edit_publications tbody tr'), function(key, row){
-				var id = key + 1;
-				$(this).attr('id', 'paper_row_'+id);
-				$(this).find('.paper_id').attr('id', 'paper_id_'+id).attr('name', 'paper_id_'+id);
-				$(this).find('.paper_year').attr('id', 'paper_year_'+id).attr('name', 'paper_year_'+id);
-				$(this).find('.paper_journal').attr('id', 'paper_journal_'+id).attr('name', 'paper_journal_'+id);
-				$(this).find('.paper_title').attr('id', 'paper_title_'+id).attr('name', 'paper_title_'+id);
-				$(this).find('.paper_authors').attr('id', 'paper_authors_'+id).attr('name', 'paper_authors_'+id);
-				$(this).find('.paper_pmid').attr('id', 'paper_pmid_'+id).attr('name', 'paper_pmid_'+id);
-				$(this).find('.paper_doi').attr('id', 'paper_doi_'+id).attr('name', 'paper_doi_'+id);
-				$(this).find('.paper_delete').attr('id', 'paper_delete_'+id);
-			});
-		});
-	}
 });
+function removePaper(id){
+	$('#paper_row_'+id).slideUp(500, function(){
+		$('#paper_row_'+id).remove();
+		// Re-do all of the paper IDs
+		$.each($('.edit_publications tbody tr'), function(key, row){
+			var id = key + 1;
+			$(this).attr('id', 'paper_row_'+id);
+			$(this).find('.paper_id').attr('id', 'paper_id_'+id).attr('name', 'paper_id_'+id);
+			$(this).find('.paper_year').attr('id', 'paper_year_'+id).attr('name', 'paper_year_'+id);
+			$(this).find('.paper_journal').attr('id', 'paper_journal_'+id).attr('name', 'paper_journal_'+id);
+			$(this).find('.paper_title').attr('id', 'paper_title_'+id).attr('name', 'paper_title_'+id);
+			$(this).find('.paper_authors').attr('id', 'paper_authors_'+id).attr('name', 'paper_authors_'+id);
+			$(this).find('.paper_pmid').attr('id', 'paper_pmid_'+id).attr('name', 'paper_pmid_'+id);
+			$(this).find('.paper_doi').attr('id', 'paper_doi_'+id).attr('name', 'paper_doi_'+id);
+			$(this).find('.paper_delete').attr('id', 'paper_delete_'+id);
+		});
+		// Put in 'no paper if now empty'
+		if($('.edit_publications tbody tr').length == 0){
+			$('.edit_publications tbody').html('<tr class="no_papers_tr"><td colspan="7"><em>No papers found..</em></td></tr>');
+		}
+	});
+}
 
 ///////
 // ACCESSION NUMBER LOOKUP FUNCTIONS

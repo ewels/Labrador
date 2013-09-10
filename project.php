@@ -735,7 +735,7 @@ if(!$new_project and !$edit and !$error){ ?>
 					}
 					if(count($papers) == 0){ ?>
 					<tr class="no_papers_tr">
-						<td colspan="6"><em>No papers found..</em></td>
+						<td colspan="7"><em>No papers found..</em></td>
 					</tr>
 					<?php 
 					} else {

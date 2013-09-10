@@ -217,7 +217,7 @@ $processing_codes = array(
 	),
 	'bowtie1_pe' => array(
 		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --chunkmbs 2048 -S {{genome_path}} -1 {{fn}}_1_trimmed.fq -2 {{fn}}_2_trimmed.fq | samtools view -bS - > {{fn}}.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'bowtie -q -m 1 -p 4 --chunkmbs 512 -S {{genome_path}} -1 {{fn}}_1_trimmed.fq -2 {{fn}}_2_trimmed.fq | samtools view -bS - > {{fn}}.bam'
+		'bilin1' => 'bowtie -q -m 1 -p 4 --chunkmbs 512 -S {{genome_path}} -1 {{fn}}_1_val_1.fq -2 {{fn}}_2__val_2.fq | samtools view -bS - > {{fn}}.bam'
 	),
 	'bowtie2' => array(
 		'rocks1' => '',
@@ -228,20 +228,20 @@ $processing_codes = array(
 		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq'
 	),
 	'tophat_pe' => array(
-		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq {{fn}}_2_trimmed.fq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq {{fn}}_2_trimmed.fq'
+		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_val_1.fq {{fn}}_2_val_2.fq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_val_1.fq {{fn}}_2_val_2.fq'
 	),
 	'bismark_se' => array(
-		'rocks1' => 'echo "bismark --bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'bismark --bam {{genome_path}} {{fn}}.fq.gz'
+		'rocks1' => 'echo "bismark --bam {{genome_path}} {{fn}}_1_trimmed.fq" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bismark --bam {{genome_path}} {{fn}}_1_trimmed.fq'
 	),
 	'bismark_pe' => array(
-		'rocks1' => 'echo "bismark --bam {{genome_path}} -1 {{fn}}_1.fq.gz -2 {{fn}}_2.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'bismark --bam {{genome_path}} -1 {{fn}}_1.fq.gz -2 {{fn}}_2.fq.gz'
+		'rocks1' => 'echo "bismark --bam {{genome_path}} -1 {{fn}}_1_val_1.fq -2 {{fn}}_2_val_2.fq" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bismark --bam {{genome_path}} -1 {{fn}}_1_val_1.fq -2 {{fn}}_2_val_2.fq'
 	),
 	'bismark_pbat' => array(
-		'rocks1' => 'echo "bismark --pbat –bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'bismark --pbat –bam {{genome_path}} {{fn}}.fq.gz'
+		'rocks1' => 'echo "bismark --pbat –bam {{genome_path}} {{fn}}_1_trimmed.fq" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bismark --pbat –bam {{genome_path}} {{fn}}_1_trimmed.fq'
 	),
 	'email_contact' => array(
 		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{contact_email}} {{hold_prev}}',
