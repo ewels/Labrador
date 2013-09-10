@@ -131,7 +131,22 @@ small.muted {
 
 .home-lab {
 	margin-bottom:20px;
+	border:1px solid #CCC;
+	-webkit-box-shadow: 0px 0px 5px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    0px 0px 5px rgba(50, 50, 50, 0.75);
+	box-shadow:         0px 0px 5px rgba(50, 50, 50, 0.75);
 }
+.home-lab, .home-lab iframe {
+	width:420px;
+	height:236px;
+}
+@media screen and (max-width:1280px){
+	.home-lab, .home-lab iframe {
+		width:210px;
+		height:118px;
+	}
+}
+
 
 #filter_status_bar {
 	margin-top:20px;

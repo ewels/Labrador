@@ -195,7 +195,7 @@ include('includes/header.php'); ?>
 		echo '<h3>'.$dataset_name.'</h3>';
 		$fileinfo = pathinfo(basename($report_path));
 		$images = array('jpeg', 'jpg', 'png', 'gif');
-		$text = array('out', 'log');
+		$text = array('txt', 'out', 'log');
 		if(in_array($fileinfo['extension'], $images)){
 			echo '<p style="text-align:center;"><img src="ajax/send_file.php?path='.$report_path.'"></p>';
 		} else if(in_array($fileinfo['extension'], $text)){

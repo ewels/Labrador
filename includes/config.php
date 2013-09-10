@@ -204,32 +204,32 @@ $processing_codes = array(
 		'bilin1' => 'fastq_screen --subset 100000 {{fn}}_1.fastq'
 	),
 	'trim_galore_se' => array(
-		'rocks1' => 'echo "trim_galore --fastqc --gzip {{fn}}.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}',
-		'bilin1' => 'trim_galore --fastqc --gzip {{fn}}.fastq'
+		'rocks1' => 'echo "trim_galore --fastqc {{fn}}_1.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}',
+		'bilin1' => 'trim_galore --fastqc {{fn}}_1.fastq'
 	),
 	'trim_galore_pe' => array(
-		'rocks1' => 'echo "trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}',
-		'bilin1' => 'trim_galore --paired --trim1 --fastqc --gzip {{fn}}_1.fastq {{fn}}_2.fastq'
+		'rocks1' => 'echo "trim_galore --paired --trim1 --fastqc {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -pe orte 2 -l vf=4G -o {{fn}}_trimming.out -j y -m as -M {{assigned_email}} -N trim_{{fn}} -hold_jid dump_{{fn}}',
+		'bilin1' => 'trim_galore --paired --trim1 --fastqc {{fn}}_1.fastq {{fn}}_2.fastq'
 	),
 	'bowtie1_se' => array(
-		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 -S {{genome_path}} {{fn}}_1.fastq | samtools view -bS - > {{fn}}_1.bam'
+		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --best --strata --chunkmbs 2048 -S {{genome_path}} {{fn}}_1_trimmed.fq | samtools view -bS - > {{fn}}_1.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bowtie -q -m 1 -p 4 --best --strata --chunkmbs 512 -S {{genome_path}} {{fn}}_1_trimmed.fq | samtools view -bS - > {{fn}}_1.bam'
 	),
 	'bowtie1_pe' => array(
-		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --chunkmbs 2048 -S {{genome_path}} -1 {{fn}}_1.fastq -2 {{fn}}_2.fastq | samtools view -bS - > {{fn}}.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'bowtie -q -m 1 -p 4 --chunkmbs 512 -S {{genome_path}} -1 {{fn}}_1.fastq -2 {{fn}}_2.fastq | samtools view -bS - > {{fn}}.bam'
+		'rocks1' => 'echo "bowtie -q -t -p 8 -m 1 --chunkmbs 2048 -S {{genome_path}} -1 {{fn}}_1_trimmed.fq -2 {{fn}}_2_trimmed.fq | samtools view -bS - > {{fn}}.bam" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_alignment.out -j y -m as -M {{assigned_email}} -N bowtie_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'bowtie -q -m 1 -p 4 --chunkmbs 512 -S {{genome_path}} -1 {{fn}}_1_trimmed.fq -2 {{fn}}_2_trimmed.fq | samtools view -bS - > {{fn}}.bam'
 	),
 	'bowtie2' => array(
 		'rocks1' => '',
 		'bilin1' => ''
 	),
 	'tophat_se' => array(
-		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq'
+		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq'
 	),
 	'tophat_pe' => array(
-		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq {{fn}}_2.fastq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
-		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1.fastq {{fn}}_2.fastq'
+		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq {{fn}}_2_trimmed.fq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq {{fn}}_2_trimmed.fq'
 	),
 	'bismark_se' => array(
 		'rocks1' => 'echo "bismark --bam {{genome_path}} {{fn}}.fq.gz" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
@@ -268,6 +268,7 @@ $project_report_types = array(
 $dataset_report_types = array(
 	'fastqc' => 'FastQC Reports',
 	'fastq_screen' => 'FastQ Screen',
+	'trim_galore' => 'Trim Galore',
 	'bowtie' => 'Bowtie Reports',
 	
 	'alignment_overview' => 'Bismark Alignment Overview Plots',
@@ -284,6 +285,9 @@ function report_match ($file, $type) {
 			
 		case 'fastq_screen':
 			return substr($file, -11) ==  '_screen.png';
+			
+		case 'trim_galore':
+			return substr($file, -20) ==  '_trimming_report.txt';
 		
 		case 'bowtie':
 			return (stripos(basename($file), 'bowtie') || stripos(basename($file), 'alignment')) && (substr($file, -4) ==  '.out' || substr($file, -4) ==  '.log');
@@ -316,6 +320,9 @@ function report_naming ($path, $type) {
 			
 		case 'fastq_screen':
 			return substr(basename($path),0, -11);
+			
+		case 'trim_galore':
+			return substr(basename($path),0, -20);
 			
 		case 'bowtie':
 			return substr(basename($path),0,-4);
