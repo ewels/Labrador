@@ -2,10 +2,7 @@
    TO DO - Labrador
 =====================
 
-1. Put in message about requesting datasets
-	* Make people click a button to say they understand before adding datasets
-
-1.5 Allow projects to have multiple contacts
+1 Allow projects to have multiple contacts
 	* Remove project contact details, just have user / project lookup table
 
 2. Tidy Up Processing

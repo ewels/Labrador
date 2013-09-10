@@ -69,6 +69,15 @@ $('#remove_datasets_button').click(function(){
 	});
 });
 
+// Save all datasets - numeric check
+$('#add_datasets_submit').click(function(e) {
+	if($('.table_form tbody tr').length > 9){
+		if(!confirm('You are adding lots of datasets - are you sure you need all of these? Extra datasets will delay processing. Press OK to Save, Cancel to return to the page.')){
+			e.preventDefault();
+		}
+	}	
+});
+
 // GEO ACCESSION LOOKUP
 $('.geo_accession_lookup').click(function(e){
 	e.preventDefault();

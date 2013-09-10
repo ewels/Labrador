@@ -415,7 +415,7 @@ if($add) { ?>
 		</div>
 		
 		<div class="form-actions">
-			<input type="submit" class="btn btn-primary btn-large" name="add_datasets" id="add_datasets" value="Save All Datasets">
+			<input type="submit" class="btn btn-primary btn-large" name="add_datasets" id="add_datasets_submit" value="Save All Datasets">
 			&nbsp; <a href="#" id="remove_datasets_button" class="btn btn-large btn-danger popover_button">Remove Checked Datasets</a>
 		</div>
 	</form>
