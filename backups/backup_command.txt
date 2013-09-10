@@ -1,1 +1,5 @@
-mysqldump --user=root --password=PASSWORD labrador > db_backup_DATE.sql
+# This crontab will automatically back up your labrador database at midnight every day
+# Replace your mySQL username and password, and the absolute labrador directories
+
+$ crontab -e
+00 00 * * * mysqldump --user=USER --password=PASSWORD labrador > /root/Labrador/backups/labrador_$(date +%Y-%m-%d).sql
