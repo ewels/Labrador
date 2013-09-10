@@ -160,7 +160,6 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 
 
 
-
 include('includes/header.php'); ?>
 
 <div class="sidebar-nav">
@@ -383,7 +382,7 @@ if($add) { ?>
 		<small><em>(overwrites current values)</em></small>
 	</form>
 	
-	<form action="datasets.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
+	<form action="datasets.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal form_validate">
 		<table id="add_existing_datasets_table" class="table table-bordered table-condensed table-hover table_form">
 			<thead>
 				<tr>
@@ -399,10 +398,10 @@ if($add) { ?>
 			<tbody>
 				<tr>
 					<td class="select"><input type="checkbox" class="select-row" id="check_1"></td>
-					<td><input class="name" type="text" id="name_1" name="name_1"></td>
-					<td><input class="species" type="text" id="species_1" name="species_1"></td>
-					<td><input class="cell_type" type="text" id="cell_type_1" name="cell_type_1"></td>
-					<td><input class="data_type" type="text" id="data_type_1" name="data_type_1"></td>
+					<td><input required class="name" type="text" id="name_1" name="name_1"></td>
+					<td><input required class="species" type="text" id="species_1" name="species_1"></td>
+					<td><input required class="cell_type" type="text" id="cell_type_1" name="cell_type_1"></td>
+					<td><input required class="data_type" type="text" id="data_type_1" name="data_type_1"></td>
 					<td><input class="accession_geo" type="text" id="accession_geo_1" name="accession_geo_1"></td>
 					<td><input class="accession_sra" type="text" id="accession_sra_1" name="accession_sra_1"></td>
 				</tr>

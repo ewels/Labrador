@@ -18,8 +18,7 @@ include('includes/header.php');
 		</div>
 		<?php endif; ?>
 				
-       	<?php /* <img class="pull-right visible-desktop home-lab" src="img/labrador_logo.png" title="woof!"> */ ?>
-		<div class="pull-right visible-desktop home-lab">
+ 		<div class="pull-right visible-desktop home-lab">
 			<iframe src="//www.youtube.com/embed/m03HTQtSGFg" frameborder="0" allowfullscreen></iframe>
 		</div>
 		<h1><?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>

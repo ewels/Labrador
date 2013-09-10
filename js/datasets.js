@@ -46,7 +46,7 @@ $('#btn_add_datasets').click(function(e){
 	var numRows = $('#add_existing_datasets_table tbody tr').length;
 	for (var i=1; i <= num; i++) {
 		var j = i + numRows;
-		$('#add_existing_datasets_table tbody').append('<tr><td class="select"><input type="checkbox" class="select-row" id="check_'+j+'"></td><td><input class="name" type="text" name="name_'+j+'" id="name_'+j+'"></td><td><input class="species" type="text" id="species_'+j+'" name="species_'+j+'"></td><td><input class="cell_type" type="text" id="cell_type_'+j+'" name="cell_type_'+j+'"></td><td><input class="data_type" type="text" id="data_type_'+j+'" name="data_type_'+j+'"></td><td><input class="accession_geo" type="text" id="accession_geo_'+j+'" name="accession_geo_'+j+'"></td><td><input class="accession_sra" type="text" id="accession_sra_'+j+'" name="accession_sra_'+j+'"></td></tr>');
+		$('#add_existing_datasets_table tbody').append('<tr><td class="select"><input type="checkbox" class="select-row" id="check_'+j+'"></td><td><input required class="name" type="text" name="name_'+j+'" id="name_'+j+'"></td><td><input required class="species" type="text" id="species_'+j+'" name="species_'+j+'"></td><td><input required class="cell_type" type="text" id="cell_type_'+j+'" name="cell_type_'+j+'"></td><td><input required class="data_type" type="text" id="data_type_'+j+'" name="data_type_'+j+'"></td><td><input class="accession_geo" type="text" id="accession_geo_'+j+'" name="accession_geo_'+j+'"></td><td><input class="accession_sra" type="text" id="accession_sra_'+j+'" name="accession_sra_'+j+'"></td></tr>');
 	}
 });
 
@@ -105,7 +105,7 @@ $('.geo_accession_lookup').click(function(e){
 				if(sample.duplicate == 'false'){
 					// Add table row
 					var j = Number(i) + 1 + numRows;
-					$('#add_existing_datasets_table tbody').append('<tr><td class="select"><input type="checkbox" class="select-row" id="check_'+j+'"></td><td><input class="name" type="text" name="name_'+j+'" id="name_'+j+'"></td><td><input class="species" type="text" id="species_'+j+'" name="species_'+j+'"></td><td><input class="cell_type" type="text" id="cell_type_'+j+'" name="cell_type_'+j+'"></td><td><input class="data_type" type="text" id="data_type_'+j+'" name="data_type_'+j+'"></td><td><input class="accession_geo" type="text" id="accession_geo_'+j+'" name="accession_geo_'+j+'"></td><td><input class="accession_sra" type="text" id="accession_sra_'+j+'" name="accession_sra_'+j+'"></td></tr>');
+					$('#add_existing_datasets_table tbody').append('<tr><td class="select"><input type="checkbox" class="select-row" id="check_'+j+'"></td><td><input required class="name" type="text" name="name_'+j+'" id="name_'+j+'"></td><td><input required class="species" type="text" id="species_'+j+'" name="species_'+j+'"></td><td><input required class="cell_type" type="text" id="cell_type_'+j+'" name="cell_type_'+j+'"></td><td><input required class="data_type" type="text" id="data_type_'+j+'" name="data_type_'+j+'"></td><td><input class="accession_geo" type="text" id="accession_geo_'+j+'" name="accession_geo_'+j+'"></td><td><input class="accession_sra" type="text" id="accession_sra_'+j+'" name="accession_sra_'+j+'"></td></tr>');
 					// Fill in inputs
 					$('#name_'+j).val(sample.name);
 					$('#species_'+j).val(sample.species);

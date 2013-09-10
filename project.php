@@ -232,14 +232,20 @@ $labrador_url
 // DELETE PROJECT
 ///////
 if($delete && $project_id){
-	// Start off by deleting file records and reports etc
-	///// NOTE - not written yet, are we going to keep file db records?
+	// Go through and delete everything else which refers to project_id
+	$query = sprintf("DELETE FROM `processing` WHERE `project_id` = '%d'", $project_id);
+	if(mysql_query($query)){
+		$s = mysql_affected_rows() > 1 ? 's' : '';
+		$msg[] = mysql_affected_rows(). " processing record$s deleted";
+	} else {
+		$error = true;
+		$msg[] = "Could not delete processing records: ".mysql_error();
+	}
 	
-	// Now go through and delete everything else which refers to project_id
 	$query = sprintf("DELETE FROM `datasets` WHERE `project_id` = '%d'", $project_id);
 	if(mysql_query($query)){
 		$s = mysql_affected_rows() > 1 ? 's' : '';
-		$msg[] = mysql_affected_rows(). " datasets$s deleted";
+		$msg[] = mysql_affected_rows(). " dataset$s deleted";
 	} else {
 		$error = true;
 		$msg[] = "Could not delete datasets: ".mysql_error();
@@ -788,7 +794,7 @@ if(!$new_project and !$edit and !$error){ ?>
 		
 		<div class="form-actions">
 			<input type="submit" class="btn btn-primary btn-large" name="save_project" id="save_project" value="Save Project">
-			<?php if($edit){ ?>
+			<?php if($edit && $admin){ ?>
 				&nbsp; &nbsp; <a href="#" id="delete_project_button" class="btn btn-large btn-danger popover_button" data-toggle="popover" data-html="true" title="Delete Project" data-content="Are you sure? This will delete the project and all papers &amp; datasets associated with it from the database. <strong>This cannot be undone</strong>. Data on the server will not be affected. <br><br> <a href='project.php?delete=<?php echo $project_id; ?>' class='btn btn-danger btn-block'>I'm sure - delete the project</a>" data-original-title="Delete Project">Delete Project</a>
 			<?php } ?>
 		</div>

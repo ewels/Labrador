@@ -2,14 +2,11 @@
    TO DO - Labrador
 =====================
 
-0. Make Delete paper work.
-
-0.5. Form checking for empty cell types / data type etc.
-
-0.8. Delete project doesn't work if not an admin - remove button for non admins
-
 1. Put in message about requesting datasets
 	* Make people click a button to say they understand before adding datasets
+
+1.5 Allow projects to have multiple contacts
+	* Remove project contact details, just have user / project lookup table
 
 2. Tidy Up Processing
 	* Delete individual steps rather than just the final one
