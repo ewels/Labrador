@@ -2,4 +2,4 @@
 # Replace your mySQL username and password, and the absolute labrador directories
 
 $ crontab -e
-00 00 * * * mysqldump --user=USER --password=PASSWORD labrador > /root/Labrador/backups/labrador_$(date +%Y-%m-%d).sql
+00 00 * * * mysqldump --user=USER --password=PASSWORD labrador > /ROOT/Labrador/backups/labrador_$(date +%Y-%m-%d).sql

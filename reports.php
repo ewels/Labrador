@@ -38,13 +38,13 @@ include('includes/header.php'); ?>
 			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
 		</li>
 		<li>
-			<a href="files.php?id=<?php echo $project_id; ?>">Files</a>
-		</li>
-		<li>
 			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
 		</li>
 		<li class="active">
 			<a href="reports.php?id=<?php echo $project_id; ?>">Reports</a>
+		</li>
+		<li>
+			<a href="files.php?id=<?php echo $project_id; ?>">Files</a>
 		</li>
 	</ul>
 </div>
@@ -122,27 +122,32 @@ include('includes/header.php'); ?>
 				$count = 0;
 				$output = '<option>[ Select Report ]</option>';
 				foreach($ds_needles as $dsname => $needles){
-					$output .= '<optgroup label="'.$dsname.'">';
+					$optgroup = '<optgroup label="'.$dsname.'">';
+					$optgroup_count = 0;
 					foreach($paths as $path){
 						$path = substr($path, strlen($data_root));
 						foreach($needles as $needle){
 							if(stripos($path, $needle)){
+								$optgroup_count++;
 								if(!$report_path){
 									$report_path = $path;
 									$active_type = $type;
 								}
-								$output .= '<option value="'.$path.'"';
+								$optgroup .= '<option value="'.$path.'"';
 								if($report_path == $path && $active_type == $type){
-									$output .= ' selected="selected"';
+									$optgroup .= ' selected="selected"';
 									$dataset_name = $dsname;
 								}
-								$output .= '>'.report_naming($path, $type).'</option>';
+								$optgroup .= '>'.report_naming($path, $type).'</option>';
 								$count++;
 								break;
 							}
 						}
 					}
-					$output .= '</optgroup>';
+					$optgroup .= '</optgroup>';
+					if($optgroup_count > 0){
+						$output .= $optgroup;
+					}
 				}
 				if($count > 0 ){
 					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'">'.$output.'</select></label>';
@@ -193,6 +198,7 @@ include('includes/header.php'); ?>
 	<div class="alert alert-info">No reports found.</div>
 	<?php } else {
 		echo '<h3>'.$dataset_name.'</h3>';
+		echo '<p><code>'.$report_path.'</code></p>';
 		$fileinfo = pathinfo(basename($report_path));
 		$images = array('jpeg', 'jpg', 'png', 'gif');
 		$text = array('txt', 'out', 'log');

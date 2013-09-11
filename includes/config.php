@@ -270,6 +270,7 @@ $dataset_report_types = array(
 	'fastq_screen' => 'FastQ Screen',
 	'trim_galore' => 'Trim Galore',
 	'bowtie' => 'Bowtie Reports',
+	'tophat' => 'Tophat Reports',
 	
 	'alignment_overview' => 'Bismark Alignment Overview Plots',
 	'm_bias' => 'Bismark M-Bias Reports',
@@ -294,6 +295,9 @@ function report_match ($file, $type) {
 		
 		case 'bowtie_report':
 			return substr($file, -18) ==  'bowtie_report.html';
+		
+		case 'tophat':
+			return substr($file, -17) ==  'align_summary.txt';
 
 		case 'alignment_overview':
 			return substr($file, -23) == '.alignment_overview.png';
@@ -329,6 +333,9 @@ function report_naming ($path, $type) {
 			
 		case 'bowtie_report':
 			return substr(basename($path),0,-5);
+			
+		case 'tophat':
+			return basename($path);
 
 		case 'alignment_overview':
 			return substr(basename($path),0, -23);

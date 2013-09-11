@@ -26,6 +26,7 @@
 
 8. Automated backups
 	* Cron job to back up database to file.
+	* SVN ignore .sql files
 	* Automated clean ups of old backups?
 
 9. Tidy Up!
