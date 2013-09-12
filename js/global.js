@@ -21,6 +21,17 @@ function resizeSearch() {
 $(document).ready(resizeSearch());
 $(window).resize(function() { resizeSearch(); });
 
+// Search bar typeahead
+$('.search-query').typeahead({
+    source: function (query, process) {
+        return $.get('ajax/project_names.php', { query: query }, function (data) {
+            return process(data.projects);
+        });
+    },
+	updater:function (item) {
+		window.location.href = "project.php?p_name="+item;
+    }
+});
 
 // Form validation
 $('.form_validate').validate({

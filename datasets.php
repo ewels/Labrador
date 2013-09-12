@@ -237,10 +237,12 @@ include('includes/header.php'); ?>
 		<tbody>
 	<?php while ($dataset = mysql_fetch_array($datasets)){ ?>
 			<tr>
-				<td><label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
+				<td>
 				<?php if(!empty($dataset['notes'])) { ?>
 					<i class="icon-tag pull-right" title="<?php echo $dataset['notes']; ?>"></i>
-				<?php } ?></td>
+				<?php } ?>
+					<label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
+				</td>
 				<td><?php echo $dataset['species']; ?></td>
 				<td><?php echo $dataset['cell_type']; ?></td>
 				<td><?php echo $dataset['data_type']; ?></td>

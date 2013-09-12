@@ -10,6 +10,20 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$new_project = true;
 }
 
+if(isset($_GET['p_name'])){
+	$sql = sprintf("SELECT `id` FROM `projects` WHERE `name` = '%s'", mysql_real_escape_string($_GET['p_name']));
+	$project_q = mysql_query($sql);
+	if(mysql_num_rows($project_q) > 0 ){
+		$project = mysql_fetch_array($project_q);
+		$_GET['id'] = $project['id'];
+		$new_project = false;
+		$project_id = $project['id'];
+	} else {
+		$new_project = true;
+		echo $sql;
+	}
+}
+
 if(isset($_GET['edit']) && is_numeric($_GET['edit'])){
 	$edit = true;
 	$new_project = false;

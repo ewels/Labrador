@@ -32,7 +32,7 @@
 				
 				<form class="navbar-search form-search pull-left" action="search.php" method="get">
 					<div class="input-append">
-						<input type="text" name="s" id="s" class="search-query" placeholder="Search" <?php if(isset($_GET['s'])){ echo 'value="'.htmlentities($_GET['s']).'"'; } ?>>
+						<input type="text" name="s" id="s" class="search-query" placeholder="Search" autocomplete="off" <?php if(isset($_GET['s'])){ echo 'value="'.htmlentities($_GET['s']).'"'; } ?>>
 						<button class="btn">Search</button>
 					</div>
 				</form>
