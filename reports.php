@@ -50,6 +50,12 @@ include('includes/header.php'); ?>
 </div>
 
 <div class="sidebar-mainpage project-mainpage">
+
+<?php
+// Check directory exists
+if(file_exists($data_root.$project['name'])){
+?>
+
 	<form action="reports.php?id=<?php echo $project_id; ?>" method="post" class="pull-right reports_form">
 		<input type="hidden" value="" name="report_type" id="report_type">
 		
@@ -211,6 +217,12 @@ include('includes/header.php'); ?>
 		}
 	} // if(!$dataset_id){ } else { ?>
 
+<?php } // directory existence check
+else { ?>
+
+<p>Project directory not found on the server.</p>
+
+<?php } ?>	
 </div>
 
 <?php include('includes/javascript.php'); ?>

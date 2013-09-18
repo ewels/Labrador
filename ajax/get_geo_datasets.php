@@ -103,13 +103,18 @@ function get_geo_datasets ($acc) {
 		
 		// See if this dataset is a duplicate of one already in the database
 		$duplicate = false;
-		$sql = "SELECT `id` FROM `datasets` WHERE `accession_geo` = '".preg_replace("/[^A-Za-z0-9]/", '', $gsm_acc)."'";
-		$query = mysql_query($sql);
-		if(mysql_num_rows($query) > 0){
-			$duplicate = true;
-		} else {
-			foreach($sra_accessions[0] as $sra_accession){
-				$sql = "SELECT `id` FROM `datasets` WHERE `accession_sra` LIKE '%".preg_replace("/[^A-Za-z0-9]/", '', $sra_accession)."%'";
+		$gsm_acc_safe = preg_replace("/[^A-Za-z0-9]/", '', $gsm_acc);
+		if(strlen($gsm_acc_safe) > 0){
+			$sql = "SELECT `id` FROM `datasets` WHERE `accession_geo` = '".preg_replace("/[^A-Za-z0-9]/", '', $gsm_acc_safe)."'";
+			$query = mysql_query($sql);
+			if(mysql_num_rows($query) > 0){
+				$duplicate = true;
+			}
+		}
+		foreach($sra_accessions[0] as $sra_accession){
+			$sra_acc_safe = preg_replace("/[^A-Za-z0-9]/", '', $sra_accession);
+				if(strlen($sra_acc_safe) > 0){
+				$sql = "SELECT `id` FROM `datasets` WHERE `accession_sra` LIKE '%".$sra_acc_safe."%'";
 				$query = mysql_query($sql);
 				if(mysql_num_rows($query) > 0){
 					$duplicate = true;

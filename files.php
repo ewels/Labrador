@@ -138,171 +138,181 @@ include('includes/header.php'); ?>
 		</div>
 	</form>
 	<form action="files.php?id=<?php echo $project_id; ?>" method="post">
-	<?php // Get dataset details for filename search needles
-	$datasets = array();
-	$orphans = array();
-	$sql = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	if(isset($_GET['ds']) && is_numeric($_GET['ds'])){
-		$sql .= " AND `id` = '".$_GET['ds']."'";
-	}
-	$dataset_query = mysql_query($sql);
-	if(mysql_num_rows($dataset_query) > 0){
-		while ($dataset = mysql_fetch_array($dataset_query)){
-			$id = $dataset['id'];
-			$datasets[$id] = $dataset;
-			$datasets[$id]['files'] = array();
+	<?php 
+	// Check directory exists
+	if(file_exists($data_root.$project['name'])){
+		
+		// Get dataset details for filename search needles
+		$datasets = array();
+		$orphans = array();
+		$sql = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
+		if(isset($_GET['ds']) && is_numeric($_GET['ds'])){
+			$sql .= " AND `id` = '".$_GET['ds']."'";
 		}
-	}
-	// Loop through files and match to datasets
-	$num_paths = 0;
-	$dir = $data_root.$project['name'];
-	$it = new RecursiveDirectoryIterator($dir);
-	foreach(new RecursiveIteratorIterator($it) as $file) {
-		$size = $file->getSize();
-		$path = $file->getPathname();
-		$matched = false;
-		if(substr($path, -1) !== '~' && substr(basename($path), 0, 1) !== '.' && !stripos($path, 'fastqc/')){
-			$num_paths++;
-			// Look for SRA accessions first
-			foreach ($datasets as $id => $dataset){
-				$accessions = explode(" ", $dataset['accession_sra']);
-				foreach($accessions as $accession){
-					if(stripos($path, $accession)){
-						$datasets[$id]['paths'][$path] = $size;
-						$matched = true;
-						break 2;
-					}
-				}
+		$dataset_query = mysql_query($sql);
+		if(mysql_num_rows($dataset_query) > 0){
+			while ($dataset = mysql_fetch_array($dataset_query)){
+				$id = $dataset['id'];
+				$datasets[$id] = $dataset;
+				$datasets[$id]['files'] = array();
 			}
-			// Look for GEO accessions
-			if(!$matched){
+		}
+		// Loop through files and match to datasets
+		$num_paths = 0;
+		$dir = $data_root.$project['name'];
+		$it = new RecursiveDirectoryIterator($dir);
+		foreach(new RecursiveIteratorIterator($it) as $file) {
+			$size = $file->getSize();
+			$path = $file->getPathname();
+			$matched = false;
+			if(substr($path, -1) !== '~' && substr(basename($path), 0, 1) !== '.' && !stripos($path, 'fastqc/')){
+				$num_paths++;
+				// Look for SRA accessions first
 				foreach ($datasets as $id => $dataset){
-					$accessions = explode(" ", $dataset['accession_geo']);
+					$accessions = explode(" ", $dataset['accession_sra']);
 					foreach($accessions as $accession){
 						if(stripos($path, $accession)){
+							$datasets[$id]['paths'][$path] = $size;
+							$matched = true;
+							break 2;
+						}
+					}
+				}
+				// Look for GEO accessions
+				if(!$matched){
+					foreach ($datasets as $id => $dataset){
+						$accessions = explode(" ", $dataset['accession_geo']);
+						foreach($accessions as $accession){
+							if(stripos($path, $accession)){
+								$datasets[$id]['paths'][$path] = $size;
+								$matched = true;
+								break;
+							}
+						}
+					}
+				}
+				// Still nothing - look for names
+				if(!$matched){
+					foreach ($datasets as $id => $dataset){
+						if(stripos($path, $dataset['name'])){
 							$datasets[$id]['paths'][$path] = $size;
 							$matched = true;
 							break;
 						}
 					}
 				}
-			}
-			// Still nothing - look for names
-			if(!$matched){
-				foreach ($datasets as $id => $dataset){
-					if(stripos($path, $dataset['name'])){
-						$datasets[$id]['paths'][$path] = $size;
-						$matched = true;
-						break;
-					}
+				// Can't find this one - an orphan
+				if(!$matched && (!isset($_GET['ds']) || $_GET['ds'] == 'all' || $_GET['ds'] == 'none')){
+					$orphans[$path] = $size;
 				}
+				
 			}
-			// Can't find this one - an orphan
-			if(!$matched && (!isset($_GET['ds']) || $_GET['ds'] == 'all' || $_GET['ds'] == 'none')){
-				$orphans[$path] = $size;
-			}
-			
 		}
-	}
-	// Kill matched dataset paths if filtering for unmatched
-	if(isset($_GET['ds']) && $_GET['ds'] == 'none'){
-		$datasets = array();
-	}
-	?>
-	
-		<table class="table table-condensed table-bordered table-striped sortable download_table">
-			<thead>
-				<tr>
-					<th class="select" style="width:20px;"><input type="checkbox" class="select-all"></th>
-					<th data-sort="string-ins" style="width:30%;">Dataset Name</th>
-					<th data-sort="int" style="width:10%;">File Size</th>
-					<th data-sort="string-ins" style="width:15%;">Genome</th>
-					<th data-sort="string-ins">Filename</th>
-				</tr>
-			</thead>
-			<tbody>
-			<?php
-			function find_genome($path){
-				$genome = '';
-				// Find genome from BAM or SAM files
-				if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-					$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
-					$bam_headers = explode("\n", $bam_header);
-					foreach($bam_headers as $header){
-						if(stripos($header, 'Genomes/')){
-							$genomes = explode(" ", substr($header, stripos($header, 'Genomes/') + 8));
-							$genomes2 = split("/", $genomes[0]);
-							$genome = $genomes2[0].' - '.$genomes2[1];
+		// Kill matched dataset paths if filtering for unmatched
+		if(isset($_GET['ds']) && $_GET['ds'] == 'none'){
+			$datasets = array();
+		}
+		?>
+		
+			<table class="table table-condensed table-bordered table-striped sortable download_table">
+				<thead>
+					<tr>
+						<th class="select" style="width:20px;"><input type="checkbox" class="select-all"></th>
+						<th data-sort="string-ins" style="width:30%;">Dataset Name</th>
+						<th data-sort="int" style="width:10%;">File Size</th>
+						<th data-sort="string-ins" style="width:15%;">Genome</th>
+						<th data-sort="string-ins">Filename</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+				function find_genome($path){
+					$genome = '';
+					// Find genome from BAM or SAM files
+					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
+						$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+						$bam_headers = explode("\n", $bam_header);
+						foreach($bam_headers as $header){
+							if(stripos($header, 'Genomes/')){
+								$genomes = explode(" ", substr($header, stripos($header, 'Genomes/') + 8));
+								$genomes2 = split("/", $genomes[0]);
+								$genome = $genomes2[0].' - '.$genomes2[1];
+							}
+						}
+					}
+					// Find genome from SeqMonk projects
+					if(substr($path, -4) == '.smk' || substr($path, -7) == '.smk.gq'){
+						$type = shell_exec (escapeshellcmd ('file '.$path));
+						$types = explode(": ", $type);
+						$type = $types[1];
+						if(substr($type,0,4) == 'gzip'){
+							$header = shell_exec ('zcat '.$path.' | head');
+						} else {
+							$header = shell_exec (escapeshellcmd ('head '.$path));
+						}
+						$headers = explode("\n", $header);
+						$genomes = explode("\t", $headers[1]);
+						$genome = $genomes[1].' - '.$genomes[2];
+					}
+					return $genome;
+				}
+				function find_parameters($path){
+					// BAM and SAM files
+					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
+						$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+						$bam_headers = explode("\n", $bam_header);
+						foreach($bam_headers as $header){
+							if(stripos($header, 'Genomes/')){
+								return '<i class="icon-info-sign" title="'.htmlspecialchars ($header).'"></i>';
+							}
 						}
 					}
 				}
-				// Find genome from SeqMonk projects
-				if(substr($path, -4) == '.smk' || substr($path, -7) == '.smk.gq'){
-					$type = shell_exec (escapeshellcmd ('file '.$path));
-					$types = explode(": ", $type);
-					$type = $types[1];
-					if(substr($type,0,4) == 'gzip'){
-						$header = shell_exec ('zcat '.$path.' | head');
-					} else {
-						$header = shell_exec (escapeshellcmd ('head '.$path));
-					}
-					$headers = explode("\n", $header);
-					$genomes = explode("\t", $headers[1]);
-					$genome = $genomes[1].' - '.$genomes[2];
-				}
-				return $genome;
-			}
-			function find_parameters($path){
-				// BAM and SAM files
-				if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-					$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
-					$bam_headers = explode("\n", $bam_header);
-					foreach($bam_headers as $header){
-						if(stripos($header, 'Genomes/')){
-							return '<i class="icon-info-sign" title="'.htmlspecialchars ($header).'"></i>';
-						}
-					}
-				}
-			}
-			
-			$j = 0;
-			foreach($datasets as $dataset){
-				$paths = $dataset['paths'];
-				ksort($paths);
-				foreach($paths as $raw_path => $size){
+				
+				$j = 0;
+				foreach($datasets as $dataset){
+					$paths = $dataset['paths'];
+					ksort($paths);
+					foreach($paths as $raw_path => $size){
+						$j++;
+						$path = substr($raw_path, strlen($dir)); ?>
+					<tr>
+						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
+						<td><?php echo $dataset['name']; ?></td>
+						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
+						<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
+						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+					</tr>
+				<?php 
+					} //foreach path
+				} // foreach dataset
+				ksort($orphans);
+				foreach ($orphans as $raw_path => $size){
 					$j++;
 					$path = substr($raw_path, strlen($dir)); ?>
-				<tr>
-					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
-					<td><?php echo $dataset['name']; ?></td>
-					<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
-					<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
-					<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
-				</tr>
-			<?php 
-				} //foreach path
-			} // foreach dataset
-			ksort($orphans);
-			foreach ($orphans as $raw_path => $size){
-				$j++;
-				$path = substr($raw_path, strlen($dir)); ?>
-				<tr>
-					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
-					<td><em>Not matched to any datasets</em></td>
-					<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
-					<td><?php echo find_genome($raw_path); ?></td>
-					<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
-				</tr>
-			<?php } // foreach orhpans ?></tbody>
-		</table>
+					<tr>
+						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $j; ?>" name="check_<?php echo $j; ?>"><input type="hidden" name="path_<?php echo $j; ?>" value="<?php echo $path; ?>"></td>
+						<td><em>Not matched to any datasets</em></td>
+						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
+						<td><?php echo find_genome($raw_path); ?></td>
+						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+					</tr>
+				<?php } // foreach orhpans ?></tbody>
+			</table>
+			
+			<div class="form-actions">
+				<input type="submit" class="btn btn-primary btn-large" name="java_download_paths" id="java_download_paths" value="Download Checked Files With Java Applet">
+			</div>
+			
+		</form>
 		
-		<div class="form-actions">
-			<input type="submit" class="btn btn-primary btn-large" name="java_download_paths" id="java_download_paths" value="Download Checked Files With Java Applet">
-		</div>
+		<?php } // directory existence check
+		else { ?>
 		
-	</form>
-	
-	<?php } // java applet check ?>
+		<p>No directory found on the server.</p>
+		
+		<?php } 
+	} // java applet check ?>
 	
 </div>
 

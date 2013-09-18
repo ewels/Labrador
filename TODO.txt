@@ -20,9 +20,9 @@
 	* Datasets - Add
 	* Datasets - Edit
 
-6. Better form validation. Check formats of accession codes
-
-7. Ajax search for duplicates when entering accessions and project names
+6. Better form validation - AJAX. 
+	* Check formats of accession codes
+	* Search for duplicates when entering accessions and project names
 
 8. Automated backups
 	* Cron job to back up database to file.

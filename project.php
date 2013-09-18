@@ -405,7 +405,7 @@ if(!$new_project and !$edit and !$error){ ?>
 				<dd><a href="http://www.ncbi.nlm.nih.gov/geo/" target="_blank">NCBI Gene Expression Omnibus</a> accession. Should be the accession for the project not a single dataset <em>(starting GSE, not GSM)</em></dd>
 				
 				<dt>SRA Accession</dt>
-				<dd><a href="http://www.ncbi.nlm.nih.gov/sra" target="_blank">NCBI Sequence Read Archive</a> accession. Should be the accession for the experiment not a single dataset <em>(starting SRX, not SRR)</em></dd>
+				<dd><a href="http://www.ncbi.nlm.nih.gov/sra" target="_blank">NCBI Sequence Read Archive</a> accession. Should be the accession for the project not a single dataset <em>(starting SRP, not SRR)</em></dd>
 				
 				<dt>ENA Accession</dt>
 				<dd><a href="http://www.ebi.ac.uk/ena/" target="_blank">EBI European Nucleotide Archive</a> accession.</dd>
@@ -691,7 +691,7 @@ if(!$new_project and !$edit and !$error){ ?>
 			<div class="control-group">
 				<label class="control-label" for="accession_sra"><abbr title="Sequence Read Archive">SRA</abbr></label>
 				<div class="controls">
-					<input type="text" name="accession_sra" id="accession_sra" maxlength="50" placeholder="SRX000000" value="<?php echo $values['accession_sra']; ?>">
+					<input type="text" name="accession_sra" id="accession_sra" maxlength="50" placeholder="SRP000000" value="<?php echo $values['accession_sra']; ?>">
 					<span class="help-inline"><a href="#" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
 				</div>
 			</div>

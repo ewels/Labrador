@@ -85,18 +85,19 @@ function labrador_login_modal() {
 								</div>
 							</div>
 							
-							<!-- hidden submit form to catch people pressing enter and expecting to log in -->
-							<input type="submit" class="btn btn-success" name="login_submit" id="login_submit_hidden" style="position:absolute; left:-1000%;"  value="Log In">
-							
-							<p>Forgotten your password? Enter your e-mail address above and <input class="btn btn-link" type="submit" name="forgotten_password" style="padding:0 0 3px;" value="click here"> to reset it.</p>
-							
-							<p>Problems with e-mail verification? <a data-toggle="modal" data-dismiss="modal" href="#email_verification_modal">Manually enter code</a>.</p>
-							
 							<div class="modal-footer">
 								<small class="help-block pull-left">Labrador uses cookies. <a href="http://www.whatarecookies.com/enable.asp" target="_blank">Click here for more info</a>.</small>
 								<button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 								<input type="submit" class="btn btn-success" name="login_submit" id="login_submit"  value="Log In">
+							
+								<div class="forgotten_password">
+									<p>Forgotten your password? Enter your e-mail address above and <input class="btn btn-link" type="submit" name="forgotten_password" value="click here"> to reset it.</p>
+									<p>Problems with e-mail verification? <a data-toggle="modal" data-dismiss="modal" href="#email_verification_modal">Manually enter code</a>.</p>
+								</div>
+							
 							</div>
+							
+							
 						</form>
 					</div>
 					<div class="tab-pane" id="register_tabpane">

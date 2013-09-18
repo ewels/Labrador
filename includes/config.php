@@ -180,8 +180,8 @@ $processing_steps = array(
 		'bismark_pbat' => array( 'name' => 'Bismark, PBAT', 'unit' => 'accession_sra', 'requires_genome' => 'true' ),
 	),
 	'Post-Processing' => array(
-		'email_contact' => array( 'name' => 'Send Contact E-mail', 'unit' => 'project' ),
-		'email_assigned' => array( 'name' => 'Send Assigned E-mail', 'unit' => 'project' )
+		'email_contact' => array( 'name' => 'Send Contact E-mail', 'unit' => 'project', 'requires_genome' => 'true' ),
+		'email_assigned' => array( 'name' => 'Send Assigned E-mail', 'unit' => 'project', 'requires_genome' => 'true' )
 	)
 );
 
@@ -224,11 +224,11 @@ $processing_codes = array(
 		'bilin1' => ''
 	),
 	'tophat_se' => array(
-		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'rocks1' => 'echo "tophat -g 1 -p 4 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq" | qsub -V -cwd -l vf=4G -pe orte 4 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
 		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_trimmed.fq'
 	),
 	'tophat_pe' => array(
-		'rocks1' => 'echo "tophat -g 1 -p 8 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_val_1.fq {{fn}}_2_val_2.fq" | qsub -V -cwd -l vf=4G -pe orte 8 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
+		'rocks1' => 'echo "tophat -g 1 -p 4 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_val_1.fq {{fn}}_2_val_2.fq" | qsub -V -cwd -l vf=4G -pe orte 4 -o {{fn}}_tophat.out -j y -m as -M {{assigned_email}} -N tophat_{{fn}} -hold_jid trim_{{fn}}',
 		'bilin1' => 'tophat -g 1 -p 4 --segment-length 42 -o {{fn}}_tophat -G {{genome_path}}.cleaned.gtf {{genome_path}} {{fn}}_1_val_1.fq {{fn}}_2_val_2.fq'
 	),
 	'bismark_se' => array(
@@ -262,7 +262,8 @@ $processing_codes = array(
 //////////////////////
 
 $project_report_types = array(
-	'bowtie_report' => 'Bowtie Overview'
+	'bowtie_report' => 'Bowtie Overview',
+	'tophat_report' => 'Tophat Overview'
 );
 
 $dataset_report_types = array(
@@ -295,6 +296,9 @@ function report_match ($file, $type) {
 		
 		case 'bowtie_report':
 			return substr($file, -18) ==  'bowtie_report.html';
+			
+		case 'tophat_report':
+			return substr($file, -18) ==  'tophat_report.html';
 		
 		case 'tophat':
 			return substr($file, -17) ==  'align_summary.txt';
@@ -332,6 +336,9 @@ function report_naming ($path, $type) {
 			return substr(basename($path),0,-4);
 			
 		case 'bowtie_report':
+			return substr(basename($path),0,-5);
+			
+		case 'tophat_report':
 			return substr(basename($path),0,-5);
 			
 		case 'tophat':

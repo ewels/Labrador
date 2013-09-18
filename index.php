@@ -19,7 +19,7 @@ include('includes/header.php');
 		<?php endif; ?>
 				
  		<div class="pull-right visible-desktop home-lab">
-			<iframe src="//www.youtube.com/embed/m03HTQtSGFg" frameborder="0" allowfullscreen></iframe>
+			<a data-toggle="modal" href="#tutorial_video_modal"><img src="img/screencast_thumb.png"></a>
 		</div>
 		<h1><?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
 	
@@ -77,12 +77,12 @@ include('includes/header.php');
 		
 		<p id="filter_status_bar"><strong>Key:</strong>
 		
-			<input type="checkbox" name="filter_status" id="filter_status_pc" value="Processing Complete" <?php if(!isset($_GET['assigned_projects'])) { echo 'checked="checked"'; } ?>>
+			<input type="checkbox" name="filter_status" id="filter_status_pc" value="Processing Complete" <?php if(!isset($_GET['assigned_projects']) && !isset($_GET['unassigned'])) { echo 'checked="checked"'; } ?>>
 			<input type="checkbox" name="filter_status" id="filter_status_cp" value="Currently Processing" checked="checked">
 			<input type="checkbox" name="filter_status" id="filter_status_ns" value="Not Started" checked="checked">
 			<input type="checkbox" name="filter_status" id="filter_status_nf" value="Directory Not Found" checked="checked">
 			
-			<label for="filter_status_pc" <?php if(!isset($_GET['assigned_projects'])) { echo 'class="checked"'; } ?>><span></span> Processing Complete</label>
+			<label for="filter_status_pc" <?php if(!isset($_GET['assigned_projects']) && !isset($_GET['unassigned'])) { echo 'class="checked"'; } ?>><span></span> Processing Complete</label>
 			<label for="filter_status_cp" class="checked"><span class=" info"></span> Currently Processing</label>
 			<label for="filter_status_ns" class="checked"><span class=" error"></span> Not Started</label>
 			<label for="filter_status_nf" class="checked"><span class=" warning"></span> Directory not found</label>
@@ -103,10 +103,13 @@ include('includes/header.php');
 			$sql = "SELECT * FROM `projects`";
 			if(isset($_GET['my_projects'])){
 				$sql .= " WHERE `contact_email` = '".$user['email']."'";
-			} else if(isset($_GET['assigned_projects'])){
+			} else if($admin && isset($_GET['assigned_projects']) && filter_var($_GET['assigned_projects'], FILTER_VALIDATE_EMAIL)){
+				$assigned = filter_var($_GET['assigned_projects'], FILTER_SANITIZE_EMAIL);
+				$sql .= " WHERE `assigned_to` = '".mysql_real_escape_string($assigned)."'";
+			} else if($admin && isset($_GET['assigned_projects'])){
 				$sql .= " WHERE `assigned_to` = '".$user['email']."'";
-			} else if(isset($_GET['unassigned'])){
-				$sql .= " WHERE `assigned_to` IS NULL";
+			} else if($admin && isset($_GET['unassigned'])){
+				$sql .= " WHERE `assigned_to` IS NULL OR `assigned_to` = ''";
 			}
 			$sql .=  " ORDER BY `name`";
 			$projects = mysql_query($sql);
@@ -114,7 +117,7 @@ include('includes/header.php');
 				while($project = mysql_fetch_array($projects)){
 					
 					// Check directory exists
-					if(file_exists($data_root.$project['name'])){
+					if(file_exists($data_root.$project['name']) || $project['status'] == 'Not Started' || $project['status'] == 'Currently Processing'){
 						$file_exists = true;
 					} else {
 						$file_exists = false;
@@ -159,7 +162,7 @@ include('includes/header.php');
 						if($project['status'] == 'Not Started'){
 							echo ' &nbsp; <i class="icon-time" title="Project has not yet started processing"></i>';
 						} else if($project['status'] == 'Currently Processing'){
-							echo ' &nbsp; <i class="icon-pencil" title="Project is currently being processed"></i>';
+							echo ' &nbsp; <i class="icon-pencil" title="Project is currently being processed by '.$project['assigned_to'].'"></i>';
 						} else if(!$file_exists){
 							echo ' &nbsp; <i class="icon-folder-open" title="Directory not found"></i><i class="icon-warning-sign" title="Directory not found"></i>';
 						} ?></td>
@@ -231,6 +234,17 @@ include('includes/header.php');
 		
 		
 	</div> <!-- /container -->
+	
+	<!-- Tutorial Video Modal -->
+	<div id="tutorial_video_modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tutorial_video_modal_label" aria-hidden="true">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3 id="tutorial_video_modal_label">Labrador Tutorial Video</h3>
+		</div>
+		<div class="modal-body">
+			<iframe width="530px" height="298px" src="//www.youtube.com/embed/m03HTQtSGFg" frameborder="0" allowfullscreen></iframe>
+		</div>
+	</div>
 	
 	<?php if(function_exists('labrador_login_modal')){ labrador_login_modal(); } ?>
 	
