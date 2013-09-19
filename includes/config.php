@@ -267,29 +267,22 @@ $project_report_types = array(
 );
 
 $dataset_report_types = array(
+	
+	'bowtie' => 'Bowtie Reports',
+	'tophat' => 'Tophat Reports',
+	'bismark_report' => 'Bismark Reports',
+	'bismark_alignment_overview' => 'Bismark Alignment Overview Plots',
+	'bismark_m_bias' => 'Bismark M-Bias Reports',
+	'hicup_ditag_classification' => 'HiCUP Di-Tag Analysis',
+	'hicup_cis-trans' => 'HiCUP <em>cis</em>/<em>trans</em> Analysis',
+	
 	'fastqc' => 'FastQC Reports',
 	'fastq_screen' => 'FastQ Screen',
 	'trim_galore' => 'Trim Galore',
-	'bowtie' => 'Bowtie Reports',
-	'tophat' => 'Tophat Reports',
-	
-	'alignment_overview' => 'Bismark Alignment Overview Plots',
-	'm_bias' => 'Bismark M-Bias Reports',
-	'ditag_classification' => 'HiCUP Di-Tag Analysis',
-	'cis-trans' => 'HiCUP <em>cis</em>/<em>trans</em> Analysis'
 );
 
 function report_match ($file, $type) {
 	switch($type) {
-	
-		case 'fastqc':
-			return basename($file) == 'fastqc_report.html';
-			
-		case 'fastq_screen':
-			return substr($file, -11) ==  '_screen.png';
-			
-		case 'trim_galore':
-			return substr($file, -20) ==  '_trimming_report.txt';
 		
 		case 'bowtie':
 			return (stripos(basename($file), 'bowtie') || stripos(basename($file), 'alignment')) && (substr($file, -4) ==  '.out' || substr($file, -4) ==  '.log');
@@ -302,18 +295,30 @@ function report_match ($file, $type) {
 		
 		case 'tophat':
 			return substr($file, -17) ==  'align_summary.txt';
-
-		case 'alignment_overview':
+		
+		case 'bismark_report':
+			return substr($file, -13) ==  'E_report.html';
+		
+		case 'bismark_alignment_overview':
 			return substr($file, -23) == '.alignment_overview.png';
 			
-		case 'm_bias':
+		case 'bismark_m_bias':
 			return stripos(basename($file), 'M-bias') && substr($file, -4) == '.png';
 			
-		case 'ditag_classification':
+		case 'hicup_ditag_classification':
 			return substr($file, -29) == 'pair_ditag_classification.png';
 			
-		case 'cis-trans':
+		case 'hicup_cis-trans':
 			return substr($file, -18) == '.sam_cis-trans.png';
+			
+		case 'fastqc':
+			return basename($file) == 'fastqc_report.html';
+			
+		case 'fastq_screen':
+			return substr($file, -11) ==  '_screen.png';
+			
+		case 'trim_galore':
+			return substr($file, -20) ==  '_trimming_report.txt';
 			
 		default:
 			return false;
@@ -322,15 +327,6 @@ function report_match ($file, $type) {
 
 function report_naming ($path, $type) {
 	switch($type) {
-	
-		case 'fastqc':
-			return substr(basename(dirname($path)), 0, -7);
-			
-		case 'fastq_screen':
-			return substr(basename($path),0, -11);
-			
-		case 'trim_galore':
-			return substr(basename($path),0, -20);
 			
 		case 'bowtie':
 			return substr(basename($path),0,-4);
@@ -344,17 +340,29 @@ function report_naming ($path, $type) {
 		case 'tophat':
 			return basename($path);
 
-		case 'alignment_overview':
+		case 'bismark_report':
+			return substr(basename($path),0,-5);
+		
+		case 'bismark_alignment_overview':
 			return substr(basename($path),0, -23);
 			
-		case 'm_bias':
+		case 'bismark_m_bias':
 			return substr(basename($path),0, -4);
 			
-		case 'ditag_classification':
+		case 'hicup_ditag_classification':
 			return substr(basename($path),0, -30);
 			
-		case 'cis-trans':
+		case 'hicup_cis-trans':
 			return substr(basename($path),0, -18);
+		
+		case 'fastqc':
+			return substr(basename(dirname($path)), 0, -7);
+			
+		case 'fastq_screen':
+			return substr(basename($path),0, -11);
+			
+		case 'trim_galore':
+			return substr(basename($path),0, -20);
 			
 		default:
 			return false;

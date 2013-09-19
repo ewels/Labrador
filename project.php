@@ -42,9 +42,16 @@ if(isset($_GET['delete']) && is_numeric($_GET['delete']) && $admin){
 }
 
 if($project_id){
-	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
-	if(mysql_num_rows($projects) == 1){
+	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."' LIMIT 1");
+	if(mysql_num_rows($projects) > 0){
 		$project = mysql_fetch_array($projects);
+		$project_users = array();
+		$project_users_q = mysql_query("SELECT `user_id` FROM `project_contacts` WHERE `project_id` = '$project_id'");
+		if(mysql_num_rows($project_users_q) > 0){
+			while($project_user = mysql_fetch_array($project_users_q)){
+				$project_users[] = $project_user['user_id'];
+			}
+		}
 	} else {
 		$new_project = true;
 		$edit = false;

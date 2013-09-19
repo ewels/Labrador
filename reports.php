@@ -17,12 +17,17 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 // Set report type and path
 $active_type = false;
 $report_path = false;
-foreach(array_merge($project_report_types, $dataset_report_types) as $type => $report_name){
+foreach($dataset_report_types as $type => $report_name){
 	if(isset($_POST[$type]) && isset($_POST['report_type']) && $_POST['report_type'] == $type){
 		$active_type = $type;
 		$report_path = $_POST[$type];
 	}
 }
+if(isset($_POST['overview']) && isset($_POST['report_type']) && $_POST['report_type'] == 'overview'){
+	$active_type = 'overview';
+	$report_path = $_POST['overview'];
+}
+;
 
 
 include('includes/header.php'); ?>
@@ -50,7 +55,6 @@ include('includes/header.php'); ?>
 </div>
 
 <div class="sidebar-mainpage project-mainpage">
-
 <?php
 // Check directory exists
 if(file_exists($data_root.$project['name'])){
@@ -83,6 +87,7 @@ if(file_exists($data_root.$project['name'])){
 					$output .= '<option value="'.$path.'"';
 					if($report_path == $path && $active_type == 'overview'){
 						$output .= ' selected="selected"';
+						$dataset_name = '';
 					}
 					$output .= '>'.$report_name.'</option>';
 					$count++;

@@ -25,6 +25,13 @@ if($project_id){
 	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
 	if(mysql_num_rows($projects) == 1){
 		$project = mysql_fetch_array($projects);
+		$project_users = array();
+		$project_users_q = mysql_query("SELECT `user_id` FROM `project_contacts` WHERE `project_id` = '$project_id'");
+		if(mysql_num_rows($project_users_q) > 0){
+			while($project_user = mysql_fetch_array($project_users_q)){
+				$project_users[] = $project_user['user_id'];
+			}
+		}
 	} else {
 		header("Location: index.php");
 	}
@@ -196,10 +203,11 @@ include('includes/header.php'); ?>
 		</div>
 	<?php endif; ?>
 	
-	<?php if($admin || $user['email'] == $project['contact_email']){ ?>
+	<?php if($admin || in_array($user['id'], $project_users)){ ?>
 	<a class="btn pull-right" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a>
-	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
 	<?php } ?>
+	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
+	
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
 	
