@@ -168,7 +168,7 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 	if(strlen($project['assigned_to']) < 3 && !$error){
 		mail($support_email, "[Labrador] $i datasets added to ".$project['name'], "Hi there,
 
-$i datasets have just been added to the project ".$project['name']." on Labrador by ".$project_array['contact_name']." (".$project_array['contact_email']."). The project doesn't have anyone assigned yet.
+$i datasets have just been added to the project ".$project['name']." on Labrador by ".$user['firstname'].' '.$user['surname']." (".$user['email']."). The project doesn't have anyone assigned yet.
 
 You can see the project here: ".$labrador_url."project.php?id=$project_id
 
@@ -181,7 +181,7 @@ $labrador_url
 	} else if(!$error){
 		mail($project['assigned_to'], "[Labrador] $i datasets added to ".$project['name'], "Hi there,
 
-$i datasets have just been added to the project ".$project['name']." on Labrador by ".$project_array['contact_name']." (".$project_array['contact_email']."). The project is assigned to you.
+$i datasets have just been added to the project ".$project['name']." on Labrador by ".$user['firstname'].' '.$user['surname']." (".$user['email']."). The project is assigned to you.
 
 You can see the project here: ".$labrador_url."project.php?id=$project_id
 

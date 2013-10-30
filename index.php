@@ -117,7 +117,7 @@ include('includes/header.php');
 				while($project = mysql_fetch_array($projects)){
 					
 					// Check directory exists
-					if(file_exists($data_root.$project['name']) || $project['status'] == 'Not Started' || $project['status'] == 'Currently Processing'){
+					if(file_exists($data_root.$project['name']) || $project['status'] == 'Not Started' || $project['status'] == 'Currently Processing' || $project['status'] == ''){
 						$file_exists = true;
 					} else {
 						$file_exists = false;
@@ -151,7 +151,7 @@ include('includes/header.php');
 					}
 					?>
 					<tr id="project_<?php echo $project['id']; ?>" data-status="<?php echo $project['status']; ?>" class="project <?php
-						if($project['status'] == 'Not Started'){
+						if($project['status'] == 'Not Started' || ($project['status'] == '' && !file_exists($data_root.$project['name']))){
 							echo "error";
 						} else if($project['status'] == 'Currently Processing'){
 							echo "info";
