@@ -163,6 +163,33 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 	} else {
 		$msg[] = "Successfully added $i datasets.";
 	}
+	
+	// Email support if no-one is assigned
+	if(strlen($project['assigned_to']) < 3 && !$error){
+		mail($support_email, "[Labrador] $i datasets added to ".$project['name'], "Hi there,
+
+$i datasets have just been added to the project ".$project['name']." on Labrador by ".$project_array['contact_name']." (".$project_array['contact_email']."). The project doesn't have anyone assigned yet.
+
+You can see the project here: ".$labrador_url."project.php?id=$project_id
+
+--
+This is an automated e-mail sent from Labrador
+$labrador_url
+", $email_headers);
+	
+	// Email person assigned
+	} else if(!$error){
+		mail($project['assigned_to'], "[Labrador] $i datasets added to ".$project['name'], "Hi there,
+
+$i datasets have just been added to the project ".$project['name']." on Labrador by ".$project_array['contact_name']." (".$project_array['contact_email']."). The project is assigned to you.
+
+You can see the project here: ".$labrador_url."project.php?id=$project_id
+
+--
+This is an automated e-mail sent from Labrador
+$labrador_url
+", $email_headers);
+	}
 }
 
 
@@ -379,6 +406,20 @@ if($add) { ?>
 		if(strlen($project['accession_sra']) > 0) {
 			$sra_accessions = explode(" ",$project['accession_sra']);
 			foreach($sra_accessions as $acc) {
+				$acc = trim($acc); ?>
+			<button class="btn geo_accession_lookup" type="button" data-accession="<?php echo $acc; ?>">Look up accession <?php echo $acc; ?> &nbsp; <i class="icon-search"></i></button>
+		<?php }
+		}
+		if(strlen($project['accession_ena']) > 0) {
+			$ena_accessions = explode(" ",$project['accession_ena']);
+			foreach($ena_accessions as $acc) {
+				$acc = trim($acc); ?>
+			<button class="btn geo_accession_lookup" type="button" data-accession="<?php echo $acc; ?>">Look up accession <?php echo $acc; ?> &nbsp; <i class="icon-search"></i></button>
+		<?php }
+		}
+		if(strlen($project['accession_ddjb']) > 0) {
+			$ddjb_accessions = explode(" ",$project['accession_ddjb']);
+			foreach($ddjb_accessions as $acc) {
 				$acc = trim($acc); ?>
 			<button class="btn geo_accession_lookup" type="button" data-accession="<?php echo $acc; ?>">Look up accession <?php echo $acc; ?> &nbsp; <i class="icon-search"></i></button>
 		<?php }

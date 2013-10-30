@@ -5,6 +5,10 @@
 1 Allow projects to have multiple contacts
 	* Remove project contact details, just have user / project lookup table
 
+1.2 Tidy Dataset naming
+	* Automatically trim off GSE number if present
+	* Automatically pull in project SRP number if found
+	
 2. Tidy Up Processing
 	* Delete individual steps rather than just the final one
 	* Buttons to move steps up and down in order

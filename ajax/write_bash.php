@@ -10,7 +10,11 @@ if(isset($_POST['output']) && isset($_POST['project_id']) && is_numeric($_POST['
 	$project_q = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$_POST['project_id']."'");
 	$project = mysql_fetch_array($project_q);
 	
-	$bash_fn = $project['name'].'_labrador_bash_'.date('d_m_Y').'.bash';
+	if(isset($_POST['bash_fn'])){
+		$bash_fn = preg_replace("/[^A-Za-z0-9_]/", '_', $_POST['bash_fn']);
+	} else {
+		$bash_fn = $project['name'].'_labrador_bash_'.date('d_m_Y').'.bash';
+	}
 	$dir = $data_root.$project['name'].'/';
 	$fn = $dir.$bash_fn;
 	
@@ -20,7 +24,7 @@ if(isset($_POST['output']) && isset($_POST['project_id']) && is_numeric($_POST['
 	mysql_query($query);
 	
 	// Write file contents
-	$output = "# Bash script produced by Labrador at ".date('H:i, l \t\h\e jS F Y')."\n# Script written for the ".$_POST['server']." server\n\n";
+	# $output = "# Bash script produced by Labrador at ".date('H:i, l \t\h\e jS F Y')."\n# Script written for the ".$_POST['server']." server\n\n";
 	$output .= $_POST['output'];
 	$output = str_replace("\r", "", $output);
 	

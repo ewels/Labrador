@@ -9,8 +9,7 @@
 
 $labrador_url = 'http://bilin1/labrador/';
 $data_root = '/data/pipeline/new_public/TIDIED/';
-$support_email = 'babraham.bioinformatics@babraham.ac.uk';
-
+$support_email = 'phil.ewels@babraham.ac.uk'; //'babraham.bioinformatics@babraham.ac.uk';
 
 $db_database = 'labrador';
 $db_user = 'labrador';
@@ -162,6 +161,7 @@ $processing_pipelines = array(
 
 $processing_steps = array(
 	'Pre-processing' => array(
+		'cf_download' => array( 'name' => 'Cluster Flow Download', 'unit' => 'accession_sra', 'requires_genome' => 'false' ), 
 		'get_sra' => array( 'name' => 'Download SRA', 'unit' => 'accession_sra', 'requires_genome' => 'false' ), 
 		'sra_dump' => array( 'name' => 'SRA to FastQ', 'unit' => 'accession_sra', 'requires_genome' => 'false' ), 
 		'fastqc' => array( 'name' => 'FastQC', 'unit' => 'accession_sra', 'requires_genome' => 'false' ), 
@@ -187,9 +187,13 @@ $processing_steps = array(
 
 
 $processing_codes = array(
+	'cf_download' => array(
+		'rocks1' => "{{sra_url}}\t{{fn}}.sra",
+		'bilin1' => "{{sra_url}}\t{{fn}}.sra"
+	),
 	'get_sra' => array(
-		'rocks1' => 'echo "wget -nv {{sra_url}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{fn}}_download.out -j y -m as -M {{assigned_email}} -N download_{{fn}}',
-		'bilin1' => 'wget -nv {{sra_url}}'
+		'rocks1' => 'echo "wget -nv {{sra_url_wget}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{fn}}_download.out -j y -m as -M {{assigned_email}} -N download_{{fn}}',
+		'bilin1' => 'wget -nv {{sra_url_wget}}'
 	),
 	'sra_dump' => array(
 		'rocks1' => 'echo "fastq-dump --split-files ./{{fn}}.sra" | qsub -V -cwd -pe orte 1 -l vf=4G -o {{fn}}_fqdump.out -j y -m as -M {{assigned_email}} -N dump_{{fn}} -hold_jid download_{{fn}}',

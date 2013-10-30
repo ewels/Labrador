@@ -267,12 +267,11 @@ include('includes/header.php'); ?>
 		</fieldset>
 		<fieldset>
 			<legend>Step 4: Save Script</legend>
-			<?php $bash_fn = '/'.$project['name'].'_labrador_bash_'.date('d_m_Y').'.bash'; ?>
-			<p>Script will be saved to <code><?php echo $data_root.$project['name'].$bash_fn; ?></code>
+			<?php $bash_fn = $project['name'].'_labrador_bash_'.date('d_m_Y').'.bash'; ?>
+			<p>Script will be saved to <code><?php echo $data_root.$project['name']; ?>/<input type="text" id="bash_script_fn" value="<?php echo $bash_fn; ?>" class="input-xxlarge" style="font-family:monospace;"></code>
 				<span class="help-block">If this file already exists, it will be overwritten.</span></p>
 			<div class="form-actions">
-				<button type="submit" id="save_run_bash_script" class="btn btn-large btn-primary">Save &amp; Run Bash Script</button> &nbsp; 
-				<button type="submit" id="save_bash_script" class="btn btn-large ">Save Bash Script</button>
+				<button type="submit" id="save_bash_script" class="btn btn-large btn-primary">Save Bash Script</button>
 			</div>
 		</fieldset>
 	</form>

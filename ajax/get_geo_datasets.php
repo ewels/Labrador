@@ -56,8 +56,8 @@ function get_geo_datasets ($acc) {
 	$i = 0;
 	foreach($xml_2->children() as $DocSum){
 		$sra_accessions = array();
-		$gsm_acc = false;
-		$library_name = false;
+		$gsm_acc = "";
+		$library_name = "";
 		// Loop through the nodes
 		foreach($DocSum->children() as $child) {
 		
@@ -97,7 +97,7 @@ function get_geo_datasets ($acc) {
 			// Find SRA accessions for this experiment
 			if($child->attributes()->Name == 'Runs') {
 				$sra_raw = (string)$child;
-				preg_match_all('/SRR\d+/', $sra_raw, $sra_accessions);
+				preg_match_all('/[SDE]RR\d+/', $sra_raw, $sra_accessions);
 			} // geo sra tag name check
 		} // geo xml foreach
 		

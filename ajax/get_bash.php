@@ -31,13 +31,15 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 			$sra = trim($sra);
 			if(strlen($sra) > 0){
 				$fn = $sra."_".$dataset_fn;
-				$sra_url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/SRR/".substr($sra,0,6)."/".$sra."/".$sra.".sra -O ".$fn.".sra";
+				$sra_url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/".substr($sra,0,3)."/".substr($sra,0,6)."/".$sra."/".$sra.".sra";
+				$sra_url_wget = "$sra_url -O $fn.sra";
 				
 				$output = $_POST['template']."\n";
 				
 				$patterns = array(
 					'/{{fn}}/',
 					'/{{sra}}/',
+					'/{{sra_url_wget}}/',
 					'/{{sra_url}}/',
 					'/{{contact_email}}/',
 					'/{{assigned_email}}/',
@@ -48,6 +50,7 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 				$replacements = array(
 					$fn,
 					$sra,
+					$sra_url_wget,
 					$sra_url,
 					$contact_email,
 					$assigned_email,
