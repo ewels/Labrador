@@ -28,7 +28,7 @@
 
 session_start();
 
-require('config.php');
+require('../conf/config.php');
 
 // Log in to the database
 if($db_password){

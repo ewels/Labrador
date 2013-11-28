@@ -24,7 +24,7 @@
    Outputs the contents of files on the server, used for Report iframes
 */
 
-require_once('../includes/config.php');
+require_once('../conf/config.php');
 
 $path = $data_root.$_GET['path'];
 $dir = dirname($_GET['path']).'/';

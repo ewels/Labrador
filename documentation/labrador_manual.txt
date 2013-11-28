@@ -1,0 +1,175 @@
+Labrador Sequence Management System
+=================================
+
+
+1 Introduction
+==============
+
+Labrador is a web based tool to manage projects and automate the processing of publicly available datasets.
+
+Researchers can use it to search through previously processed data, find how it was analysed, read processing reports and download the relevant files to their computers. If a required dataset isn't yet available, they can request it by creating a new project - the information about the required data sets is then passed on to adminsitrators (typically a bioinformatics team), who can process it. The status of projects is tracked, and everything is kept together in a logical place.
+
+Administrators can delegate the process of choosing the required datasets to researchers. Labrador automatically retrieves public data accession numbers and can write bash scripts to download and process data. This helps to standardise in-house processing and streamline pipelines. Researchers interested in a project are notified when new datasets are added or processing is complete.
+
+
+2 Installation
+==============
+
+2.1 Pre-requisites
+------------------
+
+2.1.1 Hardware
+--------------
+
+The hardware requirements for Labrador are very minimal.  No intensive processing is done within the system so a basic server class, or even desktop machine should easily be able to run the system.  In order to store the data you will need to have a large robust storage system, but this need not be present on the local machine as long as it can be made visible to the machine running Labrador (eg via NFS, Samba etc).  Since Labrador can read and transmit very large data files it would be very beneficial to have a fast (preferably gigabit) network connection to the machine running Labrador.
+
+2.1.2 Software
+--------------
+
+Labrador itself is written in PHP and uses a MySQL database to store the data.  The user interface is provided through a web server, and default configuration files are provided for the apache web server, although other servers should work equally well.
+
+Users do not need any software to use Labrador other than a web browser and an installation of Java for the bulk file download tool.
+
+
+2.2 Installation
+----------------
+
+Installation of Labrador is as simple as downloading the installation bundle from the project web site and then extracting it into the location you wish to install the program.  On a unix system you would do this using:
+
+tar -xzvf Labrador.tar.gz
+
+On a windows system you would use a decompression utility such as 7zip or WinZip to unpack the files from the installation bundle
+
+
+2.3 Configuration
+-----------------
+
+There are a number of different configuration steps you need to take before launching system for the first time.
+
+
+2.3.1 Database Creation
+-----------------------
+
+Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database with default values. The file is in the SQL folder of the installation and if you are using a MySQL install on the same machine as your webserver and you're happy to use the default database username (labradoruser), then you can install the default database using:
+
+mysql -u root -p < labrador_database.sql
+
+You will be prompted for the MySQL root password and the database will be created.  You can subsitute the root account for any other MySQL account with sufficient privileges to create a new database and add user permissions to it. Warning - running this file with an existing Labrador database will overwrite all previous data.
+
+If you want to put the database on a different machine to the webserver, or you want to change the username used to connect to the database then you will need to edit the SQL file and change the GRANT statements at the bottom to use the username and machine you would prefer to use.
+
+For example you could change the statement:
+
+GRANT INSERT,SELECT on labrador.* TO labradoruser@localhost;
+
+to
+
+GRANT INSERT,SELECT on labrador.* TO mylocaluser@somemachine.example.com;
+
+
+2.3.2 Webserver configuration
+-----------------------------
+
+Our recommended configuration is to install Labrador in a directory outside your document root and then adjust your webserver configuration to allow it to find the installation and map it to a URL.  We have included a default apache configuration file under conf/labrador_apache.conf which you can either copy into your apache configuration directory (normally something like /etc/httpd/conf.d/) or which you can copy into your main httpd.conf file.
+
+The example configuration will allow you to access Labrador at a URL of /labrador/ under your top level domain (eg http://www.example.com/labrador/).  You will need to edit the configuration file to change the file paths shown to reflect the directory in which you have installed Labrador.
+
+Once you have added the configuration file you will need to restart your web server for the changes to take effect.
+
+
+2.3.3 Data Folders
+------------------
+
+If you want Labrador to be able to locate and serve data you need to make these available on the system on which Labrador is installed.  Labrador uses a directory for each project, named after that project identifier.
+
+eg You would have a run data folder with a structure like:
+
+..Somewhere
+          \
+          Labrador
+                  \
+                  \ Project_One_2011
+                  \ Project_Two_2013
+
+
+
+2.3.4 Labrador Configuration File
+-------------------------------
+
+In order to connect to your database and find your data Labrador needs to know some information about your setup.  All of the pieces of information the system needs are configured in a file called config.php which is in the conf directory of your Labrador installation.  A template configuration file called config.php.example is provided, and you should copy this to a file called config.php in the same directory and then edit this to include the correct information for your site. Hopefully all the pieces of information in there are self-explanatory, and you need to ensure that they reflect your local environment
+
+Once you have all of these elements in place you should be able to go to http://yourserver/labrador/ and start using the system.
+
+
+
+3 Normal Usage
+==============
+
+3.1 Use by normal users
+-----------------------
+
+
+3.1.1 Creating an account
+-------------------------
+
+If an account has not been created for you by an admin you can create your own from the login page by selecting the "Create new Accoun" option, and filling in the associated form.  Upon submission the system will send out an email containing a link which will activate the account and allow you to log in.
+
+3.1.2 Submitting a new sample
+-----------------------------
+
+Once you have logged in you can select 'Add new sample' from the toolbar.  You can then fill in as much information as you can about your sample.  Once the sample is submitted it will appear in your list of active samples on your front page.  The sample is not eligable to be placed into a run until an admin has marked it as received within the system.  You can submit as many samples as you like into the system, but it's not a good idea to add a sample to the system unless you are ready to present it to your sequencing service.
+
+
+3.1.3 Viewing an existing sample
+--------------------------------
+
+Your most recent samples will appear on your front page, if you want to see older samples you can use the 'Search' option to find them.  Running the search with no search options will show you every sample you've ever run.
+
+Within the sample page you can see and change the details for your sample.  You can also see and add notes to the sample to specify special instructions to the sequencing facility, or to note unusual results which may have been found.
+
+If your sample has been put onto one or more runs you will see links to the lanes of data created from your sample.  If your sample is only to be run on a single lane then a link to the lane will be present on your front page, otherwise you will need to go via your sample page.
+
+Within the lane page you will see the details of the run which your sample was part of, and if there are data files for your sample from the run then these will be listed.  The lane will show up as soon as the flowcell has been laid out, but the result data will not show up until the run has completed, been processed, and been moved to its final storage position, so don't be worried if you see a lane with no data.
+
+3.1.4 Sharing Data
+------------------
+
+You can share your data with other people in the Labrador system.  To do this select the 'Change Details' link on the toolbar.  Here you can also change your personal details.  If you want to allow someone else to see your samples simply enter their email address into the box at the bottom and press 'Add permission'.  You can also see the list of people to whom you have granted read permission for your data, and the list of people who have granted you read permission.
+
+All permissions are global, so they apply to all of your samples.  They only give the other person permission to see the metadata and data for your samples.  They do not allow them to make any changes.
+
+
+3.2 Use by Administrators
+-------------------------
+
+Administrators can do everything a normal user can do, so only information on additional options will be shown in this section.
+
+
+3.2.1 Creating a new account
+----------------------------
+
+Administrators can make an account for other people using the 'New User' option on the toolbar.  The account will be created without a password (ie the user won't be able to log in at all until they have created a password).  The administrator can't set a password for the account, and the user should use the 'Forgotten password' option to set a password for themselves.
+
+Admins have the option of creating new administrator accounts by ticking the 'Make Administrator' option.
+
+Admins can also change the personal details of other users.  The easiest way to do this is to use the Search tool to search for users, and then edit their details.  An admin can add sharing permissions or change any of the normal user details.
+
+
+3.2.2 Adding new samples
+------------------------
+
+Administrators can add new samples and assign them to users other than themsevles.  They also have the option to selected retired run types, sample types or search databases.  Admins can also create control samples.  Control samples are different from normal samples in that they will not expire once the specified number of lanes has been run as it assumes you have an infinite supply.  They will also appear as an option in every type of run, so don't mark a sample as a control unless it's a true control sample (eg PhiX) which will always be around.
+
+
+3.2.2 Creating a new flowcell
+-----------------------------
+
+Once you have one or more pending samples you can start to create a flowcell using the 'New flowcell' option in the toolbar.  You will initially be asked for the serial number of the flowcell and the type of run you want to do.  Only run types for currently pending samples will be shown.
+
+Once you have started the flowcell it will appear in your pending flowcells list on the front page and you can edit it until you create a run from it.
+
+You can add samples to the flowcell.  You will see all control samples (whatever type of run they were originally assigned to) and any normal samples for the same run type as the current flowcell.  Once the flowcell is full any additional samples will not be shown, and you will be offered the opportunity to create a run for the flowcell.
+
+When you create a run you assign a flowcell to a machine.  Only machines listed as able to undertake the type of run for this flowcell will be shown.  You can then specify a run date and a run folder name.  Please ensure that the run folder name matches exactly with the real run folder, since any mismatch will result in the data files for the run not being visible within Labrador.
+
+Once you have created a run from a flowcell it will be removed from the pending flowcells list and the lanes in the flowcell will move to the recent samples list.
