@@ -1,5 +1,24 @@
 <?php
 
+##########################################################################
+# Copyright 2013, Philip Ewels (phil.ewels@babraham.ac.uk)               #
+#                                                                        #
+# This file is part of Labrador.                                         #
+#                                                                        #
+# Labrador is free software: you can redistribute it and/or modify       #
+# it under the terms of the GNU General Public License as published by   #
+# the Free Software Foundation, either version 3 of the License, or      #
+# (at your option) any later version.                                    #
+#                                                                        #
+# Labrador is distributed in the hope that it will be useful,            #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+# GNU General Public License for more details.                           #
+#                                                                        #
+# You should have received a copy of the GNU General Public License      #
+# along with Labrador.  If not, see <http://www.gnu.org/licenses/>.      #
+##########################################################################
+
 /*
 * config.php
 * ---------
@@ -9,7 +28,7 @@
 
 $labrador_url = 'http://bilin1/labrador/';
 $data_root = '/data/pipeline/new_public/TIDIED/';
-$support_email = 'phil.ewels@babraham.ac.uk'; //'babraham.bioinformatics@babraham.ac.uk';
+$support_email = 'babraham.bioinformatics@babraham.ac.uk';
 
 $db_database = 'labrador';
 $db_user = 'labrador';
@@ -125,6 +144,10 @@ $genomes = array (
 	'Mouse - NCBIM37' => array(
 		'rocks1' => '/bi/scratch/Genomes/Mouse/NCBIM37/Mus_musculus.NCBIM37',
 		'bilin1' => '/data/public/Genomes/Mouse/NCBIM37/Mus_musculus.NCBIM37'
+	),
+	'Mouse - GRCm38' => array(
+		'rocks1' => '/bi/scratch/Genomes/Mouse/GRCm38/Mus_musculus.GRCm38',
+		'bilin1' => '/data/public/Genomes/Mouse/GRCm38/Mus_musculus.GRCm38'
 	),
 	'Human - GRCh37' => array(
 		'rocks1' => '/bi/scratch/Genomes/Human/GRCh37/Homo_sapiens.GRCh37',

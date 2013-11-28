@@ -1,4 +1,25 @@
 /*
+##########################################################################
+# Copyright 2013, Philip Ewels (phil.ewels@babraham.ac.uk)               #
+#                                                                        #
+# This file is part of Labrador.                                         #
+#                                                                        #
+# Labrador is free software: you can redistribute it and/or modify       #
+# it under the terms of the GNU General Public License as published by   #
+# the Free Software Foundation, either version 3 of the License, or      #
+# (at your option) any later version.                                    #
+#                                                                        #
+# Labrador is distributed in the hope that it will be useful,            #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+# GNU General Public License for more details.                           #
+#                                                                        #
+# You should have received a copy of the GNU General Public License      #
+# along with Labrador.  If not, see <http://www.gnu.org/licenses/>.      #
+##########################################################################
+*/
+
+/*
    datasets.js
    Javascript for the Labrador Datasets page
 */
@@ -90,7 +111,7 @@ $('.geo_accession_lookup').click(function(e){
 	// Find the accession number that we're looking for
 	var acc = $(this).attr('data-accession');	
 	
-	$.getJSON('ajax/get_geo_datasets.php?acc='+acc, function(data) {
+	$.getJSON('ajax/sra_get_datasets.php?acc='+acc, function(data) {
 		
 		// Check that the call succeeded
 		if(data.status == 1){

@@ -1,4 +1,26 @@
-<?php include('includes/start.php');
+<?php
+
+##########################################################################
+# Copyright 2013, Philip Ewels (phil.ewels@babraham.ac.uk)               #
+#                                                                        #
+# This file is part of Labrador.                                         #
+#                                                                        #
+# Labrador is free software: you can redistribute it and/or modify       #
+# it under the terms of the GNU General Public License as published by   #
+# the Free Software Foundation, either version 3 of the License, or      #
+# (at your option) any later version.                                    #
+#                                                                        #
+# Labrador is distributed in the hope that it will be useful,            #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+# GNU General Public License for more details.                           #
+#                                                                        #
+# You should have received a copy of the GNU General Public License      #
+# along with Labrador.  If not, see <http://www.gnu.org/licenses/>.      #
+##########################################################################
+
+
+include('includes/start.php');
 
 $project_id = false;
 $stop_page_after_message = false;
@@ -699,13 +721,14 @@ if(!$new_project and !$edit and !$error){ ?>
 				<label class="control-label" for="accession_sra"><abbr title="Sequence Read Archive">SRA</abbr></label>
 				<div class="controls">
 					<input type="text" name="accession_sra" id="accession_sra" maxlength="50" placeholder="SRP000000" value="<?php echo $values['accession_sra']; ?>">
-					<span class="help-inline"><a href="#" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
+					
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="accession_ena"><abbr title="European Nucleotide Archive">ENA</abbr></label>
 				<div class="controls">
-					<input type="text" name="accession_ena" id="accession_ena" maxlength="50" placeholder="BN000000" value="<?php echo $values['accession_ena']; ?>">
+					<input type="text" name="accession_ena" id="accession_ena" maxlength="50" placeholder="ERP000000" value="<?php echo $values['accession_ena']; ?>">
+					<span class="help-inline"><a href="#" id="ena_lookup" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
 				</div>
 			</div>
 			<div class="control-group">

@@ -1,4 +1,24 @@
 <?php
+
+##########################################################################
+# Copyright 2013, Philip Ewels (phil.ewels@babraham.ac.uk)               #
+#                                                                        #
+# This file is part of Labrador.                                         #
+#                                                                        #
+# Labrador is free software: you can redistribute it and/or modify       #
+# it under the terms of the GNU General Public License as published by   #
+# the Free Software Foundation, either version 3 of the License, or      #
+# (at your option) any later version.                                    #
+#                                                                        #
+# Labrador is distributed in the hope that it will be useful,            #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the          #
+# GNU General Public License for more details.                           #
+#                                                                        #
+# You should have received a copy of the GNU General Public License      #
+# along with Labrador.  If not, see <http://www.gnu.org/licenses/>.      #
+##########################################################################
+
 /*
 Script to make a chunk of bash script for Processing steps
 */
@@ -22,7 +42,9 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 		$project_q = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$dataset['project_id']."'");
 		$project = mysql_fetch_array($project_q);
 		
-		$dataset_fn = substr(preg_replace("/[^A-Za-z0-9_]/", '_', $dataset['name']), 0, 100);
+		$dataset['name'] = str_replace('–', '-', $dataset['name']);
+		$dataset_fn = substr(preg_replace("/[^A-Za-z0-9_-]/", '_', $dataset['name']), 0, 100);
+		$dataset_fn = preg_replace('/_+/', '_', $dataset_fn);
 		$sras = split(" ",$dataset['accession_sra']);
 		$contact_email = $project['contact_email'];
 		$assigned_email = $project['assigned_to'];

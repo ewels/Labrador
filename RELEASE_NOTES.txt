@@ -1,0 +1,13 @@
+Release notes for Labrador v0.1
+-----------------------------
+
+This is the first public release of Labrador, although the system has been
+in use at the Babraham Institute for around 6 months, so the code has 
+received some stress testing.
+
+If you find any problems with Labrador then please report them either into 
+our bug tracking system at:
+
+http://www.bioinformatics.babraham.ac.uk/bugzilla/
+
+..or you can send them directly to phil.ewels@babraham.ac.uk
