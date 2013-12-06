@@ -28,16 +28,14 @@
 $('.show_more_link').click(function(e){
 	e.preventDefault();
 	var id = $(this).attr('id').substr(10);
-	$(this).hide();
+	$('#processing_teaser_'+id).hide();
 	$('#more_'+id).show();
-	$('#hide_more_'+id).show();
 });
 $('.hide_more_link').click(function(e){
 	e.preventDefault();
 	var id = $(this).attr('id').substr(10);
-	$(this).hide();
 	$('#more_'+id).hide();
-	$('#show_more_'+id).show();
+	$('#processing_teaser_'+id).show();
 });
 
 // Automatically select all datasets on page load

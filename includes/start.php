@@ -28,7 +28,9 @@
 
 session_start();
 
-require('../conf/config.php');
+$basename = substr(dirname(__FILE__), 0, -1*(strlen(basename(dirname(__FILE__)))));
+
+require("$basename/conf/config.php");
 
 // Log in to the database
 if($db_password){

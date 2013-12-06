@@ -2,6 +2,14 @@
    TO DO - Labrador
 =====================
 
+0 Finish writing the documentation (3 Normal Usage onwards)
+0 Figure out why require('../') doesn't work
+0 Do the database schema properly
+0 Do the apache config properly
+0 Rename config.php to something with labrador in the name.
+0 Make browse page have links to give right click context menu
+0 Add search to the project SRA
+
 1 Allow projects to have multiple contacts
 	* Remove project contact details, just have user / project lookup table
 

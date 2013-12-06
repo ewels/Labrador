@@ -1,9 +1,9 @@
 Labrador Sequence Management System
-=================================
+====================================
 
 
 1 Introduction
-==============
+===============
 
 Labrador is a web based tool to manage projects and automate the processing of publicly available datasets.
 
@@ -13,18 +13,18 @@ Administrators can delegate the process of choosing the required datasets to res
 
 
 2 Installation
-==============
+===============
 
 2.1 Pre-requisites
-------------------
+-------------------
 
 2.1.1 Hardware
---------------
+---------------
 
 The hardware requirements for Labrador are very minimal.  No intensive processing is done within the system so a basic server class, or even desktop machine should easily be able to run the system.  In order to store the data you will need to have a large robust storage system, but this need not be present on the local machine as long as it can be made visible to the machine running Labrador (eg via NFS, Samba etc).  Since Labrador can read and transmit very large data files it would be very beneficial to have a fast (preferably gigabit) network connection to the machine running Labrador.
 
 2.1.2 Software
---------------
+---------------
 
 Labrador itself is written in PHP and uses a MySQL database to store the data.  The user interface is provided through a web server, and default configuration files are provided for the apache web server, although other servers should work equally well.
 
@@ -32,7 +32,7 @@ Users do not need any software to use Labrador other than a web browser and an i
 
 
 2.2 Installation
-----------------
+-----------------
 
 Installation of Labrador is as simple as downloading the installation bundle from the project web site and then extracting it into the location you wish to install the program.  On a unix system you would do this using:
 
@@ -42,15 +42,15 @@ On a windows system you would use a decompression utility such as 7zip or WinZip
 
 
 2.3 Configuration
------------------
+------------------
 
 There are a number of different configuration steps you need to take before launching system for the first time.
 
 
 2.3.1 Database Creation
------------------------
+------------------------
 
-Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database with default values. The file is in the SQL folder of the installation and if you are using a MySQL install on the same machine as your webserver and you're happy to use the default database username (labradoruser), then you can install the default database using:
+Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database with default values. The file is in the SQL folder of the installa8tion and if you are using a MySQL install on the same machine as your webserver and you're happy to use the default database username (labradoruser), then you can install the default database using:
 
 mysql -u root -p < labrador_database.sql
 
@@ -68,7 +68,7 @@ GRANT INSERT,SELECT on labrador.* TO mylocaluser@somemachine.example.com;
 
 
 2.3.2 Webserver configuration
------------------------------
+------------------------------
 
 Our recommended configuration is to install Labrador in a directory outside your document root and then adjust your webserver configuration to allow it to find the installation and map it to a URL.  We have included a default apache configuration file under conf/labrador_apache.conf which you can either copy into your apache configuration directory (normally something like /etc/httpd/conf.d/) or which you can copy into your main httpd.conf file.
 
@@ -78,7 +78,7 @@ Once you have added the configuration file you will need to restart your web ser
 
 
 2.3.3 Data Folders
-------------------
+-------------------
 
 If you want Labrador to be able to locate and serve data you need to make these available on the system on which Labrador is installed.  Labrador uses a directory for each project, named after that project identifier.
 
@@ -94,7 +94,7 @@ eg You would have a run data folder with a structure like:
 
 
 2.3.4 Labrador Configuration File
--------------------------------
+----------------------------------
 
 In order to connect to your database and find your data Labrador needs to know some information about your setup.  All of the pieces of information the system needs are configured in a file called config.php which is in the conf directory of your Labrador installation.  A template configuration file called config.php.example is provided, and you should copy this to a file called config.php in the same directory and then edit this to include the correct information for your site. Hopefully all the pieces of information in there are self-explanatory, and you need to ensure that they reflect your local environment
 
@@ -103,73 +103,101 @@ Once you have all of these elements in place you should be able to go to http://
 
 
 3 Normal Usage
-==============
+===============
 
-3.1 Use by normal users
------------------------
+Once set up, Labrador can be viewed and used by anyone without any authentication for basic use. Below, the basic functionality is described for a user who is not logged in. Then the additional features granted to authenticated users (normal and then administrators) is described after that.
 
-
-3.1.1 Creating an account
+3.1 Searching projects
 -------------------------
+Often you want to find a specific project within Labrador that you know about. There is a search bar at the top of every page - entering a search term and submitting the form will take you to a results page with tabs for projects, publications and datasets.
 
-If an account has not been created for you by an admin you can create your own from the login page by selecting the "Create new Accoun" option, and filling in the associated form.  Upon submission the system will send out an email containing a link which will activate the account and allow you to log in.
+As you start typing into the search bar, Labrador tries to match project identifiers. Any matching identifiers will be shown as a drop down list - these can be selected with the keyboard or the mouse, clicking or pressing enter will take you directly to that project.
 
-3.1.2 Submitting a new sample
+
+3.2 Browsing projects
+------------------------
+The homepage of Labrador is designed for browsing projects. The main panel lists all projects known to Labrador, colour coded by their status. Clicking the different statuses in the key will filter the table by status. The left panel contains a number of filters, enabling you to quickly filter by a text string, project name (first letter), species and data type. Clicking anywhere on a project will go to that project.
+
+
+3.3 Viewing projects
+---------------------
+Once you've selected a project, you'll be taken to its page. Project pages always have a side navigation allowing you to view different aspects of the project.
+
+All project pages share a header. This shows the project identifier and any project accession numbers. Under this the project status is shown, the names of people linked to the project, the bioinformatician assigned to process the data and the location of the project directory on the server. 
+
+
+3.3.1 Project Details
+----------------------
+The Project Details page outlines the overarching meta data related to the project. Any publications relating to the project are shown, along with a project title and description. A full list of contacts is shown as well as a history of logged events showing any activity related to the project.
+
+
+3.3.2 Datasets
+---------------
+The Datasets page shows all datasets associated with a project. A dataset describes data from a single experiment. Name, species, cell type, data type and accession codes are shown. You can click column headers to sort the table by that column and use the text box at the top to filter by text string. Clicking an accession number will open the relevant database page in a new window.
+
+
+3.3.3 Processing
+-----------------
+The processing page shows logs of the processing commands that have been run on each dataset, if they were generated using Labrador. This gives a way to see how data was processed, even if it was done some time ago.
+
+
+3.3.4 Reports
+--------------
+Labrador can be configured to show processing reports within the browser, making it quick and easy to get an overview of the quality of a dataset and how well the processsing has worked. Recognised report files will be shown in dropdown boxes in the top right. Selecting an option will refresh the page.
+
+
+3.3.5 Files
+------------
+The Files page shows all files found within the project folder on the server. You can sort the table by it's headers - name, file size, genome and filename. You can filter the fiels by dataset, by free text string and by type (aligned, raw etc. Uses common file extensions).
+
+Clicking a filename will download that file to your computer. If you want to download multiple files you can select their rows and click the download button at the bottom of the page. This launches the downloads in a Java applet which maintains the directory structure and runs the downloads in series.
+
+
+4 Use by registered users
+==========================
+To do some functions in Labrador you have to be logged in. This is so that any bioinformaticians processing the data for you know who to contact about any questions.
+
+4.1 Creating an account
+--------------------------
+You can register to use Labrador by from the login page by clicking "Log In / Register" at the top of any page. This will show a modal window with two tabs - click 'Register' and fill in the associated form.  Upon submission the system will send out an email containing a link which will activate the account and allow you to log in. If your group is not present in the drop down list, an administrator can add it in the Labrador config file.
+
+4.2 Logging in
+---------------
+Once registered you can log in by clicking the same "Log In / Register" link in the top right of any page. You will be returned to the same page upon logging in, but please note that you'll lose any data that you've entered into the page and not saved. If you've forgotten your password you can reset it by clicking the "click here" link on the log in form.
+
+4.3 Requesting a new project
 -----------------------------
+If you've searched Labrador for a particular dataset and not been able to find it, you can request it be processed by your bioinformatics team by clicking "Create New Project" at the top of any page.
 
-Once you have logged in you can select 'Add new sample' from the toolbar.  You can then fill in as much information as you can about your sample.  Once the sample is submitted it will appear in your list of active samples on your front page.  The sample is not eligable to be placed into a run until an admin has marked it as received within the system.  You can submit as many samples as you like into the system, but it's not a good idea to add a sample to the system unless you are ready to present it to your sequencing service.
+Most repositories of publicly available next-generation sequencing (GEO, SRA, ENA, DDJB) have a similar structure - a single publication usually has a single project accession. Contained within this are multiple datasets, which correspond to different experiments. Labrador mirrors this structure.
 
+The best place to start when requesting a new project is from such a public repository. Entering a project accession and clicking the magnifying glass will look the accession up from the relevant repository and automatically fill in as much of the form as possible. For GEO and SRA accessions, this typically means the title, description, publication and project identifier.
 
-3.1.3 Viewing an existing sample
---------------------------------
+You can enter as many accession numbers as you like. In fact, the more you add, the better. Having all relevant accession numbers is important when adding datasets (see below).
 
-Your most recent samples will appear on your front page, if you want to see older samples you can use the 'Search' option to find them.  Running the search with no search options will show you every sample you've ever run.
-
-Within the sample page you can see and change the details for your sample.  You can also see and add notes to the sample to specify special instructions to the sequencing facility, or to note unusual results which may have been found.
-
-If your sample has been put onto one or more runs you will see links to the lanes of data created from your sample.  If your sample is only to be run on a single lane then a link to the lane will be present on your front page, otherwise you will need to go via your sample page.
-
-Within the lane page you will see the details of the run which your sample was part of, and if there are data files for your sample from the run then these will be listed.  The lane will show up as soon as the flowcell has been laid out, but the result data will not show up until the run has completed, been processed, and been moved to its final storage position, so don't be worried if you see a lane with no data.
-
-3.1.4 Sharing Data
-------------------
-
-You can share your data with other people in the Labrador system.  To do this select the 'Change Details' link on the toolbar.  Here you can also change your personal details.  If you want to allow someone else to see your samples simply enter their email address into the box at the bottom and press 'Add permission'.  You can also see the list of people to whom you have granted read permission for your data, and the list of people who have granted you read permission.
-
-All permissions are global, so they apply to all of your samples.  They only give the other person permission to see the metadata and data for your samples.  They do not allow them to make any changes.
+The only item that is mandatory is the project identifier. This needs to be unique within Labrador and will correspond to a directory name on the server. Entering an identifier that already exists will produce an error.
 
 
-3.2 Use by Administrators
--------------------------
+4.3.1 Adding new datasets
+--------------------------
+Once you have created a new project, you need to add the datasets that you are interested in. Clicking "Add datasets" after creating the project will take you to this page.
 
+Labrador can make your life easier by retrieving all of the datasets associated with a project accession entered under Project Details. These appear as buttons at the top of the page. Clicking a button will query that repository for all datasets associated and enter them into the table below. You may need to try searching several different accessions before finding all of the datasets that you need.
+
+
+
+4.3.2 Requesting new datasets for an old project
+-------------------------------------------------
+
+
+
+
+5 Use by Administrators
+========================
 Administrators can do everything a normal user can do, so only information on additional options will be shown in this section.
 
 
-3.2.1 Creating a new account
+5.1 Creating a new account
 ----------------------------
 
-Administrators can make an account for other people using the 'New User' option on the toolbar.  The account will be created without a password (ie the user won't be able to log in at all until they have created a password).  The administrator can't set a password for the account, and the user should use the 'Forgotten password' option to set a password for themselves.
 
-Admins have the option of creating new administrator accounts by ticking the 'Make Administrator' option.
-
-Admins can also change the personal details of other users.  The easiest way to do this is to use the Search tool to search for users, and then edit their details.  An admin can add sharing permissions or change any of the normal user details.
-
-
-3.2.2 Adding new samples
-------------------------
-
-Administrators can add new samples and assign them to users other than themsevles.  They also have the option to selected retired run types, sample types or search databases.  Admins can also create control samples.  Control samples are different from normal samples in that they will not expire once the specified number of lanes has been run as it assumes you have an infinite supply.  They will also appear as an option in every type of run, so don't mark a sample as a control unless it's a true control sample (eg PhiX) which will always be around.
-
-
-3.2.2 Creating a new flowcell
------------------------------
-
-Once you have one or more pending samples you can start to create a flowcell using the 'New flowcell' option in the toolbar.  You will initially be asked for the serial number of the flowcell and the type of run you want to do.  Only run types for currently pending samples will be shown.
-
-Once you have started the flowcell it will appear in your pending flowcells list on the front page and you can edit it until you create a run from it.
-
-You can add samples to the flowcell.  You will see all control samples (whatever type of run they were originally assigned to) and any normal samples for the same run type as the current flowcell.  Once the flowcell is full any additional samples will not be shown, and you will be offered the opportunity to create a run for the flowcell.
-
-When you create a run you assign a flowcell to a machine.  Only machines listed as able to undertake the type of run for this flowcell will be shown.  You can then specify a run date and a run folder name.  Please ensure that the run folder name matches exactly with the real run folder, since any mismatch will result in the data files for the run not being visible within Labrador.
-
-Once you have created a run from a flowcell it will be removed from the pending flowcells list and the lanes in the flowcell will move to the recent samples list.

@@ -129,10 +129,16 @@ include('includes/header.php'); ?>
 			<?php } ?>
 				<td><?php echo $dataset['name']; ?></td>
 				<td><?php echo date('H:i, jS M Y', $processed['created']); ?></td>
-				<td><pre><?php echo substr($processed['commands'], 0, 150); 
-					?> <a href="#" class="show_more_link" id="show_more_<?php echo $processed['id']; ?>">[ show more ]</a><?php 
-					?> <span class="more_commands" style="display:none;" id="more_<?php echo $processed['id']; ?>"><?php echo substr($processed['commands'], 150); ?></span><?php
-				?><a href="#" style="display:none;" class="hide_more_link" id="hide_more_<?php echo $processed['id']; ?>">[ hide more ]</a></pre></td>
+				<td>
+					<div class="processing_teaser" id="processing_teaser_<?php echo $processed['id']; ?>">
+						<a href="#" style="float:right;" class="show_more_link" id="show_more_<?php echo $processed['id']; ?>">[ show full ]</a>
+						<pre><?php echo substr($processed['commands'], 0, 150); ?></pre>
+					</div>
+					<div class="more_commands" style="display:none;" id="more_<?php echo $processed['id']; ?>">
+						<pre><?php echo nl2br(htmlspecialchars($processed['commands'])); ?></pre>
+						<a href="#" class="hide_more_link" id="hide_more_<?php echo $processed['id']; ?>">[ hide full ]</a>
+					</div>
+				</td>
 			</tr>
 		<?php } // while $processed ?>
 		</tbody>

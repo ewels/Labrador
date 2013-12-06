@@ -181,8 +181,16 @@ include('includes/header.php'); ?>
 		$dir = $data_root.$project['name'];
 		$it = new RecursiveDirectoryIterator($dir);
 		foreach(new RecursiveIteratorIterator($it) as $file) {
-			$size = $file->getSize();
+			
 			$path = $file->getPathname();
+			
+			if($file->isLink()){
+				# File is a symlink - getSize() will throw a fatal error.
+				$size = "0";
+			} else {
+				$size = $file->getSize();
+			}
+			
 			$matched = false;
 			if(substr($path, -1) !== '~' && substr(basename($path), 0, 1) !== '.' && !stripos($path, 'fastqc/')){
 				$num_paths++;
