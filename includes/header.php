@@ -22,6 +22,11 @@
 /*
 Template file - page header
 */
+
+if(!isset($root)){
+	$root = "";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,9 +39,9 @@ Template file - page header
 
     <!-- Le styles -->
 	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,400italic' rel='stylesheet' type='text/css'>
-	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
+	<link href="<?php echo $root; ?>css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?php echo $root; ?>css/bootstrap-responsive.min.css" rel="stylesheet">
+	<link href="<?php echo $root; ?>css/styles.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -52,9 +57,9 @@ Template file - page header
 		<div class="navbar-inner">
 			<div class="container-fluid">
 			
-				<a class="brand" href="index.php">Labrador<sub>BETA</sub> <img src="img/labrador_logo_tiny.png"></a>
+				<a class="brand" href="<?php echo $root; ?>index.php">Labrador<sub>BETA</sub> <img src="<?php echo $root; ?>img/labrador_logo_tiny.png"></a>
 				
-				<form class="navbar-search form-search pull-left" action="search.php" method="get">
+				<form class="navbar-search form-search pull-left" action="<?php echo $root; ?>search.php" method="get">
 					<div class="input-append">
 						<input type="text" name="s" id="s" class="search-query" placeholder="Search" autocomplete="off" <?php if(isset($_GET['s'])){ echo 'value="'.htmlentities($_GET['s']).'"'; } ?>>
 						<button class="btn">Search</button>
@@ -62,7 +67,7 @@ Template file - page header
 				</form>
 				
 				<ul class="nav" style="margin-left:20px;">
-					<li><a href="project.php" class="request-dataset-nav-link">Create New Project</a></li>
+					<li><a href="<?php echo $root; ?>project.php" class="request-dataset-nav-link">Create New Project</a></li>
 					<?php labrador_login_link(); ?>
 				</ul>
 

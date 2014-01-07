@@ -2,7 +2,6 @@
    TO DO - Labrador
 =====================
 
-0 Finish writing the documentation (3 Normal Usage onwards)
 0 Figure out why require('../') doesn't work
 0 Do the database schema properly
 0 Do the apache config properly
@@ -12,6 +11,10 @@
 
 1 Allow projects to have multiple contacts
 	* Remove project contact details, just have user / project lookup table
+	* Same for administrators?
+
+2 Consolodate project accession numbers
+	* If SRA, DDJB accessions are treated the same, have one box.
 
 1.2 Tidy Dataset naming
 	* Automatically trim off GSE number if present

@@ -30,7 +30,7 @@ session_start();
 
 $basename = substr(dirname(__FILE__), 0, -1*(strlen(basename(dirname(__FILE__)))));
 
-require("$basename/conf/config.php");
+require("$basename/conf/labrador_config.php");
 
 // Log in to the database
 if($db_password){

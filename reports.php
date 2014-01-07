@@ -83,7 +83,7 @@ if(file_exists($data_root.$project['name'])){
 		<input type="hidden" value="" name="report_type" id="report_type">
 		
 	<?php
-	// Find overview reports. Functions are in config.php
+	// Find overview reports. Functions are in labrador_config.php
 	if(isset($project_report_types) && count($project_report_types) > 0){
 		$dir = $data_root.$project['name'];
 		// Go through each report type
@@ -118,7 +118,7 @@ if(file_exists($data_root.$project['name'])){
 		}
 	}
 	
-	// Find dataset-specific reports. Functions are in config.php
+	// Find dataset-specific reports. Functions are in labrador_config.php
 	if(isset($dataset_report_types) && count($dataset_report_types) > 0){
 		// Setup - work out directory and get search terms
 		$dir = $data_root.$project['name'];

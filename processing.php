@@ -213,7 +213,7 @@ include('includes/header.php'); ?>
 						<td><select class="server" name="server" id="server">
 							<?php foreach($processing_servers as $server => $vars){ echo '<option value="'.$server.'" data-queueing="'.$vars['queueing'].'">'.$vars['name'].'</option>'; } ?>
 						</select></td>
-						<td>
+						<td rowspan="2">
 							<span class="help-block">Available variables:
 								<code><abbr title="File Name Base">{{fn}}</abbr></code>
 								<code><abbr title="Wait for previous job in script to complete (queueing servers only)">{{hold_prev}}</abbr></code>
@@ -234,7 +234,6 @@ include('includes/header.php'); ?>
 							<option value="">[ select genome ]</option>
 							<?php foreach($genomes as $genome => $paths){ echo '<option>'.$genome.'</option>'; } ?>
 						</select></td>
-						<td><span class="help-block">Note: many pipelines will have hold commands to wait for assumed previous jobs on the cluster. You may have to change or delete <code>-hold_jid</code></span></td>
 					</tr>
 					<tr>
 						<th>Steps:</th>

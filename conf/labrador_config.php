@@ -20,14 +20,14 @@
 ##########################################################################
 
 /*
-* config.php
+* labrador_config.php
 * ---------
 * Some configuration and customisation options.
 *
 */
 
 $labrador_url = 'http://bilin1/labrador/';
-$data_root = '/data/pipeline/new_public/TIDIED/';
+$data_root = '/data/pipeline/pubcache/TIDIED/';
 $support_email = 'babraham.bioinformatics@babraham.ac.uk';
 
 $db_database = 'labrador';
@@ -52,6 +52,7 @@ $groups = array(
 	'Jon Houseley' => 'Houseley',
 	'Gavin Kelsey' => 'Kelsey',
 	'Sarah Elderkin' => 'Elderkin',
+	'Peter Rugg-Gunn' => 'RuggGunn',
 	'Bioinformatics' => 'Bioinformatics'
 );
 

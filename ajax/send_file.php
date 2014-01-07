@@ -24,7 +24,7 @@
    Outputs the contents of files on the server, used for Report iframes
 */
 
-require_once('../conf/config.php');
+require_once('../conf/labrador_config.php');
 
 $path = $data_root.$_GET['path'];
 $dir = dirname($_GET['path']).'/';

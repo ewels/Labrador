@@ -21,7 +21,7 @@
 
 session_start();
 
-require_once('../conf/config.php');
+require_once('../conf/labrador_config.php');
 
 $file_list = $_SESSION['files'];
 
