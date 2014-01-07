@@ -178,18 +178,38 @@ include('includes/header.php');
 						} else if(!$file_exists){
 							echo "warning";
 						} ?>">
-						<td class="project_name"><?php echo $project['name']; 
-						if($project['status'] == 'Not Started'){
-							echo ' &nbsp; <i class="icon-time" title="Project has not yet started processing"></i>';
-						} else if($project['status'] == 'Currently Processing'){
-							echo ' &nbsp; <i class="icon-pencil" title="Project is currently being processed by '.$project['assigned_to'].'"></i>';
-						} else if(!$file_exists){
-							echo ' &nbsp; <i class="icon-folder-open" title="Directory not found"></i><i class="icon-warning-sign" title="Directory not found"></i>';
-						} ?></td>
-						<td class="num num_datasets"><?php echo $num_datasets; ?></td>
-						<td class="species"><?php echo implode(', ', $species); ?></td>
-						<td class="cell_type"><?php echo implode(', ', $cell_types); ?></td>
-						<td class="data_type"><?php echo implode(', ', $data_types); ?></td>
+						<td class="project_name">
+							<a href="project.php?id=<?php echo $project['id']; ?>">
+								<?php echo $project['name']; 
+								if($project['status'] == 'Not Started'){
+									echo ' &nbsp; <i class="icon-time" title="Project has not yet started processing"></i>';
+								} else if($project['status'] == 'Currently Processing'){
+									echo ' &nbsp; <i class="icon-pencil" title="Project is currently being processed by '.$project['assigned_to'].'"></i>';
+								} else if(!$file_exists){
+									echo ' &nbsp; <i class="icon-folder-open" title="Directory not found"></i><i class="icon-warning-sign" title="Directory not found"></i>';
+								} ?>
+							</a>
+						</td>
+						<td class="num num_datasets">
+							<a href="project.php?id=<?php echo $project['id']; ?>">
+								<?php echo $num_datasets; ?>
+							</a>
+						</td>
+						<td class="species">
+							<a href="project.php?id=<?php echo $project['id']; ?>">
+								<?php echo implode(', ', $species); ?>
+							</a>
+						</td>
+						<td class="cell_type">
+							<a href="project.php?id=<?php echo $project['id']; ?>">
+								<?php echo implode(', ', $cell_types); ?>
+							</a>
+						</td>
+						<td class="data_type">
+							<a href="project.php?id=<?php echo $project['id']; ?>">
+								<?php echo implode(', ', $data_types); ?>
+							</a>
+						</td>
 					</tr>
 				<?php } ?>
 				<tr id="no_datasets" style="display:none;">

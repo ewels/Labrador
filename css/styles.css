@@ -205,6 +205,12 @@ small.muted {
 #paper-browser-table .num {
 	text-align:center;
 }
+
+#paper-browser-table tr td a {
+	text-decoration:none;
+	color:#333;
+}
+
 #paper-browser-table tr.error td,
 #filter_status_bar span.error {
 	background-color:#F9E9E9;
