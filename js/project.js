@@ -57,6 +57,31 @@ $('.groupAssign_quickFill').click(function(e){
 	$('#contact_group').val($(this).attr('title'));
 });
 
+// Add contact button
+$('#project_add_contact').click(function(e){
+	e.preventDefault();
+	var numContacts = $('.contacts_dropdown').length;
+	var newEl = $('.contacts_dropdown').first().clone();
+	newEl.find('option:selected').removeAttr('selected');
+	newEl.insertAfter( $('.contacts_dropdown').last() );
+	$('<br>').insertBefore( $('.contacts_dropdown').last());
+	if(numContacts >= 1){
+		$('#project_remove_contact').removeClass('disabled');
+	}
+});
+// Remove contact button
+$('#project_remove_contact').click(function(e){
+	e.preventDefault();
+	var numContacts = $('.contacts_dropdown').length;
+	if(numContacts > 1){
+		$('.contacts_dropdown').last().remove();
+		$('.contacts-control-group br').last().remove();
+	}
+	if(numContacts <= 2){
+		$('#project_remove_contact').addClass('disabled');
+	}
+});
+
 // Add paper button
 $('#paper_add_paper').click(function(e){
 	e.preventDefault();

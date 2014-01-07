@@ -117,10 +117,17 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 	if($admin){
 		$values["status"] = $_POST['status'];
 		$values["assigned_to"] = filter_var($_POST['assigned_to'], FILTER_SANITIZE_EMAIL);
+		$contacts = $_POST['contacts'];
+		
 		$values["contact_name"] = $_POST['contact_name'];
 		$values["contact_email"] = filter_var($_POST['contact_email'], FILTER_SANITIZE_EMAIL);
 		$values["contact_group"] = $_POST['contact_group'];
 	} else {
+		$contacts = $project_users;
+		if(!in_array($user['id'], $contacts)){
+			$contacts[] = $user['id'];
+		}
+		
 		$values["contact_name"] = $user['firstname'].' '.$user['surname'];
 		$values["contact_email"] = $user['email'];
 		$values["contact_group"] = $user['group'];
@@ -154,11 +161,43 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 		}
 		if(mysql_query($query)){
 			$project_array = $values;
-			// Saved project - now save papers
+			
+			// Saved project. What is its ID?
 			if(!isset($project_id) || !is_numeric($project_id)){
 				$project_id = mysql_insert_id();
 				$project = $values;
 			}
+			
+			// Saved project - now save contacts
+			$contacts = array_unique($contacts);
+			$insert_contacts = $contacts;
+			$contacts_q = mysql_query("SELECT `id`, `user_id` FROM `project_contacts` WHERE `project_id` = '$project_id'");
+			if(mysql_num_rows($contacts_q) > 0){
+				while($contacts_e = mysql_fetch_array($contacts_q)){
+					if(($key = array_search($contacts_e['user_id'], $insert_contacts)) !== false) {
+						// already here. no need to insert again
+						unset($insert_contacts[$key]);
+					} else {
+						// Not in submitted form. Delete from database.
+						$query = "DELETE FROM `project_contacts` WHERE `id` = '".$contacts_e['id']."'";
+						if(!mysql_query($query)){
+							$error = true;
+							$msg[] = "Could not delete contact from database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+						}
+					}
+				}
+			}
+			// Insert remaining contacts into database
+			foreach($insert_contacts as $uid){
+				$query = "INSERT INTO `project_contacts` (`project_id`, `user_id`) VALUES ('$project_id', '$uid')";
+				if(!mysql_query($query)){
+					$error = true;
+					$msg[] = "Could not insert contact into database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+				}
+			}
+			
+			
+			// Saved project and contacts - now save papers
 			if($project_id > 0){
 				$i = 1;
 				while(isset($_POST['paper_year_'.$i])){
@@ -214,12 +253,14 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 				}
 				$stop_page_after_message = true;
 				
-				// Email main contact
-				if(strlen($project_array['contact_email']) > 3){
+				// Email project contacts
+				foreach($contacts as $contact){
+					$query = sprintf("SELECT `email` FROM `users` WHERE `id` = '%d'", $contact);
+					$contact_u = mysql_fetch_array(mysql_query($query));
 					if($new_project){
-						mail($project_array['contact_email'], '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
+						mail($contact_u['email'], '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
 
-The project ".$project_array['name']." has just been created on Labrador and you are marked as the primary contact. As such, you will receive e-mail notifications if the status of the project is updated.
+The project ".$project_array['name']." has just been created on Labrador and you are marked as a contact. As such, you will receive e-mail notifications if the status of the project is updated.
 
 You can see the project here: ".$labrador_url."project.php?id=$project_id
 
@@ -230,7 +271,7 @@ This is an automated e-mail sent from Labrador
 $labrador_url
 ", $email_headers);
 					} else if($admin) {
-						mail($project_array['contact_email'], '[Labrador] Project '.$project_array['name'].' Updated', "Hi there,
+						mail($contact_u['email'], '[Labrador] Project '.$project_array['name'].' Updated', "Hi there,
 
 The project ".$project_array['name']." has just been updated on Labrador. Its status is now '".$project_array['status']."'
 
@@ -292,6 +333,15 @@ if($delete && $project_id){
 	} else {
 		$error = true;
 		$msg[] = "Could not delete datasets: ".mysql_error();
+	}
+	
+	$query = sprintf("DELETE FROM `project_contacts` WHERE `project_id` = '%d'", $project_id);
+	if(mysql_query($query)){
+		$s = mysql_affected_rows() > 1 ? 's' : '';
+		$msg[] = mysql_affected_rows(). " project contact$s deleted";
+	} else {
+		$error = true;
+		$msg[] = "Could not delete project contacts: ".mysql_error();
 	}
 	
 	$query = sprintf("DELETE FROM `papers` WHERE `project_id` = '%d'", $project_id);
@@ -571,6 +621,7 @@ if(!$new_project and !$edit and !$error){ ?>
 		"name" => "",
 		"status" => ($user && $admin) ? "Currently Processing" : "",
 		"assigned_to" => ($user && $admin) ? $user['email'] : "",
+		"project_users" => array(-1),
 		"contact_name" => $user ? $user['firstname'].' '.$user['surname'] : "",
 		"contact_email" => $user ? $user['email'] : "",
 		"contact_group" => $user ? $user['group'] : "",
@@ -589,6 +640,7 @@ if(!$new_project and !$edit and !$error){ ?>
 			"name" => $project['name'],
 			"status" => $project['status'],
 			"assigned_to" => $project['assigned_to'],
+			"project_users" => $project_users,
 			"contact_name" => $project['contact_name'],
 			"contact_email" => $project['contact_email'],
 			"contact_group" => $project['contact_group'],
@@ -600,7 +652,9 @@ if(!$new_project and !$edit and !$error){ ?>
 			"description" => $project['description'],
 			"notes" => $project['notes']
 		);
-		
+		if(count($values['project_users']) < 1){
+			$values['project_users'] = array(-1);
+		}
 	}
 	
 	if($error) {
@@ -608,6 +662,7 @@ if(!$new_project and !$edit and !$error){ ?>
 			"name" => $_POST['name'],
 			"status" => $_POST['status'],
 			"assigned_to" => $_POST['assigned_to'],
+			"project_users" => $_POST['project_users'],
 			"contact_name" => $_POST['contact_name'],
 			"contact_email" => $_POST['contact_email'],
 			"contact_group" => $_POST['contact_group'],
@@ -678,6 +733,38 @@ if(!$new_project and !$edit and !$error){ ?>
 					</select>
 				</div>
 			</div>
+			
+			
+			<div class="control-group contacts-control-group">
+				<label class="control-label" for="contact_name">Contacts</label>
+				<div class="controls">
+					<?php $first = true;
+					foreach($values['project_users'] as $id){
+						if(!$first){ echo '<br>'; }
+						$first = false;?>
+					<select name="contacts[]" class="contacts_dropdown">
+						<option value=""> [ select user ] </option>
+						<?php
+						$allusers_query = mysql_query("SELECT `id`, `firstname`, `surname` FROM `users` ORDER BY `firstname` ASC");
+						if(mysql_num_rows($allusers_query) > 0){
+							while($alluser = mysql_fetch_array($allusers_query)){
+								echo '<option value="'.$alluser['id'].'"';
+								if($alluser['id'] == $id){
+									echo ' selected="selected"';
+								}
+								echo '>'.$alluser['firstname'].' '.$alluser['surname'].'</option>';
+							}
+						}
+					?>
+					</select>
+					<?php 
+					} ?>
+					<span class="help-inline">Who requested / generated the data?</span> 
+					&nbsp; <a href="#" id="project_add_contact" class="btn btn-small">Add</a> 
+					&nbsp; <a href="#" id="project_remove_contact" class="btn btn-small <?php if(count($values['project_users']) < 2){ echo 'disabled'; } ?>">Remove</a>
+				</div>
+			</div>
+			
 			
 			<div class="control-group ">
 				<label class="control-label" for="contact_name">Primary Contact</label>

@@ -2,53 +2,71 @@
    TO DO - Labrador
 =====================
 
-0 Figure out why require('../') doesn't work
-0 Do the database schema properly
-0 Do the apache config properly
-0 Add search to the project SRA
+----------
+Essential
+----------
 
-1 Allow projects to have multiple contacts
+* Do the database schema properly
+
+* Do the apache config properly
+
+* Allow projects to have multiple contacts
 	* Remove project contact details, just have user / project lookup table
 	* Same for administrators?
+	
+* Tidy Dataset naming
+	* Automatically trim off GSE number if present
 
-2 Consolodate project accession numbers
+
+----------
+Desirable
+----------
+
+* Figure out why require('../') doesn't work
+
+* Consolodate project accession numbers
 	* If SRA, DDJB accessions are treated the same, have one box.
 
-1.2 Tidy Dataset naming
-	* Automatically trim off GSE number if present
-	* Automatically pull in project SRP number if found
+* Automatically pull in project SRP number if found
 
-1.3 Extra checks when adding SRA records
+* Tidy Up!
+	* Go through and delete all of the files that are not being used
+	* Read through code and see what can be tidied up
+	
+* Add search to the project SRA
+
+
+--------------
+Would be nice
+--------------
+
+* Extra checks when adding SRA records
 	* Make sure that SRR runs are good - check XML attributes
 	
-2. Tidy Up Processing
+* Tidy Up Processing
 	* Delete individual steps rather than just the final one
 	* Buttons to move steps up and down in order
 
-3. Make sure that form inputs aren't being lost when we have errors
+* Make sure that form inputs aren't being lost when we have errors
 
-4. Look up missing data in Datasets edit page from existing accessions..
+* Look up missing data in Datasets edit page from existing accessions..
 	* Have a tick box to allow overwriting?
 	* Use a big button next to save and delete?
 
-5. Check for empty fields, suggest (but don't force) completion on form submit
+* Check for empty fields, suggest (but don't force) completion on form submit
 	* Project Details
 	* Datasets - Add
 	* Datasets - Edit
 
-6. Better form validation - AJAX. 
+* Better form validation - AJAX. 
 	* Check formats of accession codes
 	* Search for duplicates when entering accessions and project names
 
-8. Automated backups
+* Automated backups
 	* Cron job to back up database to file.
 	* SVN ignore .sql files
 	* Automated clean ups of old backups?
 
-9. Tidy Up!
-	* Go through and delete all of the files that are not being used
-	* Read through code and see what can be tidied up
-
-10. Look into different user authentication systems
+* Look into different user authentication systems
 	* Exchange ActiveServer thingy?
 	* New computing authentication solution?
