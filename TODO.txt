@@ -8,11 +8,6 @@ Essential
 
 * Do the apache config properly
 
-* Finish project multiple contacts
-	* Update display of contacts in headers
-	* Add functionality for user to add / remove themselves from a project
-	* Clear out old code
-	
 * Do the database schema properly
 	
 * Tidy Dataset naming

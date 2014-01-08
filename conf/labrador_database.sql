@@ -35,7 +35,7 @@ CREATE TABLE `datasets` (
   `modified` int(12) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1799 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1805 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,7 +54,7 @@ CREATE TABLE `history` (
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=460 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=467 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +75,7 @@ CREATE TABLE `papers` (
   `doi` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=167 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=168 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +95,7 @@ CREATE TABLE `processing` (
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`),
   KEY `dataset_id` (`dataset_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=850 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=862 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,7 +112,7 @@ CREATE TABLE `project_contacts` (
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,15 +133,12 @@ CREATE TABLE `projects` (
   `accession_sra` varchar(50) DEFAULT NULL,
   `accession_ena` varchar(50) DEFAULT NULL,
   `accession_ddjb` varchar(50) DEFAULT NULL,
-  `contact_name` varchar(250) DEFAULT NULL,
-  `contact_email` varchar(250) DEFAULT NULL,
-  `contact_group` varchar(250) DEFAULT NULL,
   `assigned_to` varchar(250) DEFAULT NULL,
   `created` int(12) DEFAULT NULL,
   `modified` int(12) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=139 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=140 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,4 +173,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-01-07 18:45:14
+-- Dump completed on 2014-01-08 18:52:49
