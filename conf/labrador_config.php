@@ -42,7 +42,7 @@ $administrators = array(
 	'steven.wingett@babraham.ac.uk' => 'Steven',
 	'laura.biggins@babraham.ac.uk' => 'Laura',
 	'anne.segonds-pichon@babraham.ac.uk' => 'Anne',
-	'phil.ewels@babraham.ac.uk' => 'Phil'
+	//'phil.ewels@babraham.ac.uk' => 'Phil'
 );
 
 $groups = array(
@@ -204,7 +204,6 @@ $processing_steps = array(
 		'bismark_pbat' => array( 'name' => 'Bismark, PBAT', 'unit' => 'accession_sra', 'requires_genome' => 'true' ),
 	),
 	'Post-Processing' => array(
-		'email_contact' => array( 'name' => 'Send Contact E-mail', 'unit' => 'project', 'requires_genome' => 'true' ),
 		'email_assigned' => array( 'name' => 'Send Assigned E-mail', 'unit' => 'project', 'requires_genome' => 'true' )
 	)
 );
@@ -270,10 +269,6 @@ $processing_codes = array(
 	'bismark_pbat' => array(
 		'rocks1' => 'echo "bismark --pbat –bam {{genome_path}} {{fn}}_1_trimmed.fq" | qsub -V -cwd -l vf=12G -pe orte 6 -o {{fn}}_bismark_run.out -j y -m as -M {{assigned_email}} -N bismark_{{fn}} -hold_jid trim_{{fn}}',
 		'bilin1' => 'bismark --pbat –bam {{genome_path}} {{fn}}_1_trimmed.fq'
-	),
-	'email_contact' => array(
-		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{contact_email}} {{hold_prev}}',
-		'bilin1' => 'echo "{{project}} Processing Completed at {{time}}" | mail -s "{{project}} Processing Complete" {{contact_email}}'
 	),
 	'email_assigned' => array(
 		'rocks1' => 'echo "{{project}} Processing Completed at {{time}}" | qsub -V -cwd -pe orte 1 -l vf=1G -o {{project}}_email.out -j y -N email_{{project}} -m eas -M {{assigned_email}} {{hold_prev}}',

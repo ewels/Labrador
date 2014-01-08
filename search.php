@@ -47,7 +47,7 @@ foreach($terms as $term){
 	$regex_terms[] = "/$term/i";
 }
 
-$project_fields = array('name', 'title', 'description', 'accession_geo', 'accession_sra', 'accession_ena', 'accession_ddjb', 'contact_name', 'contact_email', 'contact_group', 'assigned_to', 'notes');
+$project_fields = array('name', 'title', 'description', 'accession_geo', 'accession_sra', 'accession_ena', 'accession_ddjb', 'assigned_to', 'notes');
 $sql = "SELECT * FROM `projects` WHERE ";
 foreach ($project_fields as $field){
 	foreach ($terms as $term){

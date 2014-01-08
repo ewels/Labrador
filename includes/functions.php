@@ -83,13 +83,20 @@ function project_header($project) {
 		echo 'label-important';
 	}
 	echo '">'.$project['status'].'</span>';	
-		
-	if(!empty($project['contact_name']) && !empty($project['contact_email'])) {
-		echo '<small>Requested by: <a href="mailto:'.$project['contact_email'].'">'.$project['contact_name'].'</a></small>'; 
+	
+	$p_users = mysql_query("SELECT `users`.`email`, `users`.`firstname`, `users`.`surname` FROM `users` LEFT JOIN `project_contacts` on `users`.`id` = `project_contacts`.`user_id` WHERE `project_contacts`.`project_id` = '".$project['id']."'");
+	if(mysql_num_rows($p_users) > 0){
+		echo '<small>Contact';
+		if(mysql_num_rows($p_users) > 1) echo 's';
+		echo ': ';
+		$first = true;
+		while($p_user = mysql_fetch_array($p_users)){
+			if(!$first){ echo ', '; } $first = false;
+			echo '<a href="mailto:'.$p_user['email'].'">'.$p_user['firstname'].' '.$p_user['surname'].'</a>';
+		}
+		echo '</small>';
 	}
-	if(empty($project['contact_name']) && !empty($project['contact_email'])) {
-		echo '<small>Requested by: <a href="mailto:'.$project['contact_email'].'">'.$project['contact_email'].'</a></small>'; 
-	}
+	
 	if($project['assigned_to'] != ''){
 		echo '<small>Assigned to: <a href="mailto:'.$project['assigned_to'].'">'.$project['assigned_to'].'</a></small>';
 	}

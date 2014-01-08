@@ -6,13 +6,14 @@
 Essential
 ----------
 
-* Do the database schema properly
-
 * Do the apache config properly
 
-* Allow projects to have multiple contacts
-	* Remove project contact details, just have user / project lookup table
-	* Same for administrators?
+* Finish project multiple contacts
+	* Update display of contacts in headers
+	* Add functionality for user to add / remove themselves from a project
+	* Clear out old code
+	
+* Do the database schema properly
 	
 * Tidy Dataset naming
 	* Automatically trim off GSE number if present
@@ -39,6 +40,8 @@ Desirable
 --------------
 Would be nice
 --------------
+
+* Multiple contacts for administrators
 
 * Extra checks when adding SRA records
 	* Make sure that SRR runs are good - check XML attributes

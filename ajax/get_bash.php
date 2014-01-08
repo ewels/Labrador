@@ -46,7 +46,6 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 		$dataset_fn = substr(preg_replace("/[^A-Za-z0-9_-]/", '_', $dataset['name']), 0, 100);
 		$dataset_fn = preg_replace('/_+/', '_', $dataset_fn);
 		$sras = split(" ",$dataset['accession_sra']);
-		$contact_email = $project['contact_email'];
 		$assigned_email = $project['assigned_to'];
 		
 		foreach($sras as $sra){
@@ -63,7 +62,6 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 					'/{{sra}}/',
 					'/{{sra_url_wget}}/',
 					'/{{sra_url}}/',
-					'/{{contact_email}}/',
 					'/{{assigned_email}}/',
 					'/{{dataset}}/',
 					'/{{project}}/',
@@ -74,7 +72,6 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 					$sra,
 					$sra_url_wget,
 					$sra_url,
-					$contact_email,
 					$assigned_email,
 					$dataset['name'],
 					$project['name'],
@@ -116,14 +113,12 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 	$project_q = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$_POST['dataset']."'");
 	$project = mysql_fetch_array($project_q);
 	
-	$contact_email = $project['contact_email'];
 	$assigned_email = $project['assigned_to'];
 	
 	$output = $_POST['template']."\n";
 			
 	$patterns = array(
 		'/{{genome_path}}/',
-		'/{{contact_email}}/',
 		'/{{assigned_email}}/',
 		'/{{project}}/',
 		'/{{time}}/'

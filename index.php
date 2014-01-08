@@ -120,9 +120,9 @@ include('includes/header.php');
 			</thead>
 			<tbody>
 			<?php 
-			$sql = "SELECT * FROM `projects`";
+			$sql = "SELECT *, `projects`.`id` AS `pid` FROM `projects`";
 			if(isset($_GET['my_projects'])){
-				$sql .= " WHERE `contact_email` = '".$user['email']."'";
+				$sql .= sprintf(" LEFT JOIN `project_contacts` on `projects`.`id` = `project_contacts`.`project_id` WHERE `project_contacts`.`user_id` = '%d'", $user['id']);
 			} else if($admin && isset($_GET['assigned_projects']) && filter_var($_GET['assigned_projects'], FILTER_VALIDATE_EMAIL)){
 				$assigned = filter_var($_GET['assigned_projects'], FILTER_SANITIZE_EMAIL);
 				$sql .= " WHERE `assigned_to` = '".mysql_real_escape_string($assigned)."'";
@@ -145,7 +145,7 @@ include('includes/header.php');
 					}
 					
 					// Find papers
-					$papers_q = mysql_query("SELECT * FROM `papers` WHERE `project_id` = '".$project['id']."'");
+					$papers_q = mysql_query("SELECT * FROM `papers` WHERE `project_id` = '".$project['pid']."'");
 					$papers = array();
 					while($paper = mysql_fetch_array($papers_q)){
 						$authors = explode(' ', $paper['authors']);
@@ -153,7 +153,7 @@ include('includes/header.php');
 					}
 					
 					// Find datasets
-					$datasets = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '".$project['id']."'");
+					$datasets = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '".$project['pid']."'");
 					$num_datasets = mysql_num_rows($datasets);
 					$species = array();
 					$cell_types = array();
@@ -170,7 +170,7 @@ include('includes/header.php');
 						}
 					}
 					?>
-					<tr id="project_<?php echo $project['id']; ?>" data-status="<?php echo $project['status']; ?>" class="project <?php
+					<tr id="project_<?php echo $project['pid']; ?>" data-status="<?php echo $project['status']; ?>" class="project <?php
 						if($project['status'] == 'Not Started' || ($project['status'] == '' && !file_exists($data_root.$project['name']))){
 							echo "error";
 						} else if($project['status'] == 'Currently Processing'){
@@ -179,7 +179,7 @@ include('includes/header.php');
 							echo "warning";
 						} ?>">
 						<td class="project_name">
-							<a href="project.php?id=<?php echo $project['id']; ?>">
+							<a href="project.php?id=<?php echo $project['pid']; ?>">
 								<?php echo $project['name']; 
 								if($project['status'] == 'Not Started'){
 									echo ' &nbsp; <i class="icon-time" title="Project has not yet started processing"></i>';
@@ -191,22 +191,22 @@ include('includes/header.php');
 							</a>
 						</td>
 						<td class="num num_datasets">
-							<a href="project.php?id=<?php echo $project['id']; ?>">
+							<a href="project.php?id=<?php echo $project['pid']; ?>">
 								<?php echo $num_datasets; ?>
 							</a>
 						</td>
 						<td class="species">
-							<a href="project.php?id=<?php echo $project['id']; ?>">
+							<a href="project.php?id=<?php echo $project['pid']; ?>">
 								<?php echo implode(', ', $species); ?>
 							</a>
 						</td>
 						<td class="cell_type">
-							<a href="project.php?id=<?php echo $project['id']; ?>">
+							<a href="project.php?id=<?php echo $project['pid']; ?>">
 								<?php echo implode(', ', $cell_types); ?>
 							</a>
 						</td>
 						<td class="data_type">
-							<a href="project.php?id=<?php echo $project['id']; ?>">
+							<a href="project.php?id=<?php echo $project['pid']; ?>">
 								<?php echo implode(', ', $data_types); ?>
 							</a>
 						</td>

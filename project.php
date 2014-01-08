@@ -84,7 +84,32 @@ if($project_id){
 	}
 }
 
-if(isset($_GET['edit']) && is_numeric($_GET['edit']) && !$admin && $user['email'] != $project['contact_email']){
+if(isset($_GET['adduser']) && $project_id && $user && !$admin){
+	if(!in_array($user['id'], $project_users)){
+		$query = sprintf("INSERT INTO `project_contacts` (`project_id`, `user_id`) VALUES ('%d', '%d')", $project_id, $user['id']);
+		if(!mysql_query($query)){
+			$error = true;
+			$msg[] = "Could not add user as project contact. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+		} else {
+			$project_users[] = $user['id'];
+		}
+	}
+}
+if(isset($_GET['removeuser']) && $project_id && $user && !$admin){
+	if(in_array($user['id'], $project_users)){
+		$query = sprintf("DELETE FROM `project_contacts` WHERE `project_id` = '%d' AND `user_id` = '%d'", $project_id, $user['id']);
+		if(!mysql_query($query)){
+			$error = true;
+			$msg[] = "Could not remove user as project contact. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+		} else {
+			if(($key = array_search($user['id'], $project_users)) !== false) {
+				unset($project_users[$key]);
+			}
+		}
+	}
+}
+
+if(isset($_GET['edit']) && is_numeric($_GET['edit']) && !$admin && !in_array($user['id'], $project_users)){
 	$new_project = false;
 	$edit = false;
 	header("Location: index.php");
@@ -450,7 +475,16 @@ if(!$new_project and !$edit and !$error){ ?>
 	
 	
 	
-	<?php if(!$new_project && ($admin || $user['email'] == $project['contact_email'])) { ?><a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a><?php } ?>
+	<?php
+	if(!$new_project && ($admin || in_array($user['id'], $project_users))) {	?>
+		<a style="float:right;" class="btn" href="project.php?edit=<?php echo $project['id']; ?>">Edit Project</a>
+	<?php } else if($user){ ?>
+		<a style="float:right;" class="btn" href="project.php?id=<?php echo $project['id']; ?>&adduser">Add me as a contact</a>
+	<?php }
+	if(!$new_project && !$admin && in_array($user['id'], $project_users) && count($project_users) > 1) { ?>
+		<a style="margin-right:15px; float:right;style="margin-right:15px;" " class="btn" href="project.php?id=<?php echo $project['id']; ?>&removeuser">Remove me as a contact</a>
+	<?php }	?>
+	
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
 	

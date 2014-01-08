@@ -253,8 +253,9 @@ include('includes/header.php'); ?>
 	
 	<?php if($admin || in_array($user['id'], $project_users)){ ?>
 	<a class="btn pull-right" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a>
-	<?php } ?>
 	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
+	<?php } ?>
+	
 	
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
