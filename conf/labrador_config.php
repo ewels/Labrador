@@ -42,7 +42,7 @@ $administrators = array(
 	'steven.wingett@babraham.ac.uk' => 'Steven',
 	'laura.biggins@babraham.ac.uk' => 'Laura',
 	'anne.segonds-pichon@babraham.ac.uk' => 'Anne',
-	//'phil.ewels@babraham.ac.uk' => 'Phil'
+	'phil.ewels@babraham.ac.uk' => 'Phil'
 );
 
 $groups = array(

@@ -143,19 +143,11 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 		$values["status"] = $_POST['status'];
 		$values["assigned_to"] = filter_var($_POST['assigned_to'], FILTER_SANITIZE_EMAIL);
 		$contacts = $_POST['contacts'];
-		
-		$values["contact_name"] = $_POST['contact_name'];
-		$values["contact_email"] = filter_var($_POST['contact_email'], FILTER_SANITIZE_EMAIL);
-		$values["contact_group"] = $_POST['contact_group'];
 	} else {
 		$contacts = $project_users;
 		if(!in_array($user['id'], $contacts)){
 			$contacts[] = $user['id'];
 		}
-		
-		$values["contact_name"] = $user['firstname'].' '.$user['surname'];
-		$values["contact_email"] = $user['email'];
-		$values["contact_group"] = $user['group'];
 	}
 	
 	if(strlen($values['name']) == 0){
@@ -279,9 +271,11 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 				$stop_page_after_message = true;
 				
 				// Email project contacts
+				$project_contacts = array();
 				foreach($contacts as $contact){
-					$query = sprintf("SELECT `email` FROM `users` WHERE `id` = '%d'", $contact);
+					$query = sprintf("SELECT `email`, `firstname`, `surname` FROM `users` WHERE `id` = '%d'", $contact);
 					$contact_u = mysql_fetch_array(mysql_query($query));
+					$project_contacts[] = $contact_u['firstname'].' '.$contact_u['surname'].' ('.$contact_u['email'].')';
 					if($new_project){
 						mail($contact_u['email'], '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
 
@@ -315,7 +309,7 @@ $labrador_url
 				if(strlen($project_array['assigned_to']) < 3 && $new_project){
 					mail($support_email, '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
 
-The project ".$project_array['name']." has just been created on Labrador by ".$project_array['contact_name']." (".$project_array['contact_email']."). It doesn't have anyone assigned to the project yet.
+The project ".$project_array['name']." has just been created on Labrador by ".implode(", ", $project_contacts).". It doesn't have anyone assigned to the project yet.
 
 You can see the project here: ".$labrador_url."project.php?id=$project_id
 
@@ -598,23 +592,22 @@ if(!$new_project and !$edit and !$error){ ?>
 	</fieldset>
 	<?php } // has notes
 	
-	if(!empty($project['contact_name']) || !empty($project['contact_email']) || !empty($project['contact_group'])){ ?>
+	
+	$p_users = mysql_query("SELECT `users`.`email`, `users`.`firstname`, `users`.`surname`, `users`.`group` FROM `users` LEFT JOIN `project_contacts` on `users`.`id` = `project_contacts`.`user_id` WHERE `project_contacts`.`project_id` = '".$project['id']."'");
+	if(mysql_num_rows($p_users) > 0){
+		?>
 	<fieldset>
 		<legend>Contacts</legend>
 		<dl>
-			<?php if(!empty($project['contact_name']) || !empty($project['contact_email']) ){?>
-				<dt>Primary Contact</dt>
-				<?php if(!empty($project['contact_name']) && empty($project['contact_email'])) { echo '<dd>'.$project['contact_name'].'</dd>'; } ?>
-				<?php if(!empty($project['contact_name']) && !empty($project['contact_email'])) { echo '<dd>'.$project['contact_name'].' <em>(<a href="mailto:'.$project['contact_email'].'">'.$project['contact_email'].'</a>)</em></dd>'; } ?>
-				<?php if(empty($project['contact_name']) && !empty($project['contact_email'])) { echo '<dd><a href="mailto:'.$project['contact_email'].'">'.$project['contact_email'].'</a></dd>'; } ?>
-			<?php } ?>
-			<?php if(!empty($project['contact_group'])){?>
-				<dt>Group</dt>
-				<dd><?php echo $project['contact_group']; ?></dd>
-			<?php } ?>
+		<?php
+		while($p_user = mysql_fetch_array($p_users)){
+			echo '<dt>'.$p_user['firstname'].' '.$p_user['surname'].'</dt>';
+			echo '<dd><a href="mailto:'.$p_user['email'].'">'.$p_user['email'].'</a> &nbsp; <small><em>(Group - '.$p_user['group'].')</small></em></dd>';
+		}
+		?>
 		</dl>
-	</fieldset>
-	<?php } // has notes
+	</fieldset>	
+	<?php }
 
 	// HISTORY LOG
 	$histories = mysql_query("SELECT * FROM `history` WHERE `project_id` = '$project_id' ORDER BY `time` DESC");
@@ -656,9 +649,6 @@ if(!$new_project and !$edit and !$error){ ?>
 		"status" => ($user && $admin) ? "Currently Processing" : "",
 		"assigned_to" => ($user && $admin) ? $user['email'] : "",
 		"project_users" => array(-1),
-		"contact_name" => $user ? $user['firstname'].' '.$user['surname'] : "",
-		"contact_email" => $user ? $user['email'] : "",
-		"contact_group" => $user ? $user['group'] : "",
 		"accession_geo" => "",
 		"accession_sra" => "",
 		"accession_ena" => "",
@@ -675,9 +665,6 @@ if(!$new_project and !$edit and !$error){ ?>
 			"status" => $project['status'],
 			"assigned_to" => $project['assigned_to'],
 			"project_users" => $project_users,
-			"contact_name" => $project['contact_name'],
-			"contact_email" => $project['contact_email'],
-			"contact_group" => $project['contact_group'],
 			"accession_geo" => $project['accession_geo'],
 			"accession_sra" => $project['accession_sra'],
 			"accession_ena" => $project['accession_ena'],
@@ -697,9 +684,6 @@ if(!$new_project and !$edit and !$error){ ?>
 			"status" => $_POST['status'],
 			"assigned_to" => $_POST['assigned_to'],
 			"project_users" => $_POST['project_users'],
-			"contact_name" => $_POST['contact_name'],
-			"contact_email" => $_POST['contact_email'],
-			"contact_group" => $_POST['contact_group'],
 			"accession_geo" => $_POST['accession_geo'],
 			"accession_sra" => $_POST['accession_sra'],
 			"accession_ena" => $_POST['accession_ena'],
@@ -770,7 +754,7 @@ if(!$new_project and !$edit and !$error){ ?>
 			
 			
 			<div class="control-group contacts-control-group">
-				<label class="control-label" for="contact_name">Contacts</label>
+				<label class="control-label">Contacts</label>
 				<div class="controls">
 					<?php $first = true;
 					foreach($values['project_users'] as $id){
@@ -799,31 +783,6 @@ if(!$new_project and !$edit and !$error){ ?>
 				</div>
 			</div>
 			
-			
-			<div class="control-group ">
-				<label class="control-label" for="contact_name">Primary Contact</label>
-				<div class="controls">
-					<input type="text" name="contact_name" id="contact_name" maxlength="250" placeholder="<?php echo $name; ?>" value="<?php echo $values['contact_name']; ?>">
-					<span class="help-inline">Who requested / generated the data?</span>
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="contact_email">Contact E-mail</label>
-				<div class="controls">
-					<input type="email" name="contact_email" id="contact_email" maxlength="250" placeholder="<?php echo preg_replace('/\s+/', '.', strtolower($name)); ?>@babraham.ac.uk" value="<?php echo $values['contact_email']; ?>">
-				</div>
-			</div>
-			<div class="control-group ">
-				<label class="control-label" for="contact_group">Group</label>
-				<div class="controls">
-					<input type="text" name="contact_group" id="contact_group" maxlength="250" placeholder="<?php echo $names[array_rand($names)]; ?>" value="<?php echo $values['contact_group']; ?>">
-					<span class="help-inline"><small>
-						<?php foreach($groups as $qf_name => $qf_display) {
-							echo ' / <a href="#" class="groupAssign_quickFill" title="'.$qf_name.'">'.$qf_display.'</a>'; 
-						} ?>
-					</small></span>
-				</div>
-			</div>
 		</fieldset>
 	<?php } // if is admin ?>
 		

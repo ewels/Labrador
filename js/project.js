@@ -52,10 +52,6 @@ $('.assign_quickFill').click(function(e){
 		$('#status').val('Currently Processing');
 	}
 });
-$('.groupAssign_quickFill').click(function(e){
-	e.preventDefault();
-	$('#contact_group').val($(this).attr('title'));
-});
 
 // Add contact button
 $('#project_add_contact').click(function(e){

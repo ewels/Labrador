@@ -220,7 +220,6 @@ include('includes/header.php'); ?>
 								<code><abbr title="SRA code">{{sra}}</abbr></code>
 								<code><abbr title="SRA download URL">{{sra_url}}</abbr></code>
 								<code><abbr title="Path to Genome Directory (server specific)">{{genome_path}}</abbr></code>
-								<code><abbr title="Primary Contact E-mail">{{contact_email}}</abbr></code>
 								<code><abbr title="Assigned To E-mail">{{assigned_email}}</abbr></code>
 								<code><abbr title="Dataset Name">{{dataset}}</abbr></code>
 								<code><abbr title="Project Name">{{project}}</abbr></code>

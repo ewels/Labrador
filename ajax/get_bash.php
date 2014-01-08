@@ -125,7 +125,6 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 	);
 	$replacements = array(
 		$genomes[$_POST['genome']][$_POST['server']],
-		$contact_email,
 		$assigned_email,
 		$project['name'],
 		date('H:i, l \t\h\e jS F Y')
