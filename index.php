@@ -225,7 +225,7 @@ include('includes/header.php');
 		</table>
 		
 		
-		<img class="pull-right visible-desktop" src="img/puppies/sleepy_puppy_1_300px.jpg" style="margin: 0 -20px -40px 0;">
+		<img class="pull-right visible-desktop" src="img/puppy.jpg" style="margin: 0 -20px -40px 0;">
 		<div class="clearfix"></div>
 		<footer>
 			<hr>
