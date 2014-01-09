@@ -22,20 +22,40 @@
 /*
 * labrador_config.php
 * ---------
-* Some configuration and customisation options.
+* Configuration and customisation options.
 *
 */
 
+
+/////////////
+/// SETUP
+/////////////
+
+//// The base URL at which a browser can load Labrador
 $labrador_url = 'http://bilin1/labrador/';
+
+//// The directory path at which data within Labrador should be accessed
 $data_root = '/data/pipeline/pubcache/TIDIED/';
+
+//// Support e-mail address. Will be notified when new unassigned projects are added.
 $support_email = 'babraham.bioinformatics@babraham.ac.uk';
 
-$db_database = 'labrador';
-$db_user = 'labrador';
-$db_password = false;
-$db_host = 'localhost';
+//// Title and subtitle (used on homepage)
+$homepage_title = 'Labrador Dataset Browser';
+$homepage_subtitle = 'A database of datasets processed by the BI Bioinformatics group.';
 
+//// MySQL database details
+// Typical permissions required with database and user called labrador:
+// GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, LOCK TABLES ON `labrador`.* TO 'labrador'@'localhost'
+$db_database = 'labrador';	// database name
+$db_user = 'labrador';		// database username
+$db_password = false;		// database password
+$db_host = 'localhost';		// database host (default: localhost)
 
+//// List of administrators
+// Keys should be e-mail addresses (used for notifications)
+// Values should be Names (used for quick insertion links on project page)
+// eg. 'user@email.com' => 'Name',
 $administrators = array(
 	'simon.andrews@babraham.ac.uk' => 'Simon',
 	'felix.krueger@babraham.ac.uk' => 'Felix',
@@ -45,6 +65,9 @@ $administrators = array(
 	'phil.ewels@babraham.ac.uk' => 'Phil'
 );
 
+//// Groups (used for user registration)
+// Keys should be full length names
+// Values should be shortened versions (no spaces)
 $groups = array(
 	'Wolf Reik' => 'Reik',
 	'Peter Fraser' => 'Fraser',
@@ -57,20 +80,26 @@ $groups = array(
 );
 
 
-$homepage_title = 'Labrador Dataset Browser';
-$homepage_subtitle = 'A database of datasets processed by the BI Bioinformatics group.';
+
 
 
 
 //////////////////////
-// DOWNLOADS SETTINGS
+// DOWNLOAD SETTINGS
 //////////////////////
 
+//// Files instruction text (shown in filter box on Files page)
+$download_instructions = "Aligned files contain genome co-ordinates and can be imported directly into SeqMonk.
+Raw files contain the original sequence read data.";
+
+//// Filename filters for 'Projects' filter button
+// Simple array of extensions. Should match end of file name. eg. '.bam', '.fastq.gz'
 $project_filename_filters = array(
 	'.smk',
 	'.smk.gz'
 );
 
+//// Filename filters for 'Aligned' filter button
 $aligned_filename_filters = array(
 	'.bam',
 	'.sam',
@@ -81,6 +110,7 @@ $aligned_filename_filters = array(
 	'.txt.gz'
 );
 
+//// Filename filters for 'Raw' filter button
 $raw_filename_filters = array(
 	'.fastq',
 	'.fastq.gz',
@@ -89,7 +119,7 @@ $raw_filename_filters = array(
 	'.sra'
 );
 
-
+//// Filename filters for 'Reports' filter button
 $reports_filename_filters = array(
 	'.log',
 	'.nohup',
@@ -107,81 +137,55 @@ $reports_filename_filters = array(
 	'_screen.txt'
 );
 
-$download_instructions = "Aligned files contain genome co-ordinates and can be imported directly into SeqMonk.
-Raw files contain the original sequence read data.";
 
 
 
 
-//////////////////////
+/////////////////////////
 // PROCESSING PIPELINES
-//////////////////////
+/////////////////////////
 
+//// Servers available for creating processing scripts
+// Key: simple text key used to identify server below
+// Value: associative array. Needs key value pairs for the full name of 
+//  the server and whether queueing is enabled. Setting queueing to true
+//  enables some basic support for a GRIDEngine queueing system.
+// Example: 'server1' => array('name' => 'Server No. 1', 'queueing' => 'false'),
 $processing_servers = array(
 	'rocks1' => array('name' => 'The Cluster', 'queueing' => 'true'),
 	'bilin1' => array('name' => 'Bilin 1', 'queueing' => 'false')
 );
 
-// Written to the javascript in the base of processing.php
-$processing_modules = array(
-	'rocks1' => array(
-		'sra_dump' => 'module load sratoolkit',
-		'fastqc' => 'module load fastqc',
-		'fastq_screen' => 'module load fastq_screen',
-		'trim_galore' => 'module load trim_galore',
-		'bowtie1_se' => 'module load bowtie',
-		'bowtie1_pe' => 'module load bowtie',
-		'bowtie2' => 'module load bowtie2',
-		'tophat_se' => 'module load tophat',
-		'tophat_pe' => 'module load tophat',
-		'bismark_se' => 'module load bismark',
-		'bismark_pe' => 'module load bismark',
-		'bismark_pbat' => 'module load bismark',
-	),
-	'bilin1' => array()
-);
 
-$genomes = array (
-	'Mouse - NCBIM37' => array(
-		'rocks1' => '/bi/scratch/Genomes/Mouse/NCBIM37/Mus_musculus.NCBIM37',
-		'bilin1' => '/data/public/Genomes/Mouse/NCBIM37/Mus_musculus.NCBIM37'
+//// Processing Steps
+// Contains arrays to group drop-down into sections. Keys are name of each dropdown optgroup.
+// Each array contains keys which are a unique identifier for the
+// processing step. Then an array with a name, a processing unit and whether the step
+// requires a genome.
+// Example:
+/*
+$processing_steps = array(
+	'Pre-processing' => array(
+		'get_sra' => array(
+			'name' => 'Download SRA',
+			'unit' => 'accession_sra',
+			'requires_genome' => 'false'
+		), 
+		'sra_dump' => array(
+			'name' => 'SRA to FastQ',
+			'unit' => 'accession_sra',
+			'requires_genome' => 'false'
+		) 
 	),
-	'Mouse - GRCm38' => array(
-		'rocks1' => '/bi/scratch/Genomes/Mouse/GRCm38/Mus_musculus.GRCm38',
-		'bilin1' => '/data/public/Genomes/Mouse/GRCm38/Mus_musculus.GRCm38'
-	),
-	'Human - GRCh37' => array(
-		'rocks1' => '/bi/scratch/Genomes/Human/GRCh37/Homo_sapiens.GRCh37',
-		'bilin1' => '/data/public/Genomes/Human/GRCh37/Homo_sapiens.GRCh37'
+	'Alignment' => array(
+		'bowtie' => array(
+			'name' => 'Bowtie',
+			'unit' => 'accession_sra',
+			'requires_genome' => 'true'
+		) 
 	)
 );
-
-$processing_pipelines = array(
-	'sra_to_bowtie1_se' => array(
-		'name' => 'SRA &raquo; Bowtie 1 SE',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'bowtie1_se'),
-	),
-	'sra_to_bowtie1_pe' => array(
-		'name' => 'SRA &raquo; Bowtie 1 PE',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'bowtie1_pe'),
-	),
-	'sra_to_tophat_se' => array(
-		'name' => 'SRA &raquo; Tophat SE',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'tophat_se'),
-	),
-	'sra_to_tophat_pe' => array(
-		'name' => 'SRA &raquo; Tophat PE',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'tophat_pe'),
-	),
-	'sra_to_bismark_se' => array(
-		'name' => 'SRA &raquo; Bismark SE',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'bismark_se'),
-	),
-	'sra_to_bismark_pe' => array(
-		'name' => 'SRA &raquo; Bismark PE',
-		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'bismark_pe')
-	)
-);
+*/
 
 $processing_steps = array(
 	'Pre-processing' => array(
@@ -208,7 +212,20 @@ $processing_steps = array(
 	)
 );
 
-
+//// Processing commands
+// Template commands to use for each step on each server.
+// Keys correspond to processing step keys defined above.
+// Values are an array with keys corresponding to server ids.
+// These values contain the commands. Squiggly brackets should
+// be used to code for dynamic values.
+// Example:
+/*
+$processing_codes = array(
+	'get_sra' => array(
+		'server1' => 'wget -nv {{sra_url_wget}}'
+	)
+);
+*/
 $processing_codes = array(
 	'cf_download' => array(
 		'rocks1' => "{{sra_url}}\t{{fn}}.sra",
@@ -277,6 +294,92 @@ $processing_codes = array(
 );
 
 
+//// GRIDEngine queue system module load commands
+// Commands used to load modules if using a queueing server
+// Should be a 2D array. Keys correspond to server keys above.
+// Values correspond to an array with keys as processing step
+// keys and values as command to load.
+// Written to the javascript in the base of processing.php
+// Example for server with no queueing: 'server1' => array() 
+// Example for server with queueing: 'server2' => array('step_id' => 'module load step_example') 
+$processing_modules = array(
+	'rocks1' => array(
+		'sra_dump' => 'module load sratoolkit',
+		'fastqc' => 'module load fastqc',
+		'fastq_screen' => 'module load fastq_screen',
+		'trim_galore' => 'module load trim_galore',
+		'bowtie1_se' => 'module load bowtie',
+		'bowtie1_pe' => 'module load bowtie',
+		'bowtie2' => 'module load bowtie2',
+		'tophat_se' => 'module load tophat',
+		'tophat_pe' => 'module load tophat',
+		'bismark_se' => 'module load bismark',
+		'bismark_pe' => 'module load bismark',
+		'bismark_pbat' => 'module load bismark',
+	),
+	'bilin1' => array()
+);
+
+//// Names and locations of Reference Genomes
+// Keys: Name of genome
+// Values: array. Keys correspond to server id. Values correspond to path.
+// Example: 'Human - GRCh37' => array( 'server1' => '/root/Genomes/Human/GRCh37/Homo_sapiens.GRCh37')
+$genomes = array (
+	'Mouse - NCBIM37' => array(
+		'rocks1' => '/bi/scratch/Genomes/Mouse/NCBIM37/Mus_musculus.NCBIM37',
+		'bilin1' => '/data/public/Genomes/Mouse/NCBIM37/Mus_musculus.NCBIM37'
+	),
+	'Mouse - GRCm38' => array(
+		'rocks1' => '/bi/scratch/Genomes/Mouse/GRCm38/Mus_musculus.GRCm38',
+		'bilin1' => '/data/public/Genomes/Mouse/GRCm38/Mus_musculus.GRCm38'
+	),
+	'Human - GRCh37' => array(
+		'rocks1' => '/bi/scratch/Genomes/Human/GRCh37/Homo_sapiens.GRCh37',
+		'bilin1' => '/data/public/Genomes/Human/GRCh37/Homo_sapiens.GRCh37'
+	)
+);
+
+//// Processing pipeline shortcuts
+// Shortcuts that can be used from the Choose Processing panel
+// Keys are unique pipeline identifiers.
+// Values are an array with a full name (used for link) and steps - an
+// array of Step identifiers
+// Example:
+/*
+$processing_pipelines = array(
+	'sra_to_bowtie' => array(
+		'name' => 'SRA &raquo; Bowtie',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore', 'bowtie'),
+	)
+);
+*/
+$processing_pipelines = array(
+	'sra_to_bowtie1_se' => array(
+		'name' => 'SRA &raquo; Bowtie 1 SE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'bowtie1_se'),
+	),
+	'sra_to_bowtie1_pe' => array(
+		'name' => 'SRA &raquo; Bowtie 1 PE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'bowtie1_pe'),
+	),
+	'sra_to_tophat_se' => array(
+		'name' => 'SRA &raquo; Tophat SE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'tophat_se'),
+	),
+	'sra_to_tophat_pe' => array(
+		'name' => 'SRA &raquo; Tophat PE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'tophat_pe'),
+	),
+	'sra_to_bismark_se' => array(
+		'name' => 'SRA &raquo; Bismark SE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_se', 'bismark_se'),
+	),
+	'sra_to_bismark_pe' => array(
+		'name' => 'SRA &raquo; Bismark PE',
+		'steps' => array('get_sra', 'sra_dump', 'fastqc', 'fastq_screen', 'trim_galore_pe', 'bismark_pe')
+	)
+);
+
 
 
 
@@ -284,11 +387,19 @@ $processing_codes = array(
 // CUSTOM REPORT TYPES
 //////////////////////
 
+//// Project reports
+// Identifiers and names of reports which relate to the entire project
+// Key: unique identifier
+// Value: full name of report type
 $project_report_types = array(
 	'bowtie_report' => 'Bowtie Overview',
 	'tophat_report' => 'Tophat Overview'
 );
 
+//// Dataset reports
+// Identifiers and names of reports which relate to each dataset
+// Key: unique identifier
+// Value: full name of report type
 $dataset_report_types = array(
 	
 	'bowtie' => 'Bowtie Reports',
@@ -304,6 +415,10 @@ $dataset_report_types = array(
 	'trim_galore' => 'Trim Galore',
 );
 
+//// Report filename match function
+// PHP function to match each report type to a filename
+// Takes two variables as input - $file (filename) and $type (true or
+//   false, depending on whether the filename matched or not)
 function report_match ($file, $type) {
 	switch($type) {
 		
@@ -348,6 +463,10 @@ function report_match ($file, $type) {
 	}
 }
 
+//// Report filename cleaning function
+// PHP function to clean up filenames of matched reports
+// Typically uses substr to cut off unneccessary filename
+//  suffixes such as align_summary.txt
 function report_naming ($path, $type) {
 	switch($type) {
 			

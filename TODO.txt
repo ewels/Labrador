@@ -6,14 +6,20 @@
 Desirable
 ----------
 
-* Tidy Up!
-	* Go through and delete all of the files that are not being used
-	* Read through code and see what can be tidied up
+* Package up
+
+* Do a test installation
+
+* Check installation instructions are sufficient
 
 
 --------------
 Would be nice
 --------------
+
+* Tidy Up!
+	* Go through and delete all of the files that are not being used
+	* Read through code and see what can be tidied up
 
 * Multiple contacts for administrators
 
