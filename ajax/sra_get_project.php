@@ -20,37 +20,34 @@
 ##########################################################################
 
 /*
-Script to handle NCBI GEO lookups using GSE accessions
+Script to handle NCBI SRA lookups using SRP accessions
 Provides a function if included, returns JSON if called directly
 */
 
 require_once('../includes/start.php');
 
-function get_geo_project ($acc) {
-	// Get the first XML file with GEO ID accessions, using the supplied GEO accession
+function get_sra_project ($acc) {
+	// Get the first XML file with GEO ID accessions, using the supplied SRA accession
 	// Only get the info we want for the Project
 	// uses eSearch
 	
-	$results = array();
-	$results['message'] = "";
-	$results['status'] = 1;
-	
-	if(substr($acc, 0, 3) == 'GSM'){
+	if(substr($acc, 0, 3) == 'SRR'){
 		$results['status'] = 0;
-		$results['message'] = "Accession is a GEO sample, not series. Needs to start GSE not GSM.";
+		$results['message'] = "Accession is a SRA sample, not series. Needs to start SRP not SRR.";
 		return $results;
-	} else if(substr($acc, 0, 3) !== 'GSE'){
+	} else if(substr($acc, 0, 3) !== 'SRP'){
 		$results['status'] = 0;
-		$results['message'] = "Accession does not start with GSE. ";
+		$results['message'] = "Accession does not start with SRP. ";
 		return $results;
 	}
 	
+	$results = array();
 	
 	$url_1 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term='.$acc.'&usehistory=y';
 	$xml_1 = simplexml_load_file($url_1);
 	if($xml_1 === FALSE){
 		$results['status'] = 0;
-		$results['message'] = "Could not load GEO information. This usually means that the NCBI GEO API is down, try again later. API call URL: $url_1";
+		$results['message'] = "Could not load SRA information. This usually means that the NCBI SRA API is down, try again later. API call URL: $url_1";
 		return $results;
 	}
 	// Check if we have any Ids - if not, accession probably wrong
@@ -61,18 +58,18 @@ function get_geo_project ($acc) {
 	}
 	$WebEnv = $xml_1->WebEnv;
 	
-	// Get the second XML file with GEO meta data and dataset information
+	// Get the second XML file with SRA meta data and dataset information
 	$url_2 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&query_key=1&WebEnv='.$WebEnv;
 	$xml_2 = simplexml_load_file($url_2);
 	if($xml_2 === FALSE){
 		$results['status'] = 0;
-		$results['message'] = "Could not load second NCBI GEO API call: $url_2";
+		$results['message'] = "Could not load second NCBI SRA API call: $url_2";
 		return $results;
 	}
 	// Check for an error
 	if(isset($xml_2->ERROR)) {
 		$results['status'] = 0;
-		$results['message'] = "Second NCBI GEO API call returned an error: ".$xml_2->ERROR;
+		$results['message'] = "Second NCBI SRA API call returned an error: ".$xml_2->ERROR;
 		return $results;
 	}
 	
@@ -89,6 +86,9 @@ function get_geo_project ($acc) {
 					case 'summary':
 						$results['description'] = (string)$child;
 						break;
+					case 'GSE':
+						$results['geo_accession'] = 'GSE'.(string)$child;
+						break;
 					case 'PubMedIds':
 						$results['PMIDs'] = array();
 						foreach ($child->Item as $pmid){
@@ -101,52 +101,14 @@ function get_geo_project ($acc) {
 		}
 	}
 	
-	////////////////////
-	// Ok, let's go hunting for a SRP accession using the SRA database instead...
-	////////////////////
-	$url_3 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term='.$acc.'&usehistory=y';
-	$xml_3 = simplexml_load_file($url_3);
-	if($xml_3 !== FALSE){
-		// Check if we have any Ids - if not, accession probably wrong
-		if(isset($xml_3->IdList->Id)){
-			$WebEnv = $xml_3->WebEnv;
-			
-			// Get the fourth XML file with SRA meta data and dataset information
-			$url_4 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&query_key=1&WebEnv='.$WebEnv;
-			$xml_4 = simplexml_load_file($url_4);
-			if($xml_4 !== FALSE){
-				// Check for an error
-				if(!isset($xml_4->ERROR)) {
-					$sra_xml_string = false;
-					$firstDocSum = true;
-					foreach($xml_4->children() as $DocSum){
-						// All of what we want is found in the first DocSum node
-						if($firstDocSum){
-							$results['sra_accession'] = 'here_6';
-							$firstDocSum = false;
-							foreach($DocSum->children() as $child) {
-								if($child->attributes()->Name == 'ExpXml') {
-									$sra_xml_string = (string)$child;
-								}
-							}
-						}
-					}
-					if($sra_xml_string){
-						$pos = strpos($sra_xml_string, 'SRP');
-						if($pos){
-							$results['sra_accession'] = substr($sra_xml_string, $pos, 9);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	
-	
+	$results['message'] = "";
+	$results['status'] = 1;
 	
 	// Check to see if we already have this accession
-	$sql = sprintf("SELECT `id`, `name` FROM `projects` WHERE `accession_geo` LIKE '%%%s%%'", mysql_real_escape_string($acc));
+	$sql = sprintf("SELECT `id`, `name` FROM `projects` WHERE `accession_sra` LIKE '%%%s%%'", mysql_real_escape_string($acc));
+	if(isset($results['geo_accession']) && strlen($results['geo_accession']) > 0){
+		$sql .= sprintf(" OR `accession_geo` LIKE '%%%s%%'", mysql_real_escape_string($results['geo_accession']));
+	}
 	$projects = mysql_query($sql);
 	if(mysql_num_rows($projects) > 0){
 		$project = mysql_fetch_array($projects);
@@ -160,7 +122,7 @@ function get_geo_project ($acc) {
 // Script is being called directly (ajax)
 if(__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
 	if(isset($_GET['acc'])){
-		$results = get_geo_project ($_GET['acc']);
+		$results = get_sra_project ($_GET['acc']);
 		echo json_encode($results, JSON_FORCE_OBJECT);
 	} else {
 		$results = array(

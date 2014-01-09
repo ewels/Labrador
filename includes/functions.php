@@ -28,32 +28,38 @@
 
 function accession_badges ($string, $type){
 	$return = '';
-	switch ($type){
-		case 'geo':
-			$class = '';
-			$url = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=';
-			break;
-		case 'sra':
-			$class = 'label-info';
-			$url = 'http://www.ncbi.nlm.nih.gov/sra/';
-			break;
-		case 'ena':
-			$class = 'label-success';
-			$url = 'http://www.ebi.ac.uk/ena/data/view/';
-			break;
-		case 'ddjb':
-			$class = 'label-warning';
-			$url = 'http://trace.ddbj.nig.ac.jp/DRASearch/run?acc=';
-			break;
-		default:
-			$class = 'label-inverse';
-			$url = '#';
-			break;
-	}
 	
 	$accessions = preg_split('/\s+/', $string);
 	if(count($accessions) > 0){
 		foreach($accessions as $accession){
+			switch ($type){
+				case 'geo':
+					$class = '';
+					$url = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=';
+					break;
+				case 'sra':
+					$class = 'label-info';
+					$url = 'http://www.ncbi.nlm.nih.gov/sra/';
+					break;
+				case 'ena':
+					$class = 'label-success';
+					$url = 'http://www.ebi.ac.uk/ena/data/view/';
+					break;
+				case 'ddjb':
+					$class = 'label-warning';
+					if(substr($accession, 0, 3) == 'DRP'){
+						$url = 'http://trace.ddbj.nig.ac.jp/DRASearch/study?acc=';
+					} else if(substr($accession, 0, 3) == 'DRA'){
+						$url = 'http://trace.ddbj.nig.ac.jp/DRASearch/submission?acc=';
+					} else {
+						$url = 'http://trace.ddbj.nig.ac.jp/DRASearch/run?acc=';
+					}
+					break;
+				default:
+					$class = 'label-inverse';
+					$url = '#';
+					break;
+			}
 			if(strlen($accession) > 0){
 				$return .= '<a class="label '.$class.'" href="'.$url.$accession.'" target="_blank">'.$accession.'</a> ';
 			}

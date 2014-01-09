@@ -6,11 +6,6 @@
 Desirable
 ----------
 
-* Figure out why require('../') doesn't work
-
-* Consolodate project accession numbers
-	* If SRA, DDJB accessions are treated the same, have one box.
-
 * Automatically pull in project SRP number if found
 
 * Tidy Up!

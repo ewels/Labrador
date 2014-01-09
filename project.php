@@ -801,7 +801,7 @@ if(!$new_project and !$edit and !$error){ ?>
 				<label class="control-label" for="accession_sra"><abbr title="Sequence Read Archive">SRA</abbr></label>
 				<div class="controls">
 					<input type="text" name="accession_sra" id="accession_sra" maxlength="50" placeholder="SRP000000" value="<?php echo $values['accession_sra']; ?>">
-					
+					<span class="help-inline"><a href="#" id="sra_lookup" title="Auto-complete empty fields"><i class="icon-search"></i></a></span>
 				</div>
 			</div>
 			<div class="control-group">

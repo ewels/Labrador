@@ -163,6 +163,10 @@ $('#geo_lookup').click(function(e){
 						if(key == 'description' && $('#description').val().length == 0){
 							$('#description').val(value);
 						}
+						// geo accession
+						if(key == 'sra_accession' && $('#accession_sra').val().length == 0){
+							$('#accession_sra').val(value);
+						}
 						// PubMedIds
 						if(key == 'PMIDs'){
 							var PMIDs = value;
@@ -244,6 +248,129 @@ $('#geo_lookup').click(function(e){
 					// Something went wrong
 					icon.removeClass('icon-refresh icon-rotate-animate').addClass('icon-remove');
 					icon.parent().after('<span id="geo_error_message"> &nbsp; Error: '+data['message']+'</span>');
+				}
+				
+			});
+			
+		}
+	
+	});
+});
+
+// NCBI SRA accession lookup
+$('#sra_lookup').click(function(e){
+	e.preventDefault();
+	var icon = $(this).children();
+	
+	var acc = $.trim($('#accession_sra').val());
+	
+	accessions = acc.split(" ");
+	
+	$.each(accessions, function(index, acc){
+	
+		if(acc.length > 1){
+
+			icon.removeClass('icon-search icon-remove').addClass('icon-refresh icon-rotate-animate');
+			$('#sra_error_message').remove();
+			
+			$.getJSON('ajax/sra_get_project.php?acc='+acc, function(data) {
+				
+				// Check that the call succeeded
+				if(data['status'] == 1){
+					$.each(data, function(key, value){
+						// title
+						if(key == 'title' && $('#title').val().length == 0){
+							$('#title').val(value);
+						}
+						// summary
+						if(key == 'description' && $('#description').val().length == 0){
+							$('#description').val(value);
+						}
+						// geo accession
+						if(key == 'geo_accession' && $('#accession_geo').val().length == 0){
+							$('#accession_geo').val(value);
+						}
+						// PubMedIds
+						if(key == 'PMIDs'){
+							var PMIDs = value;
+							var first_author = false;
+							var first_year = false;
+							$.each(PMIDs, function(key, PMID){
+								// Check if we have this paper already
+								var pmid_exists = false;
+								var pid = false;
+								$('.paper_pmid').each(function(){
+									if($(this).val() == PMID){
+										pmid_exists = true;
+										pid = $(this).attr('id').substr(11);
+									}
+								});
+								
+								$.getJSON('ajax/lookup_pmid.php?PMID='+PMID, function(data) {
+									// Check that the call succeeded
+									if(data['status'] == 1){
+										// Create a new paper
+										if(!pmid_exists){
+											$('.no_papers_tr').remove();
+											var num_papers = $('.edit_publications tbody tr').length;
+											pid = num_papers + 1;
+											$('.edit_publications tbody').append('<tr id="paper_row_'+pid+'"><td><input type="text" maxlength="4" class="paper_year" id="paper_year_'+pid+'" name="paper_year_'+pid+'"  /></td><td><input type="text" class="paper_journal" id="paper_journal_'+pid+'" name="paper_journal_'+pid+'"  /></td><td><input type="text" class="paper_title" id="paper_title_'+pid+'" name="paper_title_'+pid+'" ></td><td><input type="text" class="paper_authors" id="paper_authors_'+pid+'" name="paper_authors_'+pid+'" ></td><td><input type="text" class="paper_pmid" id="paper_pmid_'+pid+'" name="paper_pmid_'+pid+'"  /></td><td><input type="text" class="paper_doi" id="paper_doi_'+pid+'" name="paper_doi_'+pid+'"  /></td><td><button class="paper_delete paper_delete_nodb btn btn-small btn-danger" id="paper_delete_'+pid+'">Delete</button></td></tr>');
+											$('#paper_pmid_'+pid).val(PMID);
+										}
+										
+										$.each(data, function(pmid_key, pmid_value){								
+											// year
+											if(pmid_key == 'year' && (typeof $('#paper_year_'+pid).val() == 'undefined' || $('#paper_year_'+pid).val().length == 0)){
+												$('#paper_year_'+pid).val(pmid_value);
+												if(!first_year){
+													first_year = pmid_value;
+												}
+											}
+											// journal
+											if(pmid_key == 'journal' && (typeof $('#paper_journal_'+pid).val() == 'undefined' || $('#paper_journal_'+pid).val().length == 0)){
+												$('#paper_journal_'+pid).val(pmid_value);
+											}
+											// title
+											if(pmid_key == 'title' && (typeof $('#paper_title_'+pid).val() == 'undefined' || $('#paper_title_'+pid).val().length == 0)){
+												$('#paper_title_'+pid).val(pmid_value);
+											}
+											// authors
+											if(pmid_key == 'authors' && (typeof $('#paper_authors_'+pid).val() == 'undefined' || $('#paper_authors_'+pid).val().length == 0)){
+												$('#paper_authors_'+pid).val(pmid_value);
+												if(!first_author){
+													var authors = pmid_value.split(" ");
+													first_author = authors[0];
+												}
+											}
+											// DOI
+											if(pmid_key == 'DOI' && (typeof $('#paper_doi_'+pid).val() == 'undefined' || $('#paper_doi_'+pid).val().length == 0)){
+												$('#paper_doi_'+pid).val(pmid_value);
+											}
+										});
+										// If we don't have both first author and year, wipe the vars
+										// Otherwise, try to fill in the data.
+										if(!first_year || !first_author){
+											first_author = false;
+											first_year = false;
+										} else if(first_year.length > 0 && first_author.length > 0 && (typeof $('#name').val() == 'undefined' || $('#name').val().length == 0)){
+											var name = first_author+'_'+first_year
+											name = name.replace(/[^A-Za-z0-9_]/g, "_");
+											$('#name').val(name);
+											updateProjectName();
+										}
+									}
+								});
+							});
+						}
+					});
+				
+					icon.removeClass('icon-refresh icon-rotate-animate').addClass('icon-ok');
+					icon.parent().after('<span id="sra_message"> &nbsp; '+data['message']+'</span>');
+					
+				} else {
+					// Something went wrong
+					icon.removeClass('icon-refresh icon-rotate-animate').addClass('icon-remove');
+					icon.parent().after('<span id="sra_error_message"> &nbsp; Error: '+data['message']+'</span>');
 				}
 				
 			});
