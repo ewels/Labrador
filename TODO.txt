@@ -3,18 +3,6 @@
 =====================
 
 ----------
-Essential
-----------
-
-* Do the apache config properly
-
-* Do the database schema properly
-	
-* Tidy Dataset naming
-	* Automatically trim off GSE number if present
-
-
-----------
 Desirable
 ----------
 

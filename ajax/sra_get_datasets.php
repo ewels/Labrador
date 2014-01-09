@@ -120,6 +120,11 @@ function get_geo_datasets ($acc) {
 			} // geo sra tag name check
 		} // geo xml foreach
 		
+		// Trim off crap that we don't want from the library name
+		$library_name = trim(preg_replace('/('.implode('|', $sra_accessions[0]).')[\:]?/', '', $library_name));
+		$library_name = trim(preg_replace('/'.$gsm_acc.'[\:]?/', '', $library_name));
+		$library_name = trim(preg_replace('/'.$acc.'[\:]?/', '', $library_name));
+		
 		// See if this dataset is a duplicate of one already in the database
 		$duplicate = false;
 		$gsm_acc_safe = preg_replace("/[^A-Za-z0-9]/", '', $gsm_acc);
