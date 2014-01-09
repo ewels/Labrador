@@ -34,8 +34,8 @@ if(!isset($root)){
     <meta charset="utf-8">
     <title>Labrador</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="<?php echo $homepage_title.' - '.$homepage_subtitle; ?>">
+    <meta name="author" content="Philip Ewels, Babraham Institute, Cambridge, UK">
 
     <!-- Le styles -->
 	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,400italic' rel='stylesheet' type='text/css'>
@@ -57,7 +57,7 @@ if(!isset($root)){
 		<div class="navbar-inner">
 			<div class="container-fluid">
 			
-				<a class="brand" href="<?php echo $root; ?>index.php">Labrador<sub>BETA</sub> <img src="<?php echo $root; ?>img/labrador_logo_tiny.png"></a>
+				<a class="brand" href="<?php echo $root; ?>index.php">Labrador <img src="<?php echo $root; ?>img/labrador_logo_tiny.png"></a>
 				
 				<form class="navbar-search form-search pull-left" action="<?php echo $root; ?>search.php" method="get">
 					<div class="input-append">
