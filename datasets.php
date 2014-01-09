@@ -269,6 +269,7 @@ include('includes/header.php'); ?>
 			Clicking an accession code will load a new window showing that dataset in its respective repository.</p>
 			<p>For projects with many datasets or poorly named datasets, it can be useful to use the 'Filter Datasets' box at the top to quickly find those which you are interested in or would like to download.
 			Ticking the check-box at in the table header will select all currently visible datasets.</p>
+			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
 	

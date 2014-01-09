@@ -92,6 +92,7 @@ $num_datasets = mysql_num_rows($dataset_q);
 	<div class="well">
 		<h3>Searching</h3>
 		<p>The search looks for any project, publication or dataset containing any of your search keywords. You can search for a specific string using quotation marks, <em>eg.</em> <code>"example string"</code>.</p>
+		<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 	</div>
 </div>
 

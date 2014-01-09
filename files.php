@@ -91,6 +91,7 @@ include('includes/header.php'); ?>
 			<p>The Java applet below allows many large files to be downloaded from the server to your computer in succession. This is useful, as trying to download a lot of data through your browser
 			can fail and choke the network. If you are downloading many files, the applet is better as it maintains the directory structure found on the server, so keeping your files organised and not over-writing anything.</p>
 			<p>To use the applet, choose the folder that you would like the files to be downloaded to by clicking 'Browse'. Select the files to be downloaded (these should be those selected in the previos page) and click Download.</p>
+			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
 	
@@ -121,6 +122,7 @@ include('includes/header.php'); ?>
 			You can filter the table for files with extensions commonly used for Aligned data, Raw data, Processing Reports and everything else. You can also use the text box to filter the file names. The table can be sorted by column heading.</p>
 			<p>There are two ways to download files: either <strong>click the file name</strong> to download the file through your browser, or select the files you wish to download and press <strong>Download Checked Files With Java Applet</strong>.
 			The Java applet is best for downloading large files and maintains directory struture, useful if downloading many files.</p>
+			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
 	

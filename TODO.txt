@@ -6,13 +6,9 @@
 Desirable
 ----------
 
-* Automatically pull in project SRP number if found
-
 * Tidy Up!
 	* Go through and delete all of the files that are not being used
 	* Read through code and see what can be tidied up
-	
-* Add search to the project SRA
 
 
 --------------

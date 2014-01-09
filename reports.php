@@ -219,6 +219,7 @@ if(file_exists($data_root.$project['name'])){
 				<dd>Proportion of read pairs falling in <em>cis</em> and <em>trans</em>, as processed by <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">HiCUP</a>.</dd>
 				
 			</dl>
+		<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
 	

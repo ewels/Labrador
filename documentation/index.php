@@ -49,6 +49,7 @@ include('../includes/header.php');
 	<footer>
 		<hr>
 		<p><small>Labrador Data Management System. Written by <a href="http://phil.ewels.co.uk" target="_blank">Phil Ewels</a> at the <a href="http://www.babraham.ac.uk" target="_blank">Babraham Institute</a>, Cambridge, UK.</small></p>
+		<p><small><a href="<?php echo $labrador_url; ?>/documentation/">Read the Labrador Documenation here</a>.</small></p>
 	</footer>
 </div>
 <div class="homepage sidebar-nav">

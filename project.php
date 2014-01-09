@@ -542,6 +542,7 @@ if(!$new_project and !$edit and !$error){ ?>
 				<dt>History</dt>
 				<dd>A log of events that have happened with Labrador related to the project.</dd>
 			</dl>
+		<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
 

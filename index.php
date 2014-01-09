@@ -49,7 +49,8 @@ include('includes/header.php');
 		<div class="labrador_help" style="display:none;">
 			<div class="well">
 				<h2>Help!</h2>
-				<p>Each page within Labrador has this question mark icon in the top right. Click the icon for contextual help about the page that you are on.</p>
+				<p>Each page within Labrador has this question mark icon in the top right. Click the icon for contextual help about the page that you are on.
+				<strong>You can also read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation</a></strong>.</p>
 				
 				<h3>What is Labrador?</h3>
 				<p>Labrador is a web based tool to manage projects and automate the processing of publicly available datasets.</p>
@@ -229,6 +230,7 @@ include('includes/header.php');
 		<footer>
 			<hr>
 			<p><small>Labrador Data Management System. Written by <a href="http://phil.ewels.co.uk" target="_blank">Phil Ewels</a> at the <a href="http://www.babraham.ac.uk" target="_blank">Babraham Institute</a>, Cambridge, UK.</small></p>
+			<p><small><a href="<?php echo $labrador_url; ?>/documentation/">Read the Labrador Documenation here</a>.</small></p>
 		</footer>
 		
 		

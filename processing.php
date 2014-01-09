@@ -95,6 +95,7 @@ include('includes/header.php'); ?>
 			<h3>Processing Page</h3>
 			<p>This page shows records of any dataset processing held by Labrador. Administrators can use this page to quickly create scripts to process data,
 			these are associated to their respective datasets and presented below for later reference.</p>
+			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
 	
