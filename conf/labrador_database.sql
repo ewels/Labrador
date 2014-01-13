@@ -1,3 +1,8 @@
+CREATE DATABASE `labrador`;
+GRANT ALL PRIVILEGES ON *.labrador TO 'labrador'@'localhost';
+FLUSH PRIVILEGES;
+USE `labrador`;
+
 -- MySQL dump 10.13  Distrib 5.5.29, for Linux (x86_64)
 --
 -- Host: localhost    Database: labrador
