@@ -22,6 +22,8 @@ Administrators can delegate the process of choosing the required datasets to res
 2 Installation
 ===============
 
+To see a walk-through of how to install Apache, PHP, MySQL and Labrador on a blank server, please see the following video tutorial: [http://youtu.be/w1n4SuRtM3U](http://youtu.be/w1n4SuRtM3U)
+
 2.1 Pre-requisites
 -------------------
 
@@ -47,7 +49,7 @@ There are a number of different configuration steps you need to take before laun
 
 ### 2.2.1 Server Setup
 
-To run Labrador you need a working web server. It is recommended that Apache is installed, along with PHP and MySQL. To see a complete walk-through of this process please see the following video tutorial:
+To run Labrador you need a working web server. It is recommended that Apache is installed, along with PHP and MySQL.
 
 
 ### 2.2.2 Database Creation
