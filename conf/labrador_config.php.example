@@ -141,7 +141,7 @@ $reports_filename_filters = array(
 //  enables some basic support for a GRIDEngine queueing system.
 // Example: 'server1' => array('name' => 'Server No. 1', 'queueing' => 'false'),
 $processing_servers = array(
-	'server1' => array('name' => 'Server 1', 'queueing' => 'true')
+	'server1' => array('name' => 'Server 1', 'queueing' => 'true'),
 	'server2' => array('name' => 'Server 2', 'queueing' => 'false')
 );
 
