@@ -36,47 +36,49 @@ Labrador itself is written in PHP and uses a MySQL database to store the data.  
 Users do not need any software to use Labrador other than a web browser and an installation of Java for the bulk file download tool.
 
 
-2.2 Installation
+2.2 Configuration
 -----------------
 
-Installation of Labrador is as simple as downloading the installation bundle from the project web site and then extracting it into the location you wish to install the program.  On a unix system you would do this using: `tar -xzvf Labrador.tar.gz`
+Installation of Labrador is as simple as downloading the installation bundle from the project web site and then extracting it into the location you wish to install the program.  On a unix system you would do this using: `tar -xzvf labrador_vXX.tar.gz`
 
 On a windows system you would use a decompression utility such as 7zip or WinZip to unpack the files from the installation bundle
 
-
-2.3 Configuration
-------------------
-
 There are a number of different configuration steps you need to take before launching system for the first time.
 
+### 2.2.1 Server Setup
 
-### 2.3.1 Database Creation
+To run Labrador you need a working web server. It is recommended that Apache is installed, along with PHP and MySQL. To see a complete walk-through of this process please see the following video tutorial:
 
-Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database with default values. The file is in the SQL folder of the installa8tion and if you are using a MySQL install on the same machine as your webserver and you're happy to use the default database username (labradoruser), then you can install the default database using: `mysql -u root -p < labrador_database.sql`
 
-You will be prompted for the MySQL root password and the database will be created.  You can subsitute the root account for any other MySQL account with sufficient privileges to create a new database and add user permissions to it. Warning - running this file with an existing Labrador database will overwrite all previous data.
+### 2.2.2 Database Creation
+
+Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database. The file is in the `conf` folder of the installation. If you are using a MySQL install on the same machine as your webserver and you're happy to use the default configuration, you can install the database using: `mysql -u root -p < labrador_database.sql`
+
+This script will create a database and a user, both called `labrador`. It will then populate the database with the empty table structure needed to run Labrador.
+
+You will be prompted for the MySQL root password and the database will be created.  You can substitute the root account for any other MySQL account with sufficient privileges to create a new database and add user permissions to it. Warning - running this file with an existing Labrador database will overwrite all previous data.
 
 If you want to put the database on a different machine to the webserver, or you want to change the username used to connect to the database then you will need to edit the SQL file and change the GRANT statements at the bottom to use the username and machine you would prefer to use.
 
 For example you could change the statement:
 
-`GRANT INSERT,SELECT on labrador.* TO labradoruser@localhost;`
+`GRANT ALL PRIVILEGES ON labrador.* TO 'labrador'@'localhost';`
 
 to
 
-`GRANT INSERT,SELECT on labrador.* TO mylocaluser@somemachine.example.com;`
+`GRANT ALL PRIVILEGES ON labrador.* TO 'mylocaluser'@'somemachine.example.com';`
 
 
-### 2.3.2 Webserver configuration
+### 2.2.3 Webserver configuration
 
-Our recommended configuration is to install Labrador in a directory outside your document root and then adjust your webserver configuration to allow it to find the installation and map it to a URL.  We have included a default apache configuration file under `conf/labrador_apache.conf` which you can either copy into your apache configuration directory (normally something like `/etc/httpd/conf.d/`) or which you can copy into your main httpd.conf file.
+Our recommended configuration is to install Labrador in a directory outside your document root and then adjust your webserver configuration to allow it to find the installation and map it to a URL.  We have included a default apache configuration file under `conf/labrador_apache.conf` which you can either copy into your apache configuration directory (normally something like `/etc/httpd/conf.d/`) or which you can copy into your main `httpd.conf` file.
 
-The example configuration will allow you to access Labrador at a URL of `/labrador/` under your top level domain (eg `http://www.example.com/labrador/`).  You will need to edit the configuration file to change the file paths shown to reflect the directory in which you have installed Labrador.
+The example configuration will allow you to access Labrador at a URL of `/labrador/` under your top level domain (eg `http://yourserver/labrador/`).  You will need to edit the configuration file to change the file paths shown to reflect the directory in which you have installed Labrador.
 
 Once you have added the configuration file you will need to restart your web server for the changes to take effect.
 
 
-### 2.3.3 Data Folders
+### 2.2.4 Data Folders
 
 If you want Labrador to be able to locate and serve data you need to make these available on the system on which Labrador is installed.  Labrador uses a directory for each project, named after that project identifier.
 
@@ -89,7 +91,7 @@ eg You would have a run data folder with a structure like:
                   \ Project_One_2011
                   \ Project_Two_2013
 
-### 2.3.4 Labrador Configuration File
+### 2.2.5 Labrador Configuration File
 
 In order to connect to your database and find your data Labrador needs to know some information about your setup.  All of the pieces of information the system needs are configured in a file called `labrador_config.php` which is in the conf directory of your Labrador installation.  A template configuration file called `labrador_config.php.example` is provided, and you should copy this to a file called `labrador_config.php` in the same directory and then edit this to include the correct information for your site. Hopefully all the pieces of information in there are self-explanatory, and you need to ensure that they reflect your local environment
 
