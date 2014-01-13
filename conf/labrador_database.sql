@@ -1,5 +1,5 @@
 CREATE DATABASE `labrador`;
-GRANT ALL PRIVILEGES ON *.labrador TO 'labrador'@'localhost';
+GRANT ALL PRIVILEGES ON `labrador`.* TO 'labrador'@'localhost';
 FLUSH PRIVILEGES;
 USE `labrador`;
 
