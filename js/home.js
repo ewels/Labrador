@@ -86,7 +86,7 @@ function updateFilters() {
 	
 	$.each($('#paper-browser-table tbody tr:visible'), function() {
 		var hideRow = true;
-		var filterText = $(this).children('.project_name').text().toLowerCase().substr(0,1);
+		var filterText = $(this).children('.project_name').text().toLowerCase().trim().substr(0,1);
 		var filterCounter = 0;
 		$.each($('.nav-list.filters .alphabetical-filter.active'), function(){
 			filterCounter++;
@@ -109,12 +109,13 @@ function updateFilters() {
 	
 	$.each($('#paper-browser-table tbody tr:visible'), function() {
 		var hideRow = true;
-		var filterText = $(this).children('.species').text().toLowerCase();
+		var filterText = $(this).children('.species').text().toLowerCase().trim();
 		var filterCounter = 0;
 		$.each($('.nav-list.filters .species-filter.active'), function(){
 			filterCounter++;
 			var searchString = $(this).text().toLowerCase();
-			if(searchString == filterText){
+			if(filterText.indexOf(searchString) >= 0){
+			//if(searchString == filterText){
 				hideRow = false;
 			}
 		});
@@ -125,7 +126,7 @@ function updateFilters() {
 	
 	$.each($('#paper-browser-table tbody tr:visible'), function() {
 		var hideRow = true;
-		var filterText = $(this).children('.data_type').text().toLowerCase();
+		var filterText = $(this).children('.data_type').text().toLowerCase().trim();
 		var filterCounter = 0;
 		$.each($('.nav-list.filters .datatype-filter.active'), function(){
 			filterCounter++;
