@@ -22,7 +22,7 @@ Administrators can delegate the process of choosing the required datasets to res
 2 Installation
 ===============
 
-To see a walk-through of how to install Apache, PHP, MySQL and Labrador on a blank server, please see the following video tutorial: [http://youtu.be/w1n4SuRtM3U](http://youtu.be/w1n4SuRtM3U)
+To see a walk-through of how to install Apache, PHP, MySQL and Labrador on a blank server, please see the following video tutorial: [http://youtu.be/EE70lpp5Fwc](http://youtu.be/EE70lpp5Fwc)
 
 2.1 Pre-requisites
 -------------------
