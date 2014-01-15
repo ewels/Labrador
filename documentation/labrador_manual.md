@@ -106,6 +106,8 @@ Once you have all of these elements in place you should be able to go to `http:/
 
 Once set up, Labrador can be viewed and used by anyone without any authentication for basic use. Below, the basic functionality is described for a user who is not logged in. Then the additional features granted to authenticated users (normal and then administrators) is described after that.
 
+You can see a video tutorial of how to use Labrador as an end-user here: [http://www.youtube.com/watch?v=m03HTQtSGFg](http://www.youtube.com/watch?v=m03HTQtSGFg)
+
 3.1 Searching projects
 -------------------------
 Often you want to find a specific project within Labrador that you know about. There is a search bar at the top of every page - entering a search term and submitting the form will take you to a results page with tabs for projects, publications and datasets.
@@ -192,6 +194,8 @@ When you create or add datasets to a project, you will automatically be assigned
 5 Use by Administrators
 ========================
 Administrators can do everything a normal user can do, so only information about additional options will be shown in this section.
+
+You can see a video tutorial of how to use Labrador as an administrator here: [http://www.youtube.com/watch?v=eK58RMMc9Gg](http://www.youtube.com/watch?v=eK58RMMc9Gg)
 
 
 5.1 Creating a new account

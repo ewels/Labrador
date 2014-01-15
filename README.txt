@@ -22,7 +22,14 @@ To get started with Labrador all you need is a computer on which you can run:
 
 All of the instructions for setting up a new instance of Labrador can be found
 in the manual. You can also see a screencast walkthrough video of installing
-Apache, PHP, MySQL and Labrador on a blank server here: http://youtu.be/EE70lpp5Fwc
+Apache, PHP, MySQL and Labrador on a blank server here:
+http://www.youtube.com/watch?v=EE70lpp5Fwc
+
+There is a video tutorial showing how to use Labrador for end-users here:
+http://www.youtube.com/watch?v=m03HTQtSGFg
+
+Finally, there is a video tutorial for administrative usage by bioinformaticians:
+http://www.youtube.com/watch?v=eK58RMMc9Gg
 
 If you have any problems with Labrador you can report them in our bug tracking
 system at:
