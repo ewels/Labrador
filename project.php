@@ -229,7 +229,7 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 						"doi" => $_POST['paper_doi_'.$i],
 					);
 					// Build mysql queries
-					if(!$new_project){
+					if(isset($_POST['paper_id_'.$i]) && !empty($_POST['paper_id_'.$i])){
 						$query = "UPDATE `papers` SET ";
 						foreach($values as $id => $var) {
 							$query .= "`$id` = '".mysql_real_escape_string($var)."', ";

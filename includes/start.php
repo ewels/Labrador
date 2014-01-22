@@ -47,4 +47,11 @@ require('auth.php');
 
 date_default_timezone_set('Europe/London');
 
+/* Do update checks */
+# TABLE `config`
+# 	`option` = 'database_version'
+# 	`option` = 'update_last_checked'
+# 	`option` = 'update_avail_version'
+# 	`option` = 'update_version_ignore'
+
 ?>
