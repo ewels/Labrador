@@ -122,8 +122,9 @@ include('includes/header.php');
 			<tbody>
 			<?php 
 			$sql = "SELECT *, `projects`.`id` AS `pid` FROM `projects`";
-			if(isset($_GET['my_projects'])){
-				$sql .= sprintf(" LEFT JOIN `project_contacts` on `projects`.`id` = `project_contacts`.`project_id` WHERE `project_contacts`.`user_id` = '%d'", $user['id']);
+			if(isset($_GET['contact'])){
+				$user_id = mysql_fetch_array(mysql_query(sprintf("SELECT `id` FROM `users` WHERE `email` = '%s'", $_GET['contact'])));
+				$sql .= sprintf(" LEFT JOIN `project_contacts` on `projects`.`id` = `project_contacts`.`project_id` WHERE `project_contacts`.`user_id` = '%s'", $user_id['id']);
 			} else if($admin && isset($_GET['assigned_projects']) && filter_var($_GET['assigned_projects'], FILTER_VALIDATE_EMAIL)){
 				$assigned = filter_var($_GET['assigned_projects'], FILTER_SANITIZE_EMAIL);
 				$sql .= " WHERE `assigned_to` = '".mysql_real_escape_string($assigned)."'";

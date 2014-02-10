@@ -170,6 +170,7 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 		}
 		$i++;
 	}
+	$i--; 
 	
 	// Save history message
 	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Added $i datasets."), time());

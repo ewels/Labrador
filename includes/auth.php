@@ -45,7 +45,7 @@ function labrador_login_link() {
 		<li class="dropdown authlink">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Logged in as <?php echo $user['firstname'].' '.$user['surname']; ?> <b class="caret"></b></a>
 			<ul class="dropdown-menu">
-				<li><a href="index.php?my_projects">My Projects</a></li>
+				<li><a href="index.php?contact=<?php echo $user['email']; ?>">My Projects</a></li>
 			<?php if($admin){ ?>
 				<li><a href="index.php?assigned_projects">Assigned To Me</a></li>
 				<li><a href="index.php?unassigned">Not Assigned</a></li>

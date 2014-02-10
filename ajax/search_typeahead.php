@@ -28,7 +28,7 @@ require_once('../includes/start.php');
 header('Content-Type: application/json');
 
 echo '{
-	"projects": [';
+	"results": [';
 
 $sql = "SELECT `name` FROM `projects` ORDER BY `name`";
 
@@ -42,6 +42,23 @@ while($result = mysql_fetch_array($results)){
 	if($counter > 0) { echo ','; }
 	$counter++;
 	echo "\n\t\t".'"'.$result['name'].'"';
+}
+}
+
+
+
+$sql = "SELECT `email` FROM `users` ORDER BY `email`";
+
+if(isset($_GET['query'])) {
+	$sql = sprintf("SELECT `email` FROM `users` WHERE `email` LIKE '%s%%' ORDER BY `email`", mysql_real_escape_string($_GET['query']));
+}
+$results = mysql_query($sql);
+if(mysql_num_rows($results) > 0){
+$counter = 0;
+while($result = mysql_fetch_array($results)){
+	if($counter > 0) { echo ','; }
+	$counter++;
+	echo "\n\t\t".'"'.$result['email'].'"';
 }
 }
 

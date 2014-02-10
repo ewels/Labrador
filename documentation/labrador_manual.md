@@ -71,7 +71,7 @@ to
 `GRANT ALL PRIVILEGES ON labrador.* TO 'mylocaluser'@'somemachine.example.com';`
 
 
-### 2.2.3 Webserver configuration
+### 2.2.3 Webserver Configuration
 
 Our recommended configuration is to install Labrador in a directory outside your document root and then adjust your webserver configuration to allow it to find the installation and map it to a URL.  We have included a default apache configuration file under `conf/labrador_apache.conf` which you can either copy into your apache configuration directory (normally something like `/etc/httpd/conf.d/`) or which you can copy into your main `httpd.conf` file.
 
@@ -79,8 +79,23 @@ The example configuration will allow you to access Labrador at a URL of `/labrad
 
 Once you have added the configuration file you will need to restart your web server for the changes to take effect.
 
+### 2.2.4 Sendmail Setup
 
-### 2.2.4 Data Folders
+If you set up Labrador and find that you aren't receiving any e-mails, it could be that the PHP `mail()` function isn't happy. This could be due to a missing copy of sendmail, [which is required](http://www.php.net/manual/en/mail.requirements.php).
+
+Sendmail can be installed as follows:
+
+	yum install sendmail sendmail-cf
+	cd /etc/mail/
+	nano sendmail.mc
+	## update the SMARTHOST line: remove dnl at start of line and enter your smtp address
+	./make
+	service postfix stop
+	service sendmail start
+
+Please note that this could be server specific and changing these settings can affect the performance of other services running on the same machine..
+
+### 2.2.5 Data Folders
 
 If you want Labrador to be able to locate and serve data you need to make these available on the system on which Labrador is installed.  Labrador uses a directory for each project, named after that project identifier.
 
@@ -93,7 +108,7 @@ eg You would have a run data folder with a structure like:
                   \ Project_One_2011
                   \ Project_Two_2013
 
-### 2.2.5 Labrador Configuration File
+### 2.2.6 Labrador Configuration File
 
 In order to connect to your database and find your data Labrador needs to know some information about your setup.  All of the pieces of information the system needs are configured in a file called `labrador_config.php` which is in the conf directory of your Labrador installation.  A template configuration file called `labrador_config.php.example` is provided, and you should copy this to a file called `labrador_config.php` in the same directory and then edit this to include the correct information for your site. Hopefully all the pieces of information in there are self-explanatory, and you need to ensure that they reflect your local environment
 

@@ -45,12 +45,16 @@ $(window).resize(function() { resizeSearch(); });
 // Search bar typeahead
 $('.search-query').typeahead({
     source: function (query, process) {
-        return $.get('ajax/project_names.php', { query: query }, function (data) {
-            return process(data.projects);
+        return $.get('ajax/search_typeahead.php', { query: query }, function (data) {
+            return process(data.results);
         });
     },
 	updater:function (item) {
-		window.location.href = "project.php?p_name="+item;
+		if(item.indexOf("@") > 0){
+			window.location.href = "index.php?contact="+item;
+		} else {
+			window.location.href = "project.php?p_name="+item;
+		}
     }
 });
 
