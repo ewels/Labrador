@@ -77,7 +77,7 @@ if(!isset($root)){
 
     <div class="container-fluid">
 		<noscript>
-			<div id="no_javascript" class="container alert alert-error">
+			<div id="no_javascript" class="alert alert-error">
 				<button type="button" class="close" data-dismiss="alert">×</button>
 				<h4>Javascript is not enabled!</h4>
 				Warning - Labrador uses Javascript which is currently disabled in your browser.

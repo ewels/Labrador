@@ -276,7 +276,7 @@ if($user && isset($_POST['save_project']) && $_POST['save_project'] == 'Save Pro
 					$query = sprintf("SELECT `email`, `firstname`, `surname` FROM `users` WHERE `id` = '%d'", $contact);
 					$contact_u = mysql_fetch_array(mysql_query($query));
 					$project_contacts[] = $contact_u['firstname'].' '.$contact_u['surname'].' ('.$contact_u['email'].')';
-					if($new_project){
+					if($new_project && !($admin && $contact_u['email'] == $user['email'])){
 						mail($contact_u['email'], '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
 
 The project ".$project_array['name']." has just been created on Labrador and you are marked as a contact. As such, you will receive e-mail notifications if the status of the project is updated.
@@ -289,7 +289,7 @@ If you have any queries, please e-mail $support_email
 This is an automated e-mail sent from Labrador
 $labrador_url
 ", $email_headers);
-					} else if($admin) {
+					} else if($admin && $contact_u['email'] != $user['email']) {
 						mail($contact_u['email'], '[Labrador] Project '.$project_array['name'].' Updated', "Hi there,
 
 The project ".$project_array['name']." has just been updated on Labrador. Its status is now '".$project_array['status']."'
@@ -306,7 +306,7 @@ $labrador_url
 				}
 				
 				// Email support if no-one is assigned
-				if(strlen($project_array['assigned_to']) < 3 && $new_project){
+				if(strlen($project_array['assigned_to']) < 3 && $new_project && !$admin){
 					mail($support_email, '[Labrador] Project '.$project_array['name'].' Created', "Hi there,
 
 The project ".$project_array['name']." has just been created on Labrador by ".implode(", ", $project_contacts).". It doesn't have anyone assigned to the project yet.
@@ -451,7 +451,7 @@ if(!$new_project and !$edit and !$error){ ?>
 	
 	<?php // if(!empty($_POST)) { echo '<pre>'.print_r($_POST, true).'</pre>'; } ?>
 	<?php if(!empty($msg)): ?>
-		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
@@ -703,7 +703,7 @@ if(!$new_project and !$edit and !$error){ ?>
 	<form action="project.php<?php if($edit){ echo '?id='.$project_id; } ?>" method="post" class="form-horizontal add_edit_project form_validate">
 		
 		<?php if(!empty($msg)): ?>
-			<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+			<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 				<button type="button" class="close" data-dismiss="alert">×</button>
 				<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
 				<?php foreach($msg as $var)	echo $var.'<br>'; ?>

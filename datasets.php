@@ -187,7 +187,7 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 	}
 	
 	// Email support if no-one is assigned
-	if(strlen($project['assigned_to']) < 3 && !$error){
+	if(strlen($project['assigned_to']) < 3 && !$error && !$admin){
 		mail($support_email, "[Labrador] $i datasets added to ".$project['name'], "Hi there,
 
 $i datasets have just been added to the project ".$project['name']." on Labrador by ".$user['firstname'].' '.$user['surname']." (".$user['email']."). The project doesn't have anyone assigned yet.
@@ -200,7 +200,7 @@ $labrador_url
 ", $email_headers);
 	
 	// Email person assigned
-	} else if(!$error){
+	} else if(!$error && $project['assigned_to'] !== $user['email']){
 		mail($project['assigned_to'], "[Labrador] $i datasets added to ".$project['name'], "Hi there,
 
 $i datasets have just been added to the project ".$project['name']." on Labrador by ".$user['firstname'].' '.$user['surname']." (".$user['email']."). The project is assigned to you.
@@ -245,7 +245,7 @@ include('includes/header.php'); ?>
 <div class="sidebar-mainpage project-mainpage">
 
 	<?php if(!empty($msg)): ?>
-		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
@@ -324,7 +324,7 @@ if($edit) { ?>
 <div class="sidebar-mainpage project-mainpage">
 	
 	<?php if(!empty($msg)): ?>
-		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
@@ -398,7 +398,7 @@ if($add) { ?>
 <div class="sidebar-mainpage project-mainpage">
 
 	<?php if(!empty($msg)): ?>
-		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>

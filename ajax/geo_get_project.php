@@ -26,7 +26,7 @@ Provides a function if included, returns JSON if called directly
 
 require_once('../includes/start.php');
 
-function get_geo_project ($acc) {
+function get_geo_project ($acc, $editing = false) {
 	// Get the first XML file with GEO ID accessions, using the supplied GEO accession
 	// Only get the info we want for the Project
 	// uses eSearch
@@ -150,7 +150,9 @@ function get_geo_project ($acc) {
 	$projects = mysql_query($sql);
 	if(mysql_num_rows($projects) > 0){
 		$project = mysql_fetch_array($projects);
-		$results['message'] = '<strong>WARNING:</strong> There is already a project with this accession: <a href="project.php?id='.$project['id'].'">'.$project['name'].'</a>';
+		if($project['id'] != $editing){
+			$results['message'] = '<strong>WARNING:</strong> There is already a project with this accession: <a href="project.php?id='.$project['id'].'">'.$project['name'].'</a>';
+		}
 	}
 	
 	
@@ -160,7 +162,11 @@ function get_geo_project ($acc) {
 // Script is being called directly (ajax)
 if(__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
 	if(isset($_GET['acc'])){
-		$results = get_geo_project ($_GET['acc']);
+		if(isset($_GET['editing'])){
+			$results = get_geo_project ($_GET['acc'], $_GET['editing']);
+		} else {
+			$results = get_geo_project ($_GET['acc'], false);
+		}
 		echo json_encode($results, JSON_FORCE_OBJECT);
 	} else {
 		$results = array(

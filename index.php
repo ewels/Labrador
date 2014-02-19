@@ -31,7 +31,7 @@ include('includes/header.php');
 	<div class="homepage sidebar-mainpage">		
 				
 		<?php if(!empty($msg)): ?>
-		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
+		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>

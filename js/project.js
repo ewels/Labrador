@@ -150,7 +150,13 @@ $('#geo_lookup').click(function(e){
 			icon.removeClass('icon-search icon-remove').addClass('icon-refresh icon-rotate-animate');
 			$('#geo_error_message').remove();
 			
-			$.getJSON('ajax/geo_get_project.php?acc='+acc, function(data) {
+			// Are we editing a project? Look at the URL
+			var editing = '';
+			if(location.search.split('edit=')[1]){
+				editing = '&editing='+location.search.split('edit=')[1];
+			}
+			
+			$.getJSON('ajax/geo_get_project.php?acc='+acc+editing, function(data) {
 				
 				// Check that the call succeeded
 				if(data['status'] == 1){
@@ -273,7 +279,13 @@ $('#sra_lookup').click(function(e){
 			icon.removeClass('icon-search icon-remove').addClass('icon-refresh icon-rotate-animate');
 			$('#sra_error_message').remove();
 			
-			$.getJSON('ajax/sra_get_project.php?acc='+acc, function(data) {
+			// Are we editing a project? Look at the URL
+			var editing = '';
+			if(location.search.split('edit=')[1]){
+				editing = '&editing='+location.search.split('edit=')[1];
+			}
+			
+			$.getJSON('ajax/sra_get_project.php?acc='+acc+editing, function(data) {
 				
 				// Check that the call succeeded
 				if(data['status'] == 1){
@@ -396,7 +408,13 @@ $('#ena_lookup').click(function(e){
 			icon.removeClass('icon-search icon-remove').addClass('icon-refresh icon-rotate-animate');
 			$('#ena_error_message').remove();
 			
-			$.getJSON('ajax/ena_get_project.php?acc='+acc, function(data) {
+			// Are we editing a project? Look at the URL
+			var editing = '';
+			if(location.search.split('edit=')[1]){
+				editing = '&editing='+location.search.split('edit=')[1];
+			}
+			
+			$.getJSON('ajax/ena_get_project.php?acc='+acc+editing, function(data) {
 				
 				// Check that the call succeeded
 				if(data['status'] == 1){
