@@ -6,9 +6,12 @@ Release notes for Labrador v0.2
 Changelog:
 * New feature - Custom accession numbers
 * New feature - Labrador now checks for available updates
+
 * New feature - Enter an e-mail address in the search bar to show projects associated with that user
 * Bug fix - You can now add new papers whilst editing an existing project
 * Bug fix - Number of new datasets in e-mail notifications is now correct
+* Bug fix - Retrieving an accession when editing a project no longer warns you that it exists
+* Bug fix - Minor formatting fixes
 * Number of e-mails sent when adding projects and datasets cut down if you're an admin
 * Documentation - described how to set up Sendmail for the PHP mail() function
 
