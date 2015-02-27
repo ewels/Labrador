@@ -2,3 +2,6 @@
 dev_scripts
 .svn
 
+
+conf/labrador_config.php
+
