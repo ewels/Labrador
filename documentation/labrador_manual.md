@@ -41,7 +41,10 @@ Users do not need any software to use Labrador other than a web browser and an i
 2.2 Configuration
 -----------------
 
-Installation of Labrador is as simple as downloading the installation bundle from the project web site and then extracting it into the location you wish to install the program.  On a unix system you would do this using: `tar -xzvf labrador_vXX.tar.gz`
+Installation of Labrador is as simple as downloading the installation bundle from the project web site and then extracting it into the location you wish to install the program.  On a unix system you would do this using:
+
+    tar -xzvf labrador_vXX.tar.gz
+
 
 On a windows system you would use a decompression utility such as 7zip or WinZip to unpack the files from the installation bundle
 
@@ -54,21 +57,28 @@ To run Labrador you need a working web server. It is recommended that Apache is 
 
 ### 2.2.2 Database Creation
 
-Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database. The file is in the `conf` folder of the installation. If you are using a MySQL install on the same machine as your webserver and you're happy to use the default configuration, you can install the database using: `mysql -u root -p < labrador_database.sql`
+Before starting the system you need to create the database which is going to be used by Labrador.  The Labrador installation contains an SQL file which will set up and configure a database. The file is in the `conf` folder of the installation. If you are using a MySQL install on the same machine as your webserver and you're happy to use the default configuration, you can install the database using:
+
+    mysql -u root -p < labrador_database.sql
+
 
 This script will create a database and a user, both called `labrador`. It will then populate the database with the empty table structure needed to run Labrador.
 
 You will be prompted for the MySQL root password and the database will be created.  You can substitute the root account for any other MySQL account with sufficient privileges to create a new database and add user permissions to it. Warning - running this file with an existing Labrador database will overwrite all previous data.
 
-If you want to put the database on a different machine to the webserver, or you want to change the username used to connect to the database then you will need to edit the SQL file and change the GRANT statements at the bottom to use the username and machine you would prefer to use.
+If you want to put the database on a different machine to the webserver, or you want to change the username used to connect to the database then you will need to edit the SQL file and change the `GRANT` statements at the bottom to use the username and machine you would prefer to use.
 
 For example you could change the statement:
 
-`GRANT ALL PRIVILEGES ON labrador.* TO 'labrador'@'localhost';`
+
+    GRANT ALL PRIVILEGES ON labrador.* TO 'labrador'@'localhost';
+
 
 to
 
-`GRANT ALL PRIVILEGES ON labrador.* TO 'mylocaluser'@'somemachine.example.com';`
+
+    GRANT ALL PRIVILEGES ON labrador.* TO 'mylocaluser'@'somemachine.example.com';
+
 
 
 ### 2.2.3 Webserver Configuration
@@ -139,7 +149,7 @@ The homepage of Labrador is designed for browsing projects. The main panel lists
 ---------------------
 Once you've selected a project, you'll be taken to its page. Project pages always have a side navigation allowing you to view different aspects of the project.
 
-All project pages share a header. This shows the project identifier and any project accession numbers. Under this the project status is shown, the names of people linked to the project, the bioinformatician assigned to process the data and the location of the project directory on the server. 
+All project pages share a header. This shows the project identifier and any project accession numbers. Under this the project status is shown, the names of people linked to the project, the bioinformatician assigned to process the data and the location of the project directory on the server.
 
 
 ### 3.3.1 Project Details
