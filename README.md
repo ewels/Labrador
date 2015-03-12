@@ -15,6 +15,13 @@ You can find full instructions for using Labrador in the
 [manual](documentation/labrador_manual.md), which can be found in
 the documentation folder of the distribution.
 
+## Download
+
+You can download the latest stable release of Labrador from the
+[releases page](https://github.com/ewels/labrador/releases).
+
+The code in the master branch of this repository is under active development
+and may be unstable.
 
 ## Usage
 I have recorded a video tutorial showing how to use Labrador for end-users:
