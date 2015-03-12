@@ -23,9 +23,9 @@ include('includes/start.php');
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$project_id = $_GET['id'];
-	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
-	if(mysql_num_rows($projects) == 1){
-		$project = mysql_fetch_array($projects);
+	$projects = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
+	if(mysqli_num_rows($projects) == 1){
+		$project = mysqli_fetch_array($projects);
 	} else {
 		header("Location: index.php");
 	}
@@ -81,7 +81,7 @@ if(file_exists($data_root.$project['name'])){
 
 	<form action="reports.php?id=<?php echo $project_id; ?>" method="post" class="pull-right reports_form">
 		<input type="hidden" value="" name="report_type" id="report_type">
-		
+
 	<?php
 	// Find overview reports. Functions are in labrador_config.php
 	if(isset($project_report_types) && count($project_report_types) > 0){
@@ -92,7 +92,7 @@ if(file_exists($data_root.$project['name'])){
 		foreach($project_report_types as $type => $report_name){
 			// get matching filenames
 			$paths = array();
-			
+
 			$it = new RecursiveDirectoryIterator($dir);
 			foreach(new RecursiveIteratorIterator($it) as $file) {
 				$path = substr($file, strlen($data_root));
@@ -117,15 +117,15 @@ if(file_exists($data_root.$project['name'])){
 			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview">'.$output.'</select></label>';
 		}
 	}
-	
+
 	// Find dataset-specific reports. Functions are in labrador_config.php
 	if(isset($dataset_report_types) && count($dataset_report_types) > 0){
 		// Setup - work out directory and get search terms
 		$dir = $data_root.$project['name'];
-		$datasets = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
+		$datasets = mysqli_query($dblink, "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
 		$ds_needles = array();
-		if(mysql_num_rows($datasets) > 0){
-			while ($dataset = mysql_fetch_array($datasets)){
+		if(mysqli_num_rows($datasets) > 0){
+			while ($dataset = mysqli_fetch_array($datasets)){
 				$ds_needles[$dataset['name']] = array($dataset['name']);
 				foreach(split(" ",$dataset['accession_geo']) as $geo){
 					array_push($ds_needles[$dataset['name']], $geo);
@@ -184,12 +184,12 @@ if(file_exists($data_root.$project['name'])){
 			}
 		}
 	}
-	
+
 	?>
-	
+
 	<div style="clear:both;"></div>
-	</form>	
-	
+	</form>
+
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
 	<div class="labrador_help" style="display:none;">
@@ -198,32 +198,32 @@ if(file_exists($data_root.$project['name'])){
 			<p>This page shows you all of the processing reports found within the project directory, associated to the project datasets.</p>
 			<p>Reports can be selected using the drop down boxes in the top right of the screen - clicking a name will refresh the page with that report.</p>
 			<p>Currently, Labrador supports the following report types:</p>
-			
+
 			<dl  class="dl-horizontal">
 				<dt>FastQC</dt>
 				<dd>Processing reports from <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc/" target="_blank">FastQC</a>, gives details about the quality of the raw sequencing data.</dd>
-				
+
 				<dt>FastQ Screen</dt>
 				<dd>Processing reports from <a href="http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/" target="_blank">FastQ Screen</a>, a tool to detect which genome(s) raw sequences align to.</dd>
-				
+
 				<dt>Bismark Alignment Overview</dt>
 				<dd>Alignment reports from <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">Bismark</a>, a tool to map bisulfite converted sequence reads and determine cytosine methylation states.</dd>
-				
+
 				<dt>Bismark M-Bias Reports</dt>
 				<dd>Metylation-Bias plots from <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">Bismark</a>, shows the methylation proportion across each possible position in the reads.</dd>
-				
+
 				<dt>HiCUP Di-Tag Analysis</dt>
 				<dd>Classification of paired end read types by <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">HiCUP</a>, a tool for mapping and performing quality control on Hi-C data.</dd>
-				
+
 				<dt>HiCUP <em>cis</em>/<em>trans</em> Analysis</dt>
 				<dd>Proportion of read pairs falling in <em>cis</em> and <em>trans</em>, as processed by <a href="http://www.bioinformatics.babraham.ac.uk/projects/bismark/" target="_blank">HiCUP</a>.</dd>
-				
+
 			</dl>
 		<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
-	
-	
+
+
 	<?php if(!$report_path){ ?>
 	<div class="alert alert-info">No reports found.</div>
 	<?php } else {
@@ -246,7 +246,7 @@ else { ?>
 
 <p>Project directory not found on the server.</p>
 
-<?php } ?>	
+<?php } ?>
 </div>
 
 <?php include('includes/javascript.php'); ?>

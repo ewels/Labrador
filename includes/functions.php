@@ -28,7 +28,7 @@
 
 function accession_badges ($string, $type){
 	$return = '';
-	
+
 	$accessions = preg_split('/\s+/', $string);
 	if(count($accessions) > 0){
 		foreach($accessions as $accession){
@@ -65,13 +65,13 @@ function accession_badges ($string, $type){
 			}
 		}
 	}
-	
+
 	return $return;
 }
 
 function project_header($project) {
-	global $data_root;
-	
+	global $data_root, $dblink;
+
 	echo '<h1>';
 	echo $project['name'].' ';
 	echo accession_badges ($project['accession_geo'], 'geo').' ';
@@ -79,36 +79,36 @@ function project_header($project) {
 	echo accession_badges ($project['accession_ena'], 'ena').' ';
 	echo accession_badges ($project['accession_ddjb'], 'ddjb');
 	echo '</h1>';
-	
+
 	echo '<p class="project_header_tag"><span class="label ';
-	if($project['status'] == 'Processing Complete'){ 
-		echo 'label-success'; 
+	if($project['status'] == 'Processing Complete'){
+		echo 'label-success';
 	} else if($project['status'] == 'Currently Processing'){
-		echo 'label-warning'; 
+		echo 'label-warning';
 	} else if($project['status'] == 'Not Started'){
 		echo 'label-important';
 	}
-	echo '">'.$project['status'].'</span>';	
-	
-	$p_users = mysql_query("SELECT `users`.`email`, `users`.`firstname`, `users`.`surname` FROM `users` LEFT JOIN `project_contacts` on `users`.`id` = `project_contacts`.`user_id` WHERE `project_contacts`.`project_id` = '".$project['id']."'");
-	if(mysql_num_rows($p_users) > 0){
+	echo '">'.$project['status'].'</span>';
+
+	$p_users = mysqli_query($dblink, "SELECT `users`.`email`, `users`.`firstname`, `users`.`surname` FROM `users` LEFT JOIN `project_contacts` on `users`.`id` = `project_contacts`.`user_id` WHERE `project_contacts`.`project_id` = '".$project['id']."'");
+	if(mysqli_num_rows($p_users) > 0){
 		echo '<small>Contact';
-		if(mysql_num_rows($p_users) > 1) echo 's';
+		if(mysqli_num_rows($p_users) > 1) echo 's';
 		echo ': ';
 		$first = true;
-		while($p_user = mysql_fetch_array($p_users)){
+		while($p_user = mysqli_fetch_array($p_users)){
 			if(!$first){ echo ', '; } $first = false;
 			echo '<a href="mailto:'.$p_user['email'].'">'.$p_user['firstname'].' '.$p_user['surname'].'</a>';
 		}
 		echo '</small>';
 	}
-	
+
 	if($project['assigned_to'] != ''){
 		echo '<small>Assigned to: <a href="mailto:'.$project['assigned_to'].'">'.$project['assigned_to'].'</a></small>';
 	}
-	
+
 	echo '<small>Location: <code>'.$data_root.$project['name'].'/</code></small>';
-	
+
 	echo '</p>';
 }
 

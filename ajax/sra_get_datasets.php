@@ -34,12 +34,15 @@ Whhhhyyyyy?
 require_once('../includes/start.php');
 
 function get_geo_datasets ($acc) {
+
+	global $dblink;
+
 	// Get the first XML file with GEO ID accessions, using the supplied GEO accession
 	// Only get the info we want for the Project
 	// uses eSearch
-	
+
 	$results = array();
-	
+
 	$url_1 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term='.$acc.'&usehistory=y';
 	$xml_1 = simplexml_load_file($url_1);
 	if($xml_1 === FALSE){
@@ -55,7 +58,7 @@ function get_geo_datasets ($acc) {
 		return $results;
 	}
 	$WebEnv = $xml_1->WebEnv;
-	
+
 	// Get the second XML file with GEO meta data and dataset information
 	$url_2 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&query_key=1&WebEnv='.$WebEnv;
 	$xml_2 = simplexml_load_file($url_2);
@@ -70,7 +73,7 @@ function get_geo_datasets ($acc) {
 		$results['message'] = "Second NCBI GEO API call returned an error: ".$xml_2->ERROR;
 		return $results;
 	}
-	
+
 	// Loop through each DocSum - each is a different dataset
 	$i = 0;
 	foreach($xml_2->children() as $DocSum){
@@ -79,14 +82,14 @@ function get_geo_datasets ($acc) {
 		$library_name = "";
 		// Loop through the nodes
 		foreach($DocSum->children() as $child) {
-		
+
 			// Most stuff is within the ExpXml node. Remember - HTML encoded XML within here
 			if($child->attributes()->Name == 'ExpXml') {
-				
+
 				// Dump this crap into a raw text string and use regexes
 				// TODO: HTML unencode this and traverse it as XML?
 				$sra_raw = (string)$child;
-				
+
 				if(preg_match('/GSM\d+/', $sra_raw, $matches)){
 					$gsm_acc = $matches[0];
 				}
@@ -119,19 +122,19 @@ function get_geo_datasets ($acc) {
 				preg_match_all('/[SDE]RR\d+/', $sra_raw, $sra_accessions);
 			} // geo sra tag name check
 		} // geo xml foreach
-		
+
 		// Trim off crap that we don't want from the library name
 		$library_name = trim(preg_replace('/('.implode('|', $sra_accessions[0]).')[\:]?/', '', $library_name));
 		$library_name = trim(preg_replace('/'.$gsm_acc.'[\:]?/', '', $library_name));
 		$library_name = trim(preg_replace('/'.$acc.'[\:]?/', '', $library_name));
-		
+
 		// See if this dataset is a duplicate of one already in the database
 		$duplicate = false;
 		$gsm_acc_safe = preg_replace("/[^A-Za-z0-9]/", '', $gsm_acc);
 		if(strlen($gsm_acc_safe) > 0){
 			$sql = "SELECT `id` FROM `datasets` WHERE `accession_geo` = '".preg_replace("/[^A-Za-z0-9]/", '', $gsm_acc_safe)."'";
-			$query = mysql_query($sql);
-			if(mysql_num_rows($query) > 0){
+			$query = mysqli_query($dblink, $sql);
+			if(mysqli_num_rows($query) > 0){
 				$duplicate = true;
 			}
 		}
@@ -139,13 +142,13 @@ function get_geo_datasets ($acc) {
 			$sra_acc_safe = preg_replace("/[^A-Za-z0-9]/", '', $sra_accession);
 				if(strlen($sra_acc_safe) > 0){
 				$sql = "SELECT `id` FROM `datasets` WHERE `accession_sra` LIKE '%".$sra_acc_safe."%'";
-				$query = mysql_query($sql);
-				if(mysql_num_rows($query) > 0){
+				$query = mysqli_query($dblink, $sql);
+				if(mysqli_num_rows($query) > 0){
 					$duplicate = true;
 				}
 			}
 		}
-		
+
 		// Assign values
 		$results['samples'][$i]['name'] = $library_name;
 		$results['samples'][$i]['accession_geo'] = $gsm_acc;
@@ -153,11 +156,11 @@ function get_geo_datasets ($acc) {
 		$results['samples'][$i]['species'] = $organism;
 		$results['samples'][$i]['data_type'] = $methodology;
 		$results['samples'][$i]['duplicate'] = $duplicate ? 'true' : 'false';
-		
+
 		// increment counter
 		$i++;
 	}
-	
+
 	// All done - worked!
 	$results['status'] = 1;
 	$results['message'] = "Success";

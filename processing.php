@@ -23,9 +23,9 @@ include('includes/start.php');
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$project_id = $_GET['id'];
-	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
-	if(mysql_num_rows($projects) == 1){
-		$project = mysql_fetch_array($projects);
+	$projects = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
+	if(mysqli_num_rows($projects) == 1){
+		$project = mysqli_fetch_array($projects);
 	} else {
 		header("Location: index.php");
 	}
@@ -34,13 +34,13 @@ if(isset($_GET['id']) && is_numeric($_GET['id'])){
 }
 
 if($admin && isset($_POST['delete_processing'])){
-	$processed_q = mysql_query("SELECT * FROM `processing` WHERE `project_id` = '$project_id'");
-	if(mysql_num_rows($processed_q) > 0){
-		while($processed = mysql_fetch_array($processed_q)){
+	$processed_q = mysqli_query($dblink, "SELECT * FROM `processing` WHERE `project_id` = '$project_id'");
+	if(mysqli_num_rows($processed_q) > 0){
+		while($processed = mysqli_fetch_array($processed_q)){
 			if(isset($_POST['check_'.$processed['id']]) && $_POST['check_'.$processed['id']] == 'on'){
-				if(!mysql_query("DELETE FROM `processing` WHERE `id` = '".$processed['id']."'")){
+				if(!mysqli_query($dblink, "DELETE FROM `processing` WHERE `id` = '".$processed['id']."'")){
 					$error = true;
-					$msg[] = 'Could not delete processing record: '.mysql_error();
+					$msg[] = 'Could not delete processing record: '.mysqli_error();
 				}
 			}
 		}
@@ -80,11 +80,11 @@ include('includes/header.php'); ?>
 	<?php if(!empty($msg)): ?>
 		<div class="container alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
-			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
+			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?>
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
 		</div>
 	<?php endif; ?>
-	
+
 	<?php if($admin){ ?>
 		<a class="btn btn-primary pull-right" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a>
 	<?php } ?>
@@ -98,12 +98,12 @@ include('includes/header.php'); ?>
 			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
-	
-	
+
+
 	<?php
 	$processing_sql = "SELECT * FROM `processing` WHERE `project_id` = '$project_id' ORDER BY `created` DESC";
-	$processed_q = mysql_query($processing_sql);
-	if(mysql_num_rows($processed_q) > 0){
+	$processed_q = mysqli_query($dblink, $processing_sql);
+	if(mysqli_num_rows($processed_q) > 0){
 	?>
 	<?php if($admin) { ?>
 	<form action="processing.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
@@ -120,9 +120,9 @@ include('includes/header.php'); ?>
 			</tr>
 		</thead>
 		<tbody>
-		<?php while($processed = mysql_fetch_array($processed_q)) {
-			$dataset_q = mysql_query("SELECT * FROM `datasets` WHERE `id` = '".$processed['dataset_id']."'");
-			$dataset = mysql_fetch_array($dataset_q);
+		<?php while($processed = mysqli_fetch_array($processed_q)) {
+			$dataset_q = mysqli_query($dblink, "SELECT * FROM `datasets` WHERE `id` = '".$processed['dataset_id']."'");
+			$dataset = mysqli_fetch_array($dataset_q);
 			?>
 			<tr>
 			<?php if($admin) { ?>
@@ -146,29 +146,29 @@ include('includes/header.php'); ?>
 	</table>
 	<?php if($admin) { ?>
 		<div class="form-actions">
-			<a class="btn btn-large btn-primary" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a> &nbsp; 
+			<a class="btn btn-large btn-primary" href="processing.php?id=<?php echo $project['id']; ?>&amp;create">Create New Processing Script</a> &nbsp;
 			<input type="submit" class="btn btn-large btn-danger" name="delete_processing" value="Delete Checked Processing Records">
 		</div>
-	</form>	
+	</form>
 	<?php } ?>
 	<?php } else { ?>
 	<p><em>No processing records found.</em></p>
-	<?php } ?>	
+	<?php } ?>
 </div>
 
 <?php } else { // isset($_GET['create'] ?>
 
 <div class="sidebar-mainpage project-mainpage">
-		
+
 	<?php project_header($project); ?>
-	
+
 	<?php
 	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
+	$datasets = mysqli_query($dblink, $dataset_query);
 	$existing_datasets = array();
-	if(mysql_num_rows($datasets) > 0){
+	if(mysqli_num_rows($datasets) > 0){
 	?>
-	
+
 	<form class="form-horizontal" action="processing.php?id=<?php echo $project_id; ?>" method="post">
 		<fieldset>
 			<legend>Step 1: Choose Datasets</legend>
@@ -184,7 +184,7 @@ include('includes/header.php'); ?>
 					</tr>
 				</thead>
 				<tbody>
-			<?php while ($dataset = mysql_fetch_array($datasets)){ ?>
+			<?php while ($dataset = mysqli_fetch_array($datasets)){ ?>
 					<tr>
 						<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $dataset['id']; ?>" name="check_<?php echo $dataset['id']; ?>"></td>
 						<td><label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
@@ -194,7 +194,7 @@ include('includes/header.php'); ?>
 						<td><?php echo $dataset['species']; ?></td>
 						<td><?php echo $dataset['cell_type']; ?></td>
 						<td><?php echo $dataset['data_type']; ?></td>
-						<td><?php 
+						<td><?php
 						echo accession_badges ($dataset['accession_geo'], 'geo');
 						echo accession_badges ($dataset['accession_sra'], 'sra');
 						?></td>
@@ -202,7 +202,7 @@ include('includes/header.php'); ?>
 			<?php } // dataset while loop ?>
 				</tbody>
 			</table>
-			
+
 		</fieldset>
 		<fieldset>
 			<legend>Step 2: Choose Processing</legend>
@@ -241,7 +241,7 @@ include('includes/header.php'); ?>
 							<button class="btn" id="add_processing_step">Add Processing Step</button> &nbsp;
 							<button class="btn" id="delete_processing_step" disabled="disabled">Delete Last Processing Step</button>
 						</td>
-	
+
 					</tr>
 					<tr>
 						<th>Shortcuts:</th>
@@ -262,7 +262,7 @@ include('includes/header.php'); ?>
 
 				<hr>
 				<table class="processing_steps_table processing_table">
-					<tr> 
+					<tr>
 						<th>Step 1:</th>
 						<td class="dropdown">
 							<select class="processing_type" name="processing_type_1" id="processing_type_1">
@@ -299,13 +299,13 @@ include('includes/header.php'); ?>
 			</div>
 		</fieldset>
 	</form>
-	
+
 	<div style="clear:both;"></div>
-	
+
 	<?php } else { ?>
 	<p><em>No datasets found.</em></p>
 	<?php } ?>
-	
+
 	<?php $processing_pipelines; ?>
 
 </div>

@@ -23,9 +23,9 @@ include('includes/start.php');
 
 if(isset($_GET['id']) && is_numeric($_GET['id'])){
 	$project_id = $_GET['id'];
-	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
-	if(mysql_num_rows($projects) == 1){
-		$project = mysql_fetch_array($projects);
+	$projects = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
+	if(mysqli_num_rows($projects) == 1){
+		$project = mysqli_fetch_array($projects);
 	} else {
 		header("Location: index.php");
 	}
@@ -79,12 +79,12 @@ include('includes/header.php'); ?>
 </div>
 
 <div class="sidebar-mainpage project-mainpage">
-	
+
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
-	
+
 	<?php if(isset($_POST['java_download_paths']) && $_POST['java_download_paths'] == 'Download Checked Files With Java Applet'){ ?>
-	
+
 	<div class="labrador_help" style="display:none;">
 		<div class="well">
 			<h3>Downloads with the Java Applet</h3>
@@ -94,7 +94,7 @@ include('includes/header.php'); ?>
 			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
-	
+
 	<applet code="biz.jupload.jdownload.Manager" archive="includes/jdownload/jdownload.jar" width="100%" height="500px" name="JDownload" mayscript="mayscript" alt="JDownload by www.jupload.biz">
 		<!-- Java Plug-In Options -->
 		<param name="progressbar" value="true">
@@ -110,9 +110,9 @@ include('includes/header.php'); ?>
 		Your browser does not support applets, or you have disabled applets in your options.
 		To use this applet, please update your Java. You can get it from <a href="http://www.java.com/">java.com</a>
 	</applet>
-	
+
 	<?php } else { ?>
-	
+
 	<div class="labrador_help" style="display:none;">
 		<div class="well">
 			<h3>Files Page</h3>
@@ -125,27 +125,27 @@ include('includes/header.php'); ?>
 			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
-	
+
 	<form action="files.php" method="get" class="form-horizontal">
 		<input type="hidden" name="id" value="<?php echo $project_id; ?>">
 		<div class="well">
 			<!-- <input type="submit" name="java_download_paths" class="btn btn-primary pull-right" value="Download Checked Files With Java Applet"> -->
-			Filter files: &nbsp; 
+			Filter files: &nbsp;
 			<div class="btn-group">
 				<button class="btn" id="filter_projects">Projects</button>
 				<button class="btn" id="filter_aligned">Aligned</button>
 				<button class="btn" id="filter_raw">Raw</button>
 				<button class="btn" id="filter_reports">Reports</button>
 				<button class="btn" id="filter_other">Other</button>
-			</div> &nbsp; 
+			</div> &nbsp;
 			<input type="text" class="input-small filter_text" id="name" placeholder="Filename">
 			<select name="ds" id="filter_dataset" class="span4">
 				<option value="all">All Datasets</option>
 				<option value="none" <?php if(isset($_GET['ds']) && $_GET['ds'] == 'none') { echo 'selected="selected"'; } ?>>Unmatched</option>
 				<?php
-				$dataset_query = mysql_query("SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
-				if(mysql_num_rows($dataset_query) > 0){
-					while($dataset = mysql_fetch_array($dataset_query)){
+				$dataset_query = mysqli_query($dblink, "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'");
+				if(mysqli_num_rows($dataset_query) > 0){
+					while($dataset = mysqli_fetch_array($dataset_query)){
 						echo '<option value="'.$dataset['id'].'"';
 						if(isset($_GET['ds']) && $_GET['ds'] == $dataset['id']){
 							echo ' selected="selected"';
@@ -159,10 +159,10 @@ include('includes/header.php'); ?>
 		</div>
 	</form>
 	<form action="files.php?id=<?php echo $project_id; ?>" method="post">
-	<?php 
+	<?php
 	// Check directory exists
 	if(file_exists($data_root.$project['name'])){
-		
+
 		// Get dataset details for filename search needles
 		$datasets = array();
 		$orphans = array();
@@ -170,9 +170,9 @@ include('includes/header.php'); ?>
 		if(isset($_GET['ds']) && is_numeric($_GET['ds'])){
 			$sql .= " AND `id` = '".$_GET['ds']."'";
 		}
-		$dataset_query = mysql_query($sql);
-		if(mysql_num_rows($dataset_query) > 0){
-			while ($dataset = mysql_fetch_array($dataset_query)){
+		$dataset_query = mysqli_query($dblink, $sql);
+		if(mysqli_num_rows($dataset_query) > 0){
+			while ($dataset = mysqli_fetch_array($dataset_query)){
 				$id = $dataset['id'];
 				$datasets[$id] = $dataset;
 				$datasets[$id]['files'] = array();
@@ -183,16 +183,16 @@ include('includes/header.php'); ?>
 		$dir = $data_root.$project['name'];
 		$it = new RecursiveDirectoryIterator($dir);
 		foreach(new RecursiveIteratorIterator($it) as $file) {
-			
+
 			$path = $file->getPathname();
-			
+
 			if($file->isLink()){
 				# File is a symlink - getSize() will throw a fatal error.
 				$size = "0";
 			} else {
 				$size = $file->getSize();
 			}
-			
+
 			$matched = false;
 			if(substr($path, -1) !== '~' && substr(basename($path), 0, 1) !== '.' && !stripos($path, 'fastqc/')){
 				$num_paths++;
@@ -234,7 +234,7 @@ include('includes/header.php'); ?>
 				if(!$matched && (!isset($_GET['ds']) || $_GET['ds'] == 'all' || $_GET['ds'] == 'none')){
 					$orphans[$path] = $size;
 				}
-				
+
 			}
 		}
 		// Kill matched dataset paths if filtering for unmatched
@@ -242,7 +242,7 @@ include('includes/header.php'); ?>
 			$datasets = array();
 		}
 		?>
-		
+
 			<table class="table table-condensed table-bordered table-striped sortable download_table">
 				<thead>
 					<tr>
@@ -297,7 +297,7 @@ include('includes/header.php'); ?>
 						}
 					}
 				}
-				
+
 				$j = 0;
 				foreach($datasets as $dataset){
 					$paths = $dataset['paths'];
@@ -312,7 +312,7 @@ include('includes/header.php'); ?>
 						<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
 					</tr>
-				<?php 
+				<?php
 					} //foreach path
 				} // foreach dataset
 				ksort($orphans);
@@ -328,21 +328,21 @@ include('includes/header.php'); ?>
 					</tr>
 				<?php } // foreach orhpans ?></tbody>
 			</table>
-			
+
 			<div class="form-actions">
 				<input type="submit" class="btn btn-primary btn-large" name="java_download_paths" id="java_download_paths" value="Download Checked Files With Java Applet">
 			</div>
-			
+
 		</form>
-		
+
 		<?php } // directory existence check
 		else { ?>
-		
+
 		<p>No directory found on the server.</p>
-		
-		<?php } 
+
+		<?php }
 	} // java applet check ?>
-	
+
 </div>
 
 <?php include('includes/javascript.php'); ?>

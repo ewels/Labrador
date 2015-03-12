@@ -27,14 +27,16 @@ Provides a function if included, returns JSON if called directly
 require_once('../includes/start.php');
 
 function get_geo_project ($acc, $editing = false) {
+
+	global $dblink;
 	// Get the first XML file with GEO ID accessions, using the supplied GEO accession
 	// Only get the info we want for the Project
 	// uses eSearch
-	
+
 	$results = array();
 	$results['message'] = "";
 	$results['status'] = 1;
-	
+
 	if(substr($acc, 0, 3) == 'GSM'){
 		$results['status'] = 0;
 		$results['message'] = "Accession is a GEO sample, not series. Needs to start GSE not GSM.";
@@ -44,8 +46,8 @@ function get_geo_project ($acc, $editing = false) {
 		$results['message'] = "Accession does not start with GSE. ";
 		return $results;
 	}
-	
-	
+
+
 	$url_1 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term='.$acc.'&usehistory=y';
 	$xml_1 = simplexml_load_file($url_1);
 	if($xml_1 === FALSE){
@@ -60,7 +62,7 @@ function get_geo_project ($acc, $editing = false) {
 		return $results;
 	}
 	$WebEnv = $xml_1->WebEnv;
-	
+
 	// Get the second XML file with GEO meta data and dataset information
 	$url_2 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&query_key=1&WebEnv='.$WebEnv;
 	$xml_2 = simplexml_load_file($url_2);
@@ -75,7 +77,7 @@ function get_geo_project ($acc, $editing = false) {
 		$results['message'] = "Second NCBI GEO API call returned an error: ".$xml_2->ERROR;
 		return $results;
 	}
-	
+
 	$firstDocSum = true;
 	foreach($xml_2->children() as $DocSum){
 		// All of what we want is found in the first DocSum node
@@ -97,10 +99,10 @@ function get_geo_project ($acc, $editing = false) {
 						break;
 				}
 			}
-		
+
 		}
 	}
-	
+
 	////////////////////
 	// Ok, let's go hunting for a SRP accession using the SRA database instead...
 	////////////////////
@@ -110,7 +112,7 @@ function get_geo_project ($acc, $editing = false) {
 		// Check if we have any Ids - if not, accession probably wrong
 		if(isset($xml_3->IdList->Id)){
 			$WebEnv = $xml_3->WebEnv;
-			
+
 			// Get the fourth XML file with SRA meta data and dataset information
 			$url_4 = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&query_key=1&WebEnv='.$WebEnv;
 			$xml_4 = simplexml_load_file($url_4);
@@ -141,21 +143,21 @@ function get_geo_project ($acc, $editing = false) {
 			}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	// Check to see if we already have this accession
-	$sql = sprintf("SELECT `id`, `name` FROM `projects` WHERE `accession_geo` LIKE '%%%s%%'", mysql_real_escape_string($acc));
-	$projects = mysql_query($sql);
-	if(mysql_num_rows($projects) > 0){
-		$project = mysql_fetch_array($projects);
+	$sql = sprintf("SELECT `id`, `name` FROM `projects` WHERE `accession_geo` LIKE '%%%s%%'", mysqli_real_escape_string($dblink, $acc));
+	$projects = mysqli_query($dblink, $sql);
+	if(mysqli_num_rows($projects) > 0){
+		$project = mysqli_fetch_array($projects);
 		if($project['id'] != $editing){
 			$results['message'] = '<strong>WARNING:</strong> There is already a project with this accession: <a href="project.php?id='.$project['id'].'">'.$project['name'].'</a>';
 		}
 	}
-	
-	
+
+
 	return $results;
 }
 

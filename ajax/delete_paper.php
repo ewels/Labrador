@@ -29,12 +29,12 @@ require_once('../includes/start.php');
 
 if(isset($_GET['pid']) && is_numeric($_GET['pid'])){
 	$query = sprintf("DELETE FROM `papers` WHERE `id` = '%d'", $_GET['pid']);
-	if(mysql_query($query)){
+	if(mysqli_query($dblink, $query)){
 		$result = array(1, "Successfully deleted paper");
 	} else {
-		$result = array(0, "Error - Could not delete paper: ".mysql_error());
+		$result = array(0, "Error - Could not delete paper: ".mysqli_error());
 	}
-	
+
 } else {
 	$result = array(0, "Error - no numeric delete ID supplied.");
 }

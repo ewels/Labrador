@@ -55,8 +55,8 @@ foreach ($project_fields as $field){
 	}
 }
 $sql = substr($sql, 0, strlen($sql) - 4);
-$project_q = mysql_query($sql);
-$num_project = mysql_num_rows($project_q);
+$project_q = mysqli_query($dblink, $sql);
+$num_project = mysqli_num_rows($project_q);
 
 
 $publication_fields = array('year', 'journal', 'title', 'authors', 'pmid', 'doi');
@@ -67,8 +67,8 @@ foreach ($publication_fields as $field){
 	}
 }
 $sql = substr($sql, 0, strlen($sql) - 4);
-$publications_q = mysql_query($sql);
-$num_publications = mysql_num_rows($publications_q);
+$publications_q = mysqli_query($dblink, $sql);
+$num_publications = mysqli_num_rows($publications_q);
 
 $dataset_fields = array('name', 'species', 'cell_type', 'data_type', 'accession_geo', 'accession_sra', 'notes');
 $sql = "SELECT * FROM `datasets` WHERE ";
@@ -78,8 +78,8 @@ foreach ($dataset_fields as $field){
 	}
 }
 $sql = substr($sql, 0, strlen($sql) - 4);
-$dataset_q = mysql_query($sql);
-$num_datasets = mysql_num_rows($dataset_q);
+$dataset_q = mysqli_query($dblink, $sql);
+$num_datasets = mysqli_num_rows($dataset_q);
 
 
 
@@ -109,18 +109,18 @@ $num_datasets = mysql_num_rows($dataset_q);
 <?php if($num_project == 0){
 	echo '<p>No projects found.</p>';
 } else {
-	while ($project = mysql_fetch_array($project_q)){
+	while ($project = mysqli_fetch_array($project_q)){
 		echo '<h4><a href="project.php?id='.$project['id'].'">'.h($project['name']).'</a> &nbsp ';
 		if($project['accession_geo']) echo accession_badges ($project['accession_geo'], 'geo');
 		if($project['accession_sra']) echo accession_badges ($project['accession_sra'], 'sra');
 		if($project['accession_ena']) echo accession_badges ($project['accession_ena'], 'ena');
 		if($project['accession_ddjb']) echo accession_badges ($project['accession_ddjb'], 'ddjb');
 		echo '</h4>';
-		
+
 		if($project['title']) echo '<p>'.h($project['title']).'</p>';
 		if($project['description']) echo '<p><small class="muted">'.h($project['description']).'</small></p>';
 		if($project['notes']) echo '<p><strong>Comments:</strong> <em>'.h($project['notes']).'</em></p>';
-		
+
 		echo '<hr>';
 	}
 } ?>
@@ -129,7 +129,7 @@ $num_datasets = mysql_num_rows($dataset_q);
 <?php if($num_publications == 0){
 	echo '<p>No publications found.</p>';
 } else {
-	while ($pub = mysql_fetch_array($publications_q)){
+	while ($pub = mysqli_fetch_array($publications_q)){
 		echo '<h4><a href="project.php?id='.$pub['project_id'].'">'.h($pub['title']).'</a></h4>';
 		echo '<p><strong>'.h($pub['journal']).'</strong> ('.h($pub['year']).')</p>';
 		echo '<p><small class="muted">'.h($pub['authors']).'</small></p>';
@@ -145,15 +145,15 @@ $num_datasets = mysql_num_rows($dataset_q);
 <?php if($num_datasets == 0){
 	echo '<p>No datasets found.</p>';
 } else {
-	while ($ds = mysql_fetch_array($dataset_q)){
+	while ($ds = mysqli_fetch_array($dataset_q)){
 		echo '<h4><a href="datasets.php?id='.$ds['project_id'].'">'.h($ds['name']).'</a> &nbsp ';
 		if($project['accession_geo']) echo accession_badges ($project['accession_geo'], 'geo');
 		if($project['accession_sra']) echo accession_badges ($project['accession_sra'], 'sra');
 		echo '</h4>';
-		
+
 		echo '<p>'.h($ds['species']).', '.h($ds['cell_type']).', '.h($ds['data_type']).'</p>';
 		if($ds['notes']) echo '<p><strong>Comments:</strong> <em>'.h($ds['notes']).'</em></p>';
-		
+
 		echo '<hr>';
 	}
 } ?>

@@ -28,17 +28,21 @@
 
 session_start();
 
-require(__DIR__."/../conf/labrador_config.php");
+$config_file = __DIR__."/../conf/labrador_config.php";
+
+if(!file_exists($config_file)){
+	print "<html><head><title>Labrador: No config</title><style>body { padding:20px; font-family:sans-serif; } </style></head><body><h1>Welcome to Labrador</h1><p>Hi there! We weren't able to find a config file, which is needed to use Labrador.</p> <p>Please copy the example config file <code>conf/labrador_config.php.example</code> to <code>conf/labrador_config.php</code> and update it with your settings.</body></html>";
+	exit;
+}
+
+require($config_file);
 
 // Log in to the database
 if($db_password){
-	$dblink = mysql_connect($db_host, $db_user, $db_password);
+	$dblink = mysqli_connect($db_host, $db_user, $db_password, $db_database) or die("Error " . mysqli_error($link));
 } else {
-	$dblink = mysql_connect($db_host, $db_user);
+	$dblink = mysqli_connect($db_host, $db_user, false, $db_database) or die("Error " . mysqli_error($link));
 }
-if (!$dblink) die('Could not connect: ' . mysql_error());
-$db_selected = mysql_select_db($db_database, $dblink);
-if (!$db_selected) die ('Can\'t use database : ' . mysql_error());
 
 require('functions.php');
 

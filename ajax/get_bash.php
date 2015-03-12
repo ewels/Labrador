@@ -26,37 +26,37 @@ Script to make a chunk of bash script for Processing steps
 require_once('../includes/start.php');
 
 // SRA UNIT REQUESTED
-if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' && 
-	isset($_POST['dataset']) && is_numeric($_POST['dataset']) && 
-	isset($_POST['genome']) && isset($_POST['server']) && 
+if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
+	isset($_POST['dataset']) && is_numeric($_POST['dataset']) &&
+	isset($_POST['genome']) && isset($_POST['server']) &&
 	isset($_POST['template']) && strlen($_POST['template']) > 0){
-	
+
 	echo "\n";
-	
+
 	$printout = '';
-	
-	$dataset_q = mysql_query("SELECT * FROM `datasets` WHERE `id` = '".$_POST['dataset']."'");
-	if(mysql_num_rows($dataset_q) > 0){
-		$dataset = mysql_fetch_array($dataset_q);
-		
-		$project_q = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$dataset['project_id']."'");
-		$project = mysql_fetch_array($project_q);
-		
+
+	$dataset_q = mysqli_query($dblink, "SELECT * FROM `datasets` WHERE `id` = '".$_POST['dataset']."'");
+	if(mysqli_num_rows($dataset_q) > 0){
+		$dataset = mysqli_fetch_array($dataset_q);
+
+		$project_q = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$dataset['project_id']."'");
+		$project = mysqli_fetch_array($project_q);
+
 		$dataset['name'] = str_replace('–', '-', $dataset['name']);
 		$dataset_fn = substr(preg_replace("/[^A-Za-z0-9_-]/", '_', $dataset['name']), 0, 100);
 		$dataset_fn = preg_replace('/_+/', '_', $dataset_fn);
 		$sras = split(" ",$dataset['accession_sra']);
 		$assigned_email = $project['assigned_to'];
-		
+
 		foreach($sras as $sra){
 			$sra = trim($sra);
 			if(strlen($sra) > 0){
 				$fn = $sra."_".$dataset_fn;
 				$sra_url = "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/".substr($sra,0,3)."/".substr($sra,0,6)."/".$sra."/".$sra.".sra";
 				$sra_url_wget = "$sra_url -O $fn.sra";
-				
+
 				$output = $_POST['template']."\n";
-				
+
 				$patterns = array(
 					'/{{fn}}/',
 					'/{{sra}}/',
@@ -87,36 +87,36 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 			}
 		}
 	}
-	
+
 	// SAVE TO DATABASE
 	if(isset($_POST['save_to_db']) && $_POST['save_to_db'] == 'true'){
 		$bash_fn = $project['name'].'_labrador_bash_'.date('d_m_Y').'.bash';
 		$sql = sprintf("INSERT INTO `processing` (`project_id`, `dataset_id`, `filename`, `commands`, `created`)
 			VALUES ('%d','%d', '%s', '%s', '%d')",
-			$project['id'], $dataset['id'], mysql_real_escape_string($bash_fn), mysql_real_escape_string($printout), time());
-		mysql_query($sql);
-	
+			$project['id'], $dataset['id'], mysqli_real_escape_string($dblink, $bash_fn), mysqli_real_escape_string($dblink, $printout), time());
+		mysqli_query($dblink, $sql);
+
 	// PRINT OUTPUT
 	} else {
 		echo $printout;
 	}
 
-	
+
 // PROJECT UNIT REQUESTED
-} else if(isset($_POST['unit']) && $_POST['unit'] == 'project' && 
-	isset($_POST['dataset']) && is_numeric($_POST['dataset']) && 
-	isset($_POST['genome']) && isset($_POST['server']) && 
+} else if(isset($_POST['unit']) && $_POST['unit'] == 'project' &&
+	isset($_POST['dataset']) && is_numeric($_POST['dataset']) &&
+	isset($_POST['genome']) && isset($_POST['server']) &&
 	isset($_POST['template']) && strlen($_POST['template']) > 0){
-	
+
 	echo "\n";
-	
-	$project_q = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$_POST['dataset']."'");
-	$project = mysql_fetch_array($project_q);
-	
+
+	$project_q = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$_POST['dataset']."'");
+	$project = mysqli_fetch_array($project_q);
+
 	$assigned_email = $project['assigned_to'];
-	
+
 	$output = $_POST['template']."\n";
-			
+
 	$patterns = array(
 		'/{{genome_path}}/',
 		'/{{assigned_email}}/',
@@ -133,11 +133,11 @@ if(isset($_POST['unit']) && $_POST['unit'] == 'accession_sra' &&
 
 // TEXT AREA REQUESTED
 } else if (isset($_GET['type']) && isset($_GET['server']) && in_array($_GET['server'], array_keys($processing_servers))){
-		
+
 	if(isset($processing_codes[$_GET['type']][$_GET['server']])){
 		echo $processing_codes[$_GET['type']][$_GET['server']];
 	}
-	
+
 }
 
 ?>

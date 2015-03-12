@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 ##########################################################################
 # Copyright 2013, Philip Ewels (phil.ewels@babraham.ac.uk)               #
@@ -43,13 +43,13 @@ if(isset($_GET['add']) && is_numeric($_GET['add'])){
 }
 
 if($project_id){
-	$projects = mysql_query("SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
-	if(mysql_num_rows($projects) == 1){
-		$project = mysql_fetch_array($projects);
+	$projects = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$project_id."'");
+	if(mysqli_num_rows($projects) == 1){
+		$project = mysqli_fetch_array($projects);
 		$project_users = array();
-		$project_users_q = mysql_query("SELECT `user_id` FROM `project_contacts` WHERE `project_id` = '$project_id'");
-		if(mysql_num_rows($project_users_q) > 0){
-			while($project_user = mysql_fetch_array($project_users_q)){
+		$project_users_q = mysqli_query($dblink, "SELECT `user_id` FROM `project_contacts` WHERE `project_id` = '$project_id'");
+		if(mysqli_num_rows($project_users_q) > 0){
+			while($project_user = mysqli_fetch_array($project_users_q)){
 				$project_users[] = $project_user['user_id'];
 			}
 		}
@@ -65,16 +65,16 @@ $error = false;
 // DELETE DATASETS
 if(!empty($_POST['delete_datasets_submit']) && $_POST['delete_datasets_submit'] == 'I’m sure - delete the datasets'){
 	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
+	$datasets = mysqli_query($dblink, $dataset_query);
 	$counter = 0;
-	if(mysql_num_rows($datasets) > 0){
-		while ($dataset = mysql_fetch_array($datasets)){
+	if(mysqli_num_rows($datasets) > 0){
+		while ($dataset = mysqli_fetch_array($datasets)){
 			$id = $dataset['id'];
 			if(isset($_POST["check_$id"]) && $_POST["check_$id"] == 'on'){
 				$query = "DELETE FROM `datasets` WHERE `id` = '$id'";
-				if(!mysql_query($query)){
+				if(!mysqli_query($dblink, $query)){
 					$error = true;
-					$msg[] = "Could not delete dataset. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+					$msg[] = "Could not delete dataset. mySQL error: <code>".mysqli_error()."</code><br>mySQL query: <code>$query</code>";
 				} else {
 					$counter++;
 				}
@@ -82,13 +82,13 @@ if(!empty($_POST['delete_datasets_submit']) && $_POST['delete_datasets_submit'] 
 		}
 	}
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Deleted $counter datasets."), time());
-	if(!mysql_query($query)){
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysqli_real_escape_string($dblink, "Deleted $counter datasets."), time());
+	if(!mysqli_query($dblink, $query)){
 		$error = true;
-		$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+		$msg[] = "Could not save history log to database. mySQL error: <code>".mysqli_error()."</code><br>mySQL query: <code>$query</code>";
 	}
-	
-	// Set up page	
+
+	// Set up page
 	if(!$error){
 		$msg[] = "Deleted $counter datasets.";
 	}
@@ -97,10 +97,10 @@ if(!empty($_POST['delete_datasets_submit']) && $_POST['delete_datasets_submit'] 
 // SAVE EDITED DATASETS
 if(!empty($_POST['edit_datasets']) && $_POST['edit_datasets'] == 'Edit Datasets'){
 	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
+	$datasets = mysqli_query($dblink, $dataset_query);
 	$counter = 0;
-	if(mysql_num_rows($datasets) > 0){
-		while ($dataset = mysql_fetch_array($datasets)){
+	if(mysqli_num_rows($datasets) > 0){
+		while ($dataset = mysqli_fetch_array($datasets)){
 			$id = $dataset['id'];
 			$sql = array();
 			$sql['name'] = $_POST["name_$id"];
@@ -113,26 +113,26 @@ if(!empty($_POST['edit_datasets']) && $_POST['edit_datasets'] == 'Edit Datasets'
 			$sql['modified'] = time();
 			$query = "UPDATE `datasets` SET ";
 			foreach($sql as $field => $var){
-				$query .= "`$field` = '".mysql_real_escape_string($var)."', ";
+				$query .= "`$field` = '".mysqli_real_escape_string($dblink, $var)."', ";
 			}
 			$query = substr($query, 0, -2)." WHERE `id` = '$id'";
 			// Save to database
-			if(!mysql_query($query)){
+			if(!mysqli_query($dblink, $query)){
 				$error = true;
-				$msg[] = "Could not save dataset to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+				$msg[] = "Could not save dataset to database. mySQL error: <code>".mysqli_error()."</code><br>mySQL query: <code>$query</code>";
 			} else {
 				$counter++;
 			}
 		}
 	}
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Edited datasets."), time());
-	if(!mysql_query($query)){
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysqli_real_escape_string($dblink, "Edited datasets."), time());
+	if(!mysqli_query($dblink, $query)){
 		$error = true;
-		$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+		$msg[] = "Could not save history log to database. mySQL error: <code>".mysqli_error()."</code><br>mySQL query: <code>$query</code>";
 	}
-	
-	// Set up page	
+
+	// Set up page
 	if($error){
 		$edit = true;
 	} else {
@@ -153,39 +153,39 @@ if(!empty($_POST['add_datasets']) && $_POST['add_datasets'] == 'Save All Dataset
 		$sql['accession_geo'] = $_POST["accession_geo_$i"];
 		$sql['accession_sra'] = $_POST["accession_sra_$i"];
 		$sql['modified'] = time();
-		
+
 		$query = "INSERT INTO `datasets` (";
 		foreach($sql as $field => $var){
 			$query .= "`$field`, ";
 		}
 		$query = substr($query, 0, -2).") VALUES (";
 		foreach($sql as $field => $var){
-			$query .= "'".mysql_real_escape_string($var)."', ";
+			$query .= "'".mysqli_real_escape_string($dblink, $var)."', ";
 		}
 		$query = substr($query, 0, -2).")";
 		// Save to database
-		if(!mysql_query($query)){
+		if(!mysqli_query($dblink, $query)){
 			$error = true;
-			$msg[] = "Could not save dataset to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+			$msg[] = "Could not save dataset to database. mySQL error: <code>".mysqli_error()."</code><br>mySQL query: <code>$query</code>";
 		}
 		$i++;
 	}
-	$i--; 
-	
+	$i--;
+
 	// Save history message
-	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysql_real_escape_string("Added $i datasets."), time());
-	if(!mysql_query($query)){
+	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')", $project_id, $user['id'], mysqli_real_escape_string($dblink, "Added $i datasets."), time());
+	if(!mysqli_query($dblink, $query)){
 		$error = true;
-		$msg[] = "Could not save history log to database. mySQL error: <code>".mysql_error()."</code><br>mySQL query: <code>$query</code>";
+		$msg[] = "Could not save history log to database. mySQL error: <code>".mysqli_error()."</code><br>mySQL query: <code>$query</code>";
 	}
-	
-	// Set up page	
+
+	// Set up page
 	if($error){
 		$add = true;
 	} else {
 		$msg[] = "Successfully added $i datasets.";
 	}
-	
+
 	// Email support if no-one is assigned
 	if(strlen($project['assigned_to']) < 3 && !$error && !$admin){
 		mail($support_email, "[Labrador] $i datasets added to ".$project['name'], "Hi there,
@@ -198,7 +198,7 @@ You can see the project here: ".$labrador_url."project.php?id=$project_id
 This is an automated e-mail sent from Labrador
 $labrador_url
 ", $email_headers);
-	
+
 	// Email person assigned
 	} else if(!$error && $project['assigned_to'] !== $user['email']){
 		mail($project['assigned_to'], "[Labrador] $i datasets added to ".$project['name'], "Hi there,
@@ -247,20 +247,20 @@ include('includes/header.php'); ?>
 	<?php if(!empty($msg)): ?>
 		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
-			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
+			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?>
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
 		</div>
 	<?php endif; ?>
-	
+
 	<?php if($admin || in_array($user['id'], $project_users)){ ?>
 	<a class="btn pull-right" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a>
 	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
 	<?php } ?>
-	
-	
+
+
 	<a class="labrador_help_toggle pull-right" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a>
 	<?php project_header($project); ?>
-	
+
 	<div class="labrador_help" style="display:none;">
 		<div class="well">
 			<h3>The Datasets Page</h3>
@@ -273,13 +273,13 @@ include('includes/header.php'); ?>
 			<p>You can read the full <a href="<?php echo $labrador_url; ?>/documentation/">Labrador documenation here</a>.</p>
 		</div>
 	</div>
-	
-	
+
+
 	<?php
 	$dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-	$datasets = mysql_query($dataset_query);
+	$datasets = mysqli_query($dblink, $dataset_query);
 	$existing_datasets = array();
-	if(mysql_num_rows($datasets) > 0){
+	if(mysqli_num_rows($datasets) > 0){
 	?>
 
 	<p style="margin-bottom:20px;"><label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label></p>
@@ -294,7 +294,7 @@ include('includes/header.php'); ?>
 			</tr>
 		</thead>
 		<tbody>
-	<?php while ($dataset = mysql_fetch_array($datasets)){ ?>
+	<?php while ($dataset = mysqli_fetch_array($datasets)){ ?>
 			<tr>
 				<td>
 				<?php if(!empty($dataset['notes'])) { ?>
@@ -305,7 +305,7 @@ include('includes/header.php'); ?>
 				<td><?php echo $dataset['species']; ?></td>
 				<td><?php echo $dataset['cell_type']; ?></td>
 				<td><?php echo $dataset['data_type']; ?></td>
-				<td><?php 
+				<td><?php
 				echo accession_badges ($dataset['accession_geo'], 'geo');
 				echo accession_badges ($dataset['accession_sra'], 'sra');
 				?></td>
@@ -322,29 +322,29 @@ include('includes/header.php'); ?>
 if($edit) { ?>
 
 <div class="sidebar-mainpage project-mainpage">
-	
+
 	<?php if(!empty($msg)): ?>
 		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
-			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
+			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?>
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
 		</div>
 	<?php endif; ?>
-	
+
 	<?php project_header($project); ?>
-	
+
 	<form class="form-inline well">
-		Batch update checked datasets: &nbsp; 
-		<input type="text" class="input-small bulk_update" id="name" placeholder="Name"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="species" placeholder="Species"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="cell_type" placeholder="Cell Type"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="data_type" placeholder="Data Type"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="notes" placeholder="Notes"> &nbsp; 
+		Batch update checked datasets: &nbsp;
+		<input type="text" class="input-small bulk_update" id="name" placeholder="Name"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="species" placeholder="Species"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="cell_type" placeholder="Cell Type"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="data_type" placeholder="Data Type"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="notes" placeholder="Notes"> &nbsp;
 		<small><em>(overwrites current values)</em></small>
 	</form>
-	
+
 	<form action="datasets.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
-		
+
 		<table id="edit_existing_datasets_table" class="table table-bordered table-condensed table-hover table_form">
 			<thead>
 				<tr>
@@ -360,9 +360,9 @@ if($edit) { ?>
 			</thead>
 			<tbody>
 		<?php $dataset_query = "SELECT * FROM `datasets` WHERE `project_id` = '$project_id'";
-		$datasets = mysql_query($dataset_query);
-		if(mysql_num_rows($datasets) > 0){
-			while ($dataset = mysql_fetch_array($datasets)){ ?>
+		$datasets = mysqli_query($dblink, $dataset_query);
+		if(mysqli_num_rows($datasets) > 0){
+			while ($dataset = mysqli_fetch_array($datasets)){ ?>
 				<tr>
 					<td class="select"><input type="checkbox" class="select-row" id="check_<?php echo $dataset['id']; ?>" name="check_<?php echo $dataset['id']; ?>"></td>
 					<td><input class="name" type="text" name="name_<?php echo $dataset['id']; ?>" value="<?php echo $dataset['name']; ?>"></td>
@@ -381,17 +381,17 @@ if($edit) { ?>
 		<?php } ?>
 			</tbody>
 		</table>
-		
+
 		<div class="form-actions">
 			<input type="submit" class="btn btn-primary btn-large" name="edit_datasets" id="edit_datasets" value="Edit Datasets">
 			&nbsp; <a href="#" id="delete_datasets_button" class="btn btn-large btn-danger popover_button" data-toggle="popover" data-html="true" title="Delete Checked Datasets" data-content="Are you sure? <strong>This cannot be undone</strong>. Data on the server will not be affected. <br><br> <input type='submit' class='btn btn-danger btn-block' name='delete_datasets_submit' value='I&#8217;m sure - delete the datasets'>" data-original-title="Delete Checked Datasets">Delete Checked Datasets</a>
 		</div>
-		
+
 	</form>
-	
+
 </div>
 
-<?php } // if($edit) 
+<?php } // if($edit)
 
 if($add) { ?>
 
@@ -400,26 +400,26 @@ if($add) { ?>
 	<?php if(!empty($msg)): ?>
 		<div class="alert alert-<?php echo $error ? 'error' : 'success'; ?>">
 			<button type="button" class="close" data-dismiss="alert">×</button>
-			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?> 
+			<?php echo $error ? '<strong>Error!</strong><br>' : ''; ?>
 			<?php foreach($msg as $var)	echo $var.'<br>'; ?>
 		</div>
 	<?php endif; ?>
-	
+
 	<?php project_header($project); ?>
-	
+
 	<div class="alert alert-warning" style="display:none;" id="lookup_error">
 		<button type="button" class="close" data-dismiss="alert">×</button>
 		<div class="msg_content">
-		
+
 		</div>
 	</div>
-	
+
 	<form class="form-inline well action_buttons">
 		<div class="input-prepend">
 			<button class="btn" type="button" id="btn_add_datasets">Add datasets</button>
-			<input style="width:20px;" id="num_datasets" type="text" value="1">			
+			<input style="width:20px;" id="num_datasets" type="text" value="1">
 		</div>
-		&nbsp; &nbsp; 
+		&nbsp; &nbsp;
 		<?php if(strlen($project['accession_geo']) > 0) {
 			$geo_accessions = explode(" ",$project['accession_geo']);
 			foreach($geo_accessions as $acc) {
@@ -449,14 +449,14 @@ if($add) { ?>
 		<?php }
 		} ?>
 		<hr>
-		Batch update checked datasets: &nbsp; 
-		<input type="text" class="input-small bulk_update" id="name" placeholder="Name"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="species" placeholder="Species"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="cell_type" placeholder="Cell Type"> &nbsp; 
-		<input type="text" class="input-small bulk_update" id="data_type" placeholder="Data Type"> &nbsp; 
+		Batch update checked datasets: &nbsp;
+		<input type="text" class="input-small bulk_update" id="name" placeholder="Name"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="species" placeholder="Species"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="cell_type" placeholder="Cell Type"> &nbsp;
+		<input type="text" class="input-small bulk_update" id="data_type" placeholder="Data Type"> &nbsp;
 		<small><em>(overwrites current values)</em></small>
 	</form>
-	
+
 	<form action="datasets.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal form_validate">
 		<table id="add_existing_datasets_table" class="table table-bordered table-condensed table-hover table_form">
 			<thead>
@@ -482,13 +482,13 @@ if($add) { ?>
 				</tr>
 			</tbody>
 		</table>
-		
+
 		<div class="alert alert-error" style="display:none;" id="lookup_warning">
 			<button type="button" class="close" data-dismiss="alert">×</button>
 			<strong>Please remember to remove any datasets that you don't need.</strong>
 			Adding additional datasets will delay the processing of your project.
 		</div>
-		
+
 		<div class="form-actions">
 			<input type="submit" class="btn btn-primary btn-large" name="add_datasets" id="add_datasets_submit" value="Save All Datasets">
 			&nbsp; <a href="#" id="remove_datasets_button" class="btn btn-large btn-danger popover_button">Remove Checked Datasets</a>
