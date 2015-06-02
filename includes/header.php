@@ -41,6 +41,8 @@ if(!isset($root)){
 	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,400italic' rel='stylesheet' type='text/css'>
 	<link href="<?php echo $root; ?>css/bootstrap.min.css" rel="stylesheet">
 	<link href="<?php echo $root; ?>css/bootstrap-responsive.min.css" rel="stylesheet">
+	<link href="<?php echo $root; ?>includes/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+	<link href="<?php echo $root; ?>includes/datatables/css/dataTables.tableTools.min.css" rel="stylesheet">
 	<link href="<?php echo $root; ?>css/styles.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -52,20 +54,20 @@ if(!isset($root)){
   </head>
 
 	<body <?php if(basename($_SERVER['PHP_SELF']) == 'project.php') { ?> style="background-color: #FAFAFA;"<?php } ?>>
-	
+
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container-fluid">
-			
+
 				<a class="brand" href="<?php echo $root; ?>index.php">Labrador <img src="<?php echo $root; ?>img/labrador_logo_tiny.png"></a>
-				
+
 				<form class="navbar-search form-search pull-left" action="<?php echo $root; ?>search.php" method="get">
 					<div class="input-append">
 						<input type="text" name="s" id="s" class="search-query" placeholder="Search" autocomplete="off" <?php if(isset($_GET['s'])){ echo 'value="'.htmlentities($_GET['s']).'"'; } ?>>
 						<button class="btn">Search</button>
 					</div>
 				</form>
-				
+
 				<ul class="nav" style="margin-left:20px;">
 					<li><a href="<?php echo $root; ?>project.php" class="request-dataset-nav-link">Create New Project</a></li>
 					<?php labrador_login_link(); ?>

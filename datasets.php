@@ -229,9 +229,6 @@ include('includes/header.php'); ?>
 			<a href="datasets.php?id=<?php echo $project_id; ?>">Datasets</a>
 		</li>
 		<li>
-			<a href="processing.php?id=<?php echo $project_id; ?>">Processing</a>
-		</li>
-		<li>
 			<a href="reports.php?id=<?php echo $project_id; ?>">Reports</a>
 		</li>
 		<li>
@@ -282,8 +279,11 @@ include('includes/header.php'); ?>
 	if(mysqli_num_rows($datasets) > 0){
 	?>
 
-	<p style="margin-bottom:20px;"><label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label></p>
-	<table id="existing_datasets_table" class="table table-bordered table-condensed table-hover sortable">
+	<p style="margin-bottom:20px;">
+		<a href="#sra-links-modal" role="button" class="btn pull-right" data-toggle="modal">Get SRA Links</a>
+		<label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label>
+	</p>
+	<table id="existing_datasets_table" class="display compact sortable order-column hover">
 		<thead>
 			<tr>
 				<th data-sort="string-ins">Name</th>
@@ -300,12 +300,12 @@ include('includes/header.php'); ?>
 				<?php if(!empty($dataset['notes'])) { ?>
 					<i class="icon-tag pull-right" title="<?php echo $dataset['notes']; ?>"></i>
 				<?php } ?>
-					<label for="check_<?php echo $dataset['id']; ?>"><?php echo $dataset['name']; ?></label>
+					<label for="check_<?php echo $dataset['id']; ?>" class="dataset_name"><?php echo $dataset['name']; ?></label>
 				</td>
 				<td><?php echo $dataset['species']; ?></td>
 				<td><?php echo $dataset['cell_type']; ?></td>
 				<td><?php echo $dataset['data_type']; ?></td>
-				<td><?php
+				<td class="dataset-accessions"><?php
 				echo accession_badges ($dataset['accession_geo'], 'geo');
 				echo accession_badges ($dataset['accession_sra'], 'sra');
 				?></td>
@@ -315,6 +315,20 @@ include('includes/header.php'); ?>
 	</table>
 
 	<?php } //check for existing datasets ?>
+</div>
+
+<!-- SRA links Modal -->
+<div id="sra-links-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="sra-links-modal-header" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="sra-links-modal-header">SRA Download Links</h3>
+  </div>
+  <div class="modal-body"><pre style="overflow-x: scroll; white-space: nowrap; font-size: 0.8em;">[ loading ]</pre></div>
+  <div class="modal-footer">
+	<p class="muted pull-left">NB: Works with <a href="http://clusterflow.io">Cluster Flow</a>.</p>
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	<button class="btn btn-primary" id="datasets_download_file">Download</a>
+  </div>
 </div>
 
 <?php } // if(!$edit && !$add)
@@ -345,7 +359,7 @@ if($edit) { ?>
 
 	<form action="datasets.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal">
 
-		<table id="edit_existing_datasets_table" class="table table-bordered table-condensed table-hover table_form">
+		<table id="edit_existing_datasets_table" class="table table-bordered table-condensed table_form">
 			<thead>
 				<tr>
 					<th class="select"><input type="checkbox" class="select-all"></th>
@@ -458,7 +472,7 @@ if($add) { ?>
 	</form>
 
 	<form action="datasets.php?id=<?php echo $project_id; ?>" method="post" class="form-horizontal form_validate">
-		<table id="add_existing_datasets_table" class="table table-bordered table-condensed table-hover table_form">
+		<table id="add_existing_datasets_table" class="table table-bordered table-condensed table_form">
 			<thead>
 				<tr>
 					<th class="select"><input type="checkbox" class="select-all"></th>

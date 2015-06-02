@@ -32,6 +32,8 @@ Template file to include Javascript sources in the page footer
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="<?php echo $root; ?>js/jquery-1.8.3.min.js"></script>
 <script src="<?php echo $root; ?>js/bootstrap.min.js"></script>
+<script src="<?php echo $root; ?>includes/datatables/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo $root; ?>includes/datatables/js/dataTables.tableTools.min.js"></script>
 <script src="<?php echo $root; ?>js/jquery.validate.min.js"></script>
 <script src="<?php echo $root; ?>js/stupidtable.min.js"></script>
 <script src="<?php echo $root; ?>js/global.js"></script>

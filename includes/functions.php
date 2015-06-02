@@ -34,19 +34,19 @@ function accession_badges ($string, $type){
 		foreach($accessions as $accession){
 			switch ($type){
 				case 'geo':
-					$class = '';
+					$class = 'geo';
 					$url = 'http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=';
 					break;
 				case 'sra':
-					$class = 'label-info';
+					$class = 'sra label-info';
 					$url = 'http://www.ncbi.nlm.nih.gov/sra/';
 					break;
 				case 'ena':
-					$class = 'label-success';
+					$class = 'ena label-success';
 					$url = 'http://www.ebi.ac.uk/ena/data/view/';
 					break;
 				case 'ddjb':
-					$class = 'label-warning';
+					$class = 'ddjb label-warning';
 					if(substr($accession, 0, 3) == 'DRP'){
 						$url = 'http://trace.ddbj.nig.ac.jp/DRASearch/study?acc=';
 					} else if(substr($accession, 0, 3) == 'DRA'){

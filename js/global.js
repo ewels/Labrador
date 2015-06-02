@@ -63,12 +63,12 @@ $('.form_validate').validate({
 	errorClass:'help-inline text-error',
 	validClass:'help-inline text-success',
 	errorElement:'span',
-	highlight: function (element, errorClass, validClass) { 
+	highlight: function (element, errorClass, validClass) {
 		$(element).parents("div[class='clearfix']").addClass(errorClass).removeClass(validClass);
 		$(element).addClass('inputError');
-	}, 
-	unhighlight: function (element, errorClass, validClass) { 
-		$(element).parents(".error").removeClass(errorClass).addClass(validClass); 
+	},
+	unhighlight: function (element, errorClass, validClass) {
+		$(element).parents(".error").removeClass(errorClass).addClass(validClass);
 		$(element).removeClass('inputError');
 	}
 });
@@ -103,7 +103,17 @@ $('.fake_link').click(function(e){
 });
 
 // Sortable tables
-$("table.sortable").stupidtable();
+// $("table.sortable").stupidtable();
+$(document).ready(function(){
+	$('table.sortable').dataTable( {
+        "dom": 'T<"clear">lfrt',
+		"paging": false,
+        "tableTools": {
+            "sRowSelect": "os",
+            "aButtons": [ "select_all", "select_none" ]
+        }
+    } );
+});
 
 // Is a number?
 function isNumber(n) {
