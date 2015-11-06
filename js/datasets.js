@@ -53,9 +53,18 @@ $('#sra-links-modal').on('show', function () {
 	$('#sra-links-modal .modal-body pre').html(file);
 });
 
-$('#datasets_download_file').click(function(){
+$('#datasets_download_file').click(function(e){
+	e.preventDefault();
 	var file = $('#sra-links-modal .modal-body pre').text();
 	$('<a href="data:text/plain,'+encodeURIComponent(file)+'" download="sra_downloads.txt">')[0].click()
+});
+$('#datasets_save_to_server').click(function(e){
+	e.preventDefault();
+	var contents = $('#sra-links-modal .modal-body pre').text();
+	var project_id = $('#datasets_save_to_server').data('projectid');
+	$.post('ajax/write_bash.php', {'contents': contents, 'project_id': project_id},  function(data){
+		alert(data);
+	});
 });
 
 // Edit - Batch update checked datasets

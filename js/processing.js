@@ -267,11 +267,9 @@ $('#save_bash_script').click(function(e){
 	}
 });
 function saveBashScript (){
-	var server = $('#server').val();
 	var output = $('#bash_preview pre').text();
 	var project_id = $('#project_id').val();
-	var bash_fn = $('#bash_script_fn').val();
-	$.post('ajax/write_bash.php', {'output': output, 'project_id': project_id, 'server': server, 'bash_fn': bash_fn},  function(data){
+	$.post('ajax/write_bash.php', {'contents': output, 'project_id': project_id},  function(data){
 		alert(data);
 	});
 }

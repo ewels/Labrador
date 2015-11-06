@@ -21,32 +21,27 @@
 
 
 /*
-Script to write out the processing bash script to a file
+Script to write out the cluster flow filenames file to the cluster
 */
 
 require_once('../includes/start.php');
 
-if(isset($_POST['output']) && isset($_POST['project_id']) && is_numeric($_POST['project_id'])){
+if(isset($_POST['contents']) && isset($_POST['project_id']) && is_numeric($_POST['project_id'])){
 
 	$project_q = mysqli_query($dblink, "SELECT * FROM `projects` WHERE `id` = '".$_POST['project_id']."'");
 	$project = mysqli_fetch_array($project_q);
-
-	if(isset($_POST['bash_fn'])){
-		$bash_fn = preg_replace("/[^A-Za-z0-9_\.]/", '_', $_POST['bash_fn']);
-	} else {
-		$bash_fn = $project['name'].'_labrador_bash_'.date('d_m_Y').'.bash';
-	}
+	
+	$filename = $project['name'].'_labrador_downloads_'.date('d_m_Y').'.txt';
 	$dir = $data_root.$project['name'].'/';
-	$fn = $dir.$bash_fn;
+	$fn = $dir.$filename;
 
 	// Save history message
 	$query = sprintf("INSERT INTO `history` (`project_id`, `user_id`, `note`, `time`) VALUES ('%d', '%d', '%s', '%d')",
-		$project['id'], $user['id'], mysqli_real_escape_string($dblink, "Saved bash script $bash_fn"), time());
+		$project['id'], $user['id'], mysqli_real_escape_string($dblink, "Saved file names file '$filename'"), time());
 	mysqli_query($dblink, $query);
 
 	// Write file contents
-	# $output = "# Bash script produced by Labrador at ".date('H:i, l \t\h\e jS F Y')."\n# Script written for the ".$_POST['server']." server\n\n";
-	$output .= $_POST['output'];
+	$output = $_POST['contents'];
 	$output = str_replace("\r", "", $output);
 
 	// Check the directory exists
@@ -61,10 +56,10 @@ if(isset($_POST['output']) && isset($_POST['project_id']) && is_numeric($_POST['
 	fwrite($fh, $output);
 	fclose($fh);
 
-	echo 'Bash script saved.';
+	echo 'File saved.';
 
 } else {
-	echo 'Missing vars to save bash script';
+	echo 'Missing vars to save file';
 }
 
 ?>

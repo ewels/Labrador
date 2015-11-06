@@ -327,7 +327,12 @@ include('includes/header.php'); ?>
   <div class="modal-footer">
 	<p class="muted pull-left">NB: Works with <a href="http://clusterflow.io">Cluster Flow</a>.</p>
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	<button class="btn btn-primary" id="datasets_download_file">Download</a>
+	<button class="btn" id="datasets_download_file">Download</button>
+	<button class="btn btn-primary" id="datasets_save_to_server" data-projectid="<?php echo $project_id; ?>">Save to cluster</button>
+	<p class="text-left muted">
+		Cluster location:<br>
+		<code style="font-size: 10px;" id="datasetsr_save_to_server_path"><?php echo $data_root.$project['name'].'/'.$project['name'].'_labrador_downloads_'.date('d_m_Y').'.txt'; ?></code>
+	</p>
   </div>
 </div>
 
