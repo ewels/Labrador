@@ -44,7 +44,11 @@ $('#filter-datasets').keyup(function(e){
 // Download text file of dataset URLs
 $('#sra-links-modal').on('show', function () {
 	var file = '';
-	$('.dataset-accessions .sra:visible').each(function(){
+	var rows = $('#existing_datasets_table tbody tr.selected');
+	if(rows.length == 0){
+		rows = $('#existing_datasets_table tbody tr');
+	}
+	rows.find($('.dataset-accessions .sra:visible')).each(function(){
 		var acc = $(this).text();
 		file += "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+acc.substring(0,3)+"/"+acc.substring(0,6)+"/"+acc+"/"+acc+".sra";
 		var name = $(this).closest('tr').find('.dataset_name').text();

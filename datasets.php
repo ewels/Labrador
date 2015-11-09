@@ -280,7 +280,7 @@ include('includes/header.php'); ?>
 	?>
 
 	<p style="margin-bottom:20px;">
-		<a href="#sra-links-modal" role="button" class="btn pull-right" data-toggle="modal">Get SRA Links</a>
+		<a href="#sra-links-modal" role="button" class="btn btn-primary pull-right" data-toggle="modal">Get SRA Links</a>
 		<label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label>
 	</p>
 	<table id="existing_datasets_table" class="display compact sortable order-column hover">

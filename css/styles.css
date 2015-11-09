@@ -146,6 +146,10 @@ table.sortable th[data-sort] {
 	cursor:pointer;
 }
 
+table.dataTable thead th, table.dataTable thead td, table.dataTable.no-footer {
+    border-bottom: 1px solid #ccc;
+}
+
 .labrador_help_toggle {
 	padding:5px 20px 5px 10px;
 }
