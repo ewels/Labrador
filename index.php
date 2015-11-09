@@ -213,15 +213,7 @@ include('includes/header.php');
 							</a>
 						</td>
 					</tr>
-				<?php } ?>
-				<tr id="no_datasets" style="display:none;">
-					<td colspan="5"><em>No datasets found</em></td>
-				</tr>
-				<?php } else { ?>
-				<tr id="no_datasets">
-					<td colspan="5"><em>No datasets found</em></td>
-				</tr>
-				<?php } ?>
+				<?php }  } ?>
 			</tbody>
 		</table>
 
