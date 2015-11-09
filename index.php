@@ -112,11 +112,12 @@ include('includes/header.php');
 		<table id="paper-browser-table" class="table table-hover table-condensed table-bordered sortable">
 			<thead>
 				<tr>
-					<th data-sort="string-ins" style="width:10%;">Name</th>
-					<th data-sort="int" style="width:5%;">Datasets</th>
-					<th data-sort="string-ins" style="width:15%;">Species</th>
-					<th data-sort="string-ins" style="width:40%;">Cell Types</th>
-					<th data-sort="string-ins" style="width:30%;">Data Types</th>
+					<th data-sort="string-ins">Name</th>
+					<th data-sort="int">Datasets</th>
+					<th data-sort="string-ins">Species</th>
+					<th data-sort="string-ins">Cell Types</th>
+					<th data-sort="string-ins">Data Types</th>
+					<th data-sort="string-ins">Last Modified</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -153,7 +154,10 @@ include('includes/header.php');
 						$authors = explode(' ', $paper['authors']);
 						$papers[] = $authors[0].' '.$paper['journal'].' ('.$paper['year'].')';
 					}
-
+					
+					// Project last modified
+					$last_mod = $project['modified'];
+					
 					// Find datasets
 					$datasets = mysqli_query($dblink, "SELECT * FROM `datasets` WHERE `project_id` = '".$project['pid']."'");
 					$num_datasets = mysqli_num_rows($datasets);
@@ -170,7 +174,17 @@ include('includes/header.php');
 						if(!in_array($dataset['data_type'], $data_types)){
 							$data_types[] = $dataset['data_type'];
 						}
+						if($dataset['modified'] !== NULL){
+							if($last_mod === NULL){
+								$last_mod = $dataset['modified'];
+							} else {
+								$last_mod = max($last_mod, $dataset['modified']);
+							}
+						}
 					}
+					
+					$last_mod = $last_mod === NULL ? '' : date('Y/m/d', $last_mod);
+					
 					?>
 					<tr id="project_<?php echo $project['pid']; ?>" data-status="<?php echo $project['status']; ?>" class="project <?php
 						if($project['status'] == 'Not Started' || ($project['status'] == '' && !file_exists($data_root.$project['name']))){
@@ -210,6 +224,11 @@ include('includes/header.php');
 						<td class="data_type">
 							<a href="project.php?id=<?php echo $project['pid']; ?>">
 								<?php echo implode(', ', $data_types); ?>
+							</a>
+						</td>
+						<td class="last_mod">
+							<a href="project.php?id=<?php echo $project['pid']; ?>">
+								<?php echo $last_mod; ?>
 							</a>
 						</td>
 					</tr>

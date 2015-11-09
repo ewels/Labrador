@@ -291,6 +291,7 @@ include('includes/header.php'); ?>
 				<th data-sort="string-ins">Cell Type</th>
 				<th data-sort="string-ins">Data Type</th>
 				<th style="width:20%;">Accession Codes</th>
+				<th data-sort="string-ins">Last Modified</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -309,6 +310,7 @@ include('includes/header.php'); ?>
 				echo accession_badges ($dataset['accession_geo'], 'geo');
 				echo accession_badges ($dataset['accession_sra'], 'sra');
 				?></td>
+				<td class="text-right"><?php echo $dataset['modified'] === NULL ? '' : date('Y/m/d', $dataset['modified']); ?></td>
 			</tr>
 	<?php } // dataset while loop ?>
 		</tbody>
