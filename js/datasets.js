@@ -24,23 +24,6 @@
    Javascript for the Labrador Datasets page
 */
 
-// View - Filter datasets by text entry
-$('#filter-datasets').keyup(function(e){
-	if($(this).val().length == 0){
-		$('#existing_datasets_table tbody tr').show();
-	} else {
-		$('#existing_datasets_table tbody tr').hide();
-		var filterText = $(this).val().toLowerCase();
-		$('#existing_datasets_table tbody tr td').filter(function(i){
-			if($(this).text().toLowerCase().indexOf(filterText) >= 0){
-				return true;
-			} else {
-				return false;
-			}
-		}).parent().show();
-	}
-});
-
 // Download text file of dataset URLs
 $('#sra-links-modal').on('show', function () {
 	var file = '';

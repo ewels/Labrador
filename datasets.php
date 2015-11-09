@@ -250,8 +250,11 @@ include('includes/header.php'); ?>
 	<?php endif; ?>
 
 	<?php if($admin || in_array($user['id'], $project_users)){ ?>
-	<a class="btn pull-right" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a>
-	<a style="margin-right:15px;" class="btn pull-right" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a>
+		<div class="pull-right">
+			<a class="btn" href="datasets.php?edit=<?php echo $project['id']; ?>">Edit Datasets</a> &nbsp; 
+			<a class="btn" href="datasets.php?add=<?php echo $project['id']; ?>">Add Datasets</a> &nbsp; 
+			<a href="#sra-links-modal" role="button" class="btn btn-primary" data-toggle="modal">Get SRA Links</a>
+		</div>
 	<?php } ?>
 
 
@@ -278,11 +281,7 @@ include('includes/header.php'); ?>
 	$existing_datasets = array();
 	if(mysqli_num_rows($datasets) > 0){
 	?>
-
-	<p style="margin-bottom:20px;">
-		<a href="#sra-links-modal" role="button" class="btn btn-primary pull-right" data-toggle="modal">Get SRA Links</a>
-		<label>Filter datasets: &nbsp; <input type="text" id="filter-datasets" /></label>
-	</p>
+	
 	<table id="existing_datasets_table" class="display compact sortable order-column hover">
 		<thead>
 			<tr>
