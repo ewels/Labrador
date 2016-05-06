@@ -43,7 +43,29 @@ include('includes/header.php');
 		</div>
 		<h1><?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
 
-		<p class="lead">You can use labrador to find and download processed data or request new datasets.
+		<p class="lead">
+
+        System Status: &nbsp </FONT>
+                <?php 
+                $space_left_cmd = shell_exec ('df -h | grep storage'); 
+                $space_headers  = preg_split('/\s+/', $space_left_cmd);
+                $usednumber     = str_replace("T", "", $space_headers[2]);
+
+                if ($usednumber > 18) {
+                   $fontcol = "red"; 
+                } else {
+                   $fontcol = "green"; 
+                }
+              
+                echo '<FONT COLOR='.$fontcol.'>';
+                $space_left     = ('Total Space = '.$space_headers[1].' Used Space = '.$space_headers[2].' Percent Used= '.$space_headers[4]);
+                echo $space_left;
+                echo '</FONT>';
+                ?>
+
+
+		<P>Please submit feature requests and bug reports at <A HREF="https://github.com/darogan/labrador/issues">https://github.com/darogan/labrador/issues</A>
+		You can use labrador to find and download processed data or request new datasets.
 		Projects are annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
 
 		<div class="labrador_help" style="display:none;">
@@ -134,7 +156,7 @@ include('includes/header.php');
 			} else if($admin && isset($_GET['unassigned'])){
 				$sql .= " WHERE `assigned_to` IS NULL OR `assigned_to` = ''";
 			}
-			$sql .=  " ORDER BY `name`";
+			$sql .=  " ORDER BY `id` DESC";
 			$projects = mysqli_query($dblink, $sql);
 			if(mysqli_num_rows($projects) > 0){
 				while($project = mysqli_fetch_array($projects)){
