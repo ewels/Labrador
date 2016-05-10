@@ -295,11 +295,31 @@ include('includes/header.php'); ?>
 					}
 				}
 
+
+                function make_webstartlink($path,$dir){
+                    // BAM files
+                    $url_short = str_replace('/storage/', '', $dir);
+                    $bam_web_link = "";
+                    if(substr($path, -4) == '.bam'){
+                       $bam_web_link = '<BR>--<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://10.0.2.249/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><P style="font-size:6pt">(Broken in Chrome)</P>';
+                    } // if BAM
+                    return $bam_web_link;
+                }
+
+                function make_urlshort($path,$dir){
+                    $tmp_url_short = str_replace('/storage/', '', $dir);
+                    $url_short = '<a href="http://10.0.2.249/' . $tmp_url_short . $path . '">[Hard Link]</a>';
+                                 // '">http://10.0.2.249/'. $tmp_url_short . $path . '</a>';
+                    return $url_short;
+                 }
+
 				$j = 0;
 				foreach($datasets as $dataset){
 					$paths = $dataset['paths'];
 					ksort($paths);
 					foreach($paths as $raw_path => $size){
+
+						if($size > 750){
 						$j++;
 						$path = substr($raw_path, strlen($dir)); ?>
 					<tr>
@@ -308,8 +328,11 @@ include('includes/header.php'); ?>
 						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
 						<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+						<td><?php echo make_urlshort($path,$dir); ?>
+                        <?php echo make_webstartlink($path,$dir); ?></td>
 					</tr>
 				<?php
+				        } // human_readable if statement
 					} //foreach path
 				} // foreach dataset
 				ksort($orphans);
