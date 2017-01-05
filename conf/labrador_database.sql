@@ -1,7 +1,8 @@
-CREATE DATABASE `labrador`;
-GRANT ALL PRIVILEGES ON `labrador`.* TO 'labrador'@'localhost';
+CREATE DATABASE `labrador-dropseq`;
+CREATE USER 'labrador-dropseq'@'localhost';
+GRANT ALL PRIVILEGES ON `labrador-dropseq`.* TO 'labrador-dropseq'@'localhost';
 FLUSH PRIVILEGES;
-USE `labrador`;
+USE `labrador-dropseq`;
 
 -- MySQL dump 10.13  Distrib 5.5.29, for Linux (x86_64)
 --

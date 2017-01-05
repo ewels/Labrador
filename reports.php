@@ -111,7 +111,7 @@ if(file_exists($data_root.$project['name'])){
 			}
 		}
 		if($count > 0 ){
-			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview">'.$output.'</select></label>';
+			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview" style="max-width: 90%; min-width: 90%; width: 90%">'.$output.'</select></label>';
 		}
 	}
 
@@ -124,10 +124,10 @@ if(file_exists($data_root.$project['name'])){
 		if(mysqli_num_rows($datasets) > 0){
 			while ($dataset = mysqli_fetch_array($datasets)){
 				$ds_needles[$dataset['name']] = array($dataset['name']);
-				foreach(split(" ",$dataset['accession_geo']) as $geo){
+				foreach(preg_split(" ",$dataset['accession_geo']) as $geo){
 					array_push($ds_needles[$dataset['name']], $geo);
 				}
-				foreach(split(" ",$dataset['accession_sra']) as $sra){
+				foreach(preg_split(" ",$dataset['accession_sra']) as $sra){
 					array_push($ds_needles[$dataset['name']], $sra);
 				}
 			}
@@ -164,7 +164,8 @@ if(file_exists($data_root.$project['name'])){
 									$optgroup .= ' selected="selected"';
 									$dataset_name = $dsname;
 								}
-								$optgroup .= '>'.report_naming($path, $type).'</option>';
+								#$optgroup .= '>'.report_naming($path, $type).'</option>';
+                                                                $optgroup .= '>'. $path .'</option>';
 								$count++;
 								break;
 							}
@@ -176,7 +177,7 @@ if(file_exists($data_root.$project['name'])){
 					}
 				}
 				if($count > 0 ){
-					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'">'.$output.'</select></label>';
+					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'" style="max-width: 90%; min-width: 90%; width: 90%">'.$output.'</select></label>';
 				}
 			}
 		}

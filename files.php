@@ -256,7 +256,7 @@ include('includes/header.php'); ?>
 					$genome = '';
 					// Find genome from BAM or SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ('/storage/Software/packages/samtools-1.3.1/bin/samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
@@ -285,7 +285,7 @@ include('includes/header.php'); ?>
 				function find_parameters($path){
 					// BAM and SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ('/storage/Software/packages/samtools-1.3.1/bin/samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
@@ -301,15 +301,15 @@ include('includes/header.php'); ?>
                     $url_short = str_replace('/storage/', '', $dir);
                     $bam_web_link = "";
                     if(substr($path, -4) == '.bam'){
-                       $bam_web_link = '<BR>--<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://10.0.2.249/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><P style="font-size:6pt">(Broken in Chrome)</P>';
+                       $bam_web_link = '<BR>--<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://ctr-bfx.pdn.private.cam.ac.uk/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><P style="font-size:6pt">(Broken in Chrome)</P>';
                     } // if BAM
                     return $bam_web_link;
                 }
 
                 function make_urlshort($path,$dir){
                     $tmp_url_short = str_replace('/storage/', '', $dir);
-                    $url_short = '<a href="http://10.0.2.249/' . $tmp_url_short . $path . '">[Hard Link]</a>';
-                                 // '">http://10.0.2.249/'. $tmp_url_short . $path . '</a>';
+                    $url_short = '<a href="http://ctr-bfx.pdn.private.cam.ac.uk/' . $tmp_url_short . $path . '">[Hard Link]</a>';
+                                 // '">http://ctr-bfx.pdn.private.cam.ac.uk/'. $tmp_url_short . $path . '</a>';
                     return $url_short;
                  }
 
