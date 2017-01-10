@@ -38,10 +38,16 @@ include('includes/header.php');
 		</div>
 		<?php endif; ?>
 
+
+
+
  		<div class="pull-right visible-desktop home-lab">
 			<a data-toggle="modal" href="#tutorial_video_modal"><img src="img/screencast_thumb.png"></a>
 		</div>
-		<h1><?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
+
+<h1><img class="pull-left visible-desktop" src="img/CTR_600.png" style="margin: 0 20px 10px 0;">
+
+		<?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
 
 		<p class="lead">
 
@@ -259,7 +265,7 @@ include('includes/header.php');
 		</table>
 
 
-		<img class="pull-right visible-desktop" src="img/puppy.jpg" style="margin: 0 -20px -40px 0;">
+		<img class="pull-right visible-desktop" src="img/CTR_600.png" style="margin: 0 -20px -40px 0;">
 		<div class="clearfix"></div>
 		<footer>
 			<hr>
