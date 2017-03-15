@@ -248,6 +248,7 @@ include('includes/header.php'); ?>
 						<th data-sort="int" style="width:10%;">File Size</th>
 						<th data-sort="string-ins" style="width:15%;">Genome</th>
 						<th data-sort="string-ins">Filename</th>
+                                                <th data-sort="string-ins" style="width:5%;">Links</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -261,7 +262,7 @@ include('includes/header.php'); ?>
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
 								$genomes = explode(" ", substr($header, stripos($header, 'Genomes/') + 8));
-								$genomes2 = split("/", $genomes[0]);
+								$genomes2 = preg_split("/", $genomes[0]);
 								$genome = $genomes2[0].' - '.$genomes2[1];
 							}
 						}
@@ -301,7 +302,7 @@ include('includes/header.php'); ?>
                     $url_short = str_replace('/storage/', '', $dir);
                     $bam_web_link = "";
                     if(substr($path, -4) == '.bam'){
-                       $bam_web_link = '<BR>--<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://ctr-bfx.pdn.private.cam.ac.uk/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><P style="font-size:6pt">(Broken in Chrome)</P>';
+                       $bam_web_link = '<BR>><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://ctr-bfx.pdn.private.cam.ac.uk/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><FONT style="font-size:6pt">(Broken in Chrome)</FONT>';
                     } // if BAM
                     return $bam_web_link;
                 }
