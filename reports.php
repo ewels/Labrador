@@ -240,7 +240,7 @@ if(file_exists($data_root.$project['name'])){
                 } else if(in_array($fileinfo['extension'], $markdown)){
                         include('ParseDown/Parsedown.php');
                         $Parsedown = new Parsedown();
-                        echo '<pre>'.$Parsedown->text(file_get_contents($data_root.$report_path)).'</pre>';
+                        echo '<span>'.$Parsedown->text(file_get_contents($data_root.$report_path)).'</span>';
                 } else if(in_array($fileinfo['extension'], $excel)){
                         require_once dirname(__FILE__) . '/PHPExcel/Classes/PHPExcel/IOFactory.php';
                         $inputFileType = PHPExcel_IOFactory::identify ( $data_root.$report_path );

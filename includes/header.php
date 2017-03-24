@@ -32,8 +32,8 @@ if(!isset($root)){
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel='shortcut icon' type='image/x-icon' href="<?php echo $root; ?>$header_icon" />
-    <title>$header_title</title>
+    <link rel='shortcut icon' type='image/x-icon' href="<?php echo $header_icon; ?>" >
+    <title><?php echo $header_title; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?php echo $homepage_title.' - '.$homepage_subtitle; ?>">
     <meta name="author" content="Philip Ewels, Babraham Institute, Cambridge, UK">
