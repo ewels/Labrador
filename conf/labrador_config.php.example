@@ -48,6 +48,9 @@ $header_icon = 'img/labrador.ico';
 $homepage_title = 'Labrador Dataset Browser';
 $homepage_subtitle = 'A database of datasets processed by the Institute Bioinformatics group.';
 
+$logo = 'img/puppy.png';
+$samtools_path = '';
+
 //// MySQL database details
 // Typical permissions required with database and user called labrador:
 // GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, ALTER, LOCK TABLES ON `labrador`.* TO 'labrador'@'localhost'

@@ -257,7 +257,7 @@ include('includes/header.php'); ?>
 					$genome = '';
 					// Find genome from BAM or SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ('/storage/Software/packages/samtools-1.3.1/bin/samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ($samtools_path.'samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
@@ -286,7 +286,7 @@ include('includes/header.php'); ?>
 				function find_parameters($path){
 					// BAM and SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ('/storage/Software/packages/samtools-1.3.1/bin/samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ($samtools_path.'samtools-1.3.1/bin/samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
