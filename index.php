@@ -45,13 +45,13 @@ include('includes/header.php');
 			<a data-toggle="modal" href="#tutorial_video_modal"><img src="img/screencast_thumb.png"></a>
 		</div>
 
-<h1><img class="pull-left visible-desktop" src="img/CTR_600.png" style="margin: 0 20px 10px 0;">
+<h1><img class="pull-left visible-desktop" src=<?php echo $logo; ?> style="margin: 0 20px 10px 0;">
 
 		<?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
 
 		<p class="lead">
 
-        System Status: &nbsp </FONT>
+        System Status: &nbsp;
                 <?php 
                 $space_left_cmd = shell_exec ('df -h | grep storage'); 
                 $space_headers  = preg_split('/\s+/', $space_left_cmd);
@@ -63,14 +63,14 @@ include('includes/header.php');
                    $fontcol = "green"; 
                 }
               
-                echo '<FONT COLOR='.$fontcol.'>';
+                echo '<span style="color:'.$fontcol.'">';
                 $space_left     = ('Total Space = '.$space_headers[1].' Used Space = '.$space_headers[2].' Percent Used= '.$space_headers[4]);
                 echo $space_left;
-                echo '</FONT>';
+                echo '</span>';
                 ?>
 
 
-		<P>Please submit feature requests and bug reports at <A HREF="https://github.com/darogan/labrador/issues">https://github.com/darogan/labrador/issues</A>
+		<P>Please submit feature requests and bug reports at <A HREF="https://github.com/ewels/labrador/issues">https://github.com/ewels/labrador/issues</A>
 		You can use labrador to find and download processed data or request new datasets.
 		Projects are annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
 
@@ -265,7 +265,7 @@ include('includes/header.php');
 		</table>
 
 
-		<img class="pull-right visible-desktop" src="img/CTR_600.png" style="margin: 0 -20px -40px 0;">
+		<img class="pull-right visible-desktop" src=<?php echo $logo; ?> style="margin: 0 -20px -40px 0;">
 		<div class="clearfix"></div>
 		<footer>
 			<hr>

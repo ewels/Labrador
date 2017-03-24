@@ -302,15 +302,14 @@ include('includes/header.php'); ?>
                     $url_short = str_replace('/storage/', '', $dir);
                     $bam_web_link = "";
                     if(substr($path, -4) == '.bam'){
-                       $bam_web_link = '<BR>><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://ctr-bfx.pdn.private.cam.ac.uk/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><FONT style="font-size:6pt">(Broken in Chrome)</FONT>';
+                       $bam_web_link = '<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL='.$server_url.'/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><FONT style="font-size:6pt">(Broken in Chrome)</FONT>';
                     } // if BAM
                     return $bam_web_link;
                 }
 
                 function make_urlshort($path,$dir){
                     $tmp_url_short = str_replace('/storage/', '', $dir);
-                    $url_short = '<a href="http://ctr-bfx.pdn.private.cam.ac.uk/' . $tmp_url_short . $path . '">[Hard Link]</a>';
-                                 // '">http://ctr-bfx.pdn.private.cam.ac.uk/'. $tmp_url_short . $path . '</a>';
+                    $url_short = '<a href="'.$server_url.'"/' . $tmp_url_short . $path . '">[Hard Link]</a>';
                     return $url_short;
                  }
 

@@ -12,3 +12,14 @@ rsh46@cam.ac.uk
 |---------------|---------------|-----------------|
 | index.php     |            48 | File space reporting using df                        |
 |               |           159 | Sort datasets by descending name CTR0001 compatible  |
+
+
+
+
+#### Git Submodules ####
+
+# To read Excel files and display in a very simple html format
+git submodule add https://github.com/PHPOffice/PHPExcel PHPExcel
+# To read and display markdown files in GitHub format
+git submodule add https://github.com/erusev/parsedown ParseDown
+

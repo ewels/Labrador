@@ -111,7 +111,7 @@ if(file_exists($data_root.$project['name'])){
 			}
 		}
 		if($count > 0 ){
-			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview" style="max-width: 90%; min-width: 90%; width: 90%">'.$output.'</select></label>';
+			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview" style="width: 90%">'.$output.'</select></label>';
 		}
 	}
 
@@ -177,7 +177,7 @@ if(file_exists($data_root.$project['name'])){
 					}
 				}
 				if($count > 0 ){
-					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'" style="max-width: 90%; min-width: 90%; width: 90%">'.$output.'</select></label>';
+					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'" style="width: 90%">'.$output.'</select></label>';
 				}
 			}
 		}
@@ -232,17 +232,47 @@ if(file_exists($data_root.$project['name'])){
 		$text = array('txt', 'out', 'log');
                 $markdown = array('md');
                 $pdf = array('pdf');
+                $excel = array('xlsx', 'xls');
 		if(in_array($fileinfo['extension'], $images)){
 			echo '<p style="text-align:center;"><img src="ajax/send_file.php?path='.$report_path.'"></p>';
 		} else if(in_array($fileinfo['extension'], $text)){
 			echo '<pre>'.file_get_contents($data_root.$report_path).'</pre>';
                 } else if(in_array($fileinfo['extension'], $markdown)){
+                        include('ParseDown/Parsedown.php');
+                        $Parsedown = new Parsedown();
                         echo '<pre>'.$Parsedown->text(file_get_contents($data_root.$report_path)).'</pre>';
+                } else if(in_array($fileinfo['extension'], $excel)){
+                        require_once dirname(__FILE__) . '/PHPExcel/Classes/PHPExcel/IOFactory.php';
+                        $inputFileType = PHPExcel_IOFactory::identify ( $data_root.$report_path );
+                        $readerObj = PHPExcel_IOFactory::createReader ( $inputFileType );
+                        $excelFile = $readerObj->load ( $data_root.$report_path );
+                        $excelFile->setActiveSheetIndex ( 0 );
+                        $activeSheet = $excelFile->getActiveSheet();
+                        $highestRow = $activeSheet->getHighestRow();
+                        $highestColumn = $activeSheet->getHighestColumn();
+                        $highestColumn = ord(strtolower($highestColumn)) - 96;
+                        $currentRow = 1;
+                        echo '<pre>'.$report_path.' Rows='.$highestRow." Columns=".$highestColumn.'<BR><TABLE BORDER=1>';
+                        while ( $currentRow < $highestRow ) {
+
+                                $currentColumn = 0;
+                                echo '<TR>';
+                                while ( $currentColumn < $highestColumn ) {
+
+                        		$value = $activeSheet->getCellByColumnAndRow ( $currentColumn, $currentRow );
+                                        $value = $value."";
+                                        echo "<TD>".$value."</TD>";
+                                        $currentColumn++;
+                                      }
+                                echo '</TR>';
+                                $currentRow++;
+                              }
+                        echo "</TABLE></pre>";
                 } else if(in_array($fileinfo['extension'], $pdf)){
-                        $url_short = str_replace('/storage/', '', $data_root);
+                        $url_short = $data_root_short;
                         echo '<pre><embed src="http://ctr-bfx.pdn.private.cam.ac.uk/'.$url_short.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>'; 
 		} else {
-			echo '<iframe class="report" id="iframe_report" src="ajax/send_file.php?path='.$report_path.'"></iframe>';
+			echo $report_path.'<iframe class="report" id="iframe_report" src="ajax/send_file.php?path='.$report_path.'"></iframe>';
 		}
 	} // if(!$dataset_id){ } else { ?>
 

@@ -1,3 +1,5 @@
+use labrador;
+
 ALTER TABLE `projects` ADD `accession_custom` VARCHAR(50) AFTER `notes`;
 
 CREATE TABLE `config` (
