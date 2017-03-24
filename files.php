@@ -254,6 +254,11 @@ include('includes/header.php'); ?>
 				<tbody>
 				<?php
 				function find_genome($path){
+
+                                        if(!isset($samtools_path)){
+                                            $samtools_path = '';
+                                          }
+
 					$genome = '';
 					// Find genome from BAM or SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
@@ -273,7 +278,7 @@ include('includes/header.php'); ?>
 						$types = explode(": ", $type);
 						$type = $types[1];
 						if(substr($type,0,4) == 'gzip'){
-							$header = shell_exec ('zcat '.$path.' | head');
+							$header = shell_exec ('gunzip -c '.$path.' | head');
 						} else {
 							$header = shell_exec (escapeshellcmd ('head '.$path));
 						}
