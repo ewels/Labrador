@@ -5,3 +5,5 @@ CREATE TABLE `config` (
 	`option` VARCHAR(250) NOT NULL,
 	`value` VARCHAR(250)
 );
+
+ALTER TABLE datasets MODIFY notes VARCHAR(255);
