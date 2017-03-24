@@ -230,11 +230,14 @@ if(file_exists($data_root.$project['name'])){
 		$fileinfo = pathinfo(basename($report_path));
 		$images = array('jpeg', 'jpg', 'png', 'gif');
 		$text = array('txt', 'out', 'log');
+                $markdown = array('md');
                 $pdf = array('pdf');
 		if(in_array($fileinfo['extension'], $images)){
 			echo '<p style="text-align:center;"><img src="ajax/send_file.php?path='.$report_path.'"></p>';
 		} else if(in_array($fileinfo['extension'], $text)){
 			echo '<pre>'.file_get_contents($data_root.$report_path).'</pre>';
+                } else if(in_array($fileinfo['extension'], $markdown)){
+                        echo '<pre>'.$Parsedown->text(file_get_contents($data_root.$report_path)).'</pre>';
                 } else if(in_array($fileinfo['extension'], $pdf)){
                         $url_short = str_replace('/storage/', '', $data_root);
                         echo '<pre><embed src="http://ctr-bfx.pdn.private.cam.ac.uk/'.$url_short.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>'; 
