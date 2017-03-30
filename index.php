@@ -51,8 +51,11 @@ include('includes/header.php');
 
 		<p class="lead">
 
-        System Status: &nbsp;
                 <?php 
+
+                if(isset($data_root_path)){
+
+                echo 'System Status: &nbsp;';
                 $space_left_cmd = shell_exec ('df -h | grep storage'); 
                 $space_headers  = preg_split('/\s+/', $space_left_cmd);
                 $usednumber     = str_replace("T", "", $space_headers[2]);
@@ -67,6 +70,7 @@ include('includes/header.php');
                 $space_left     = ('Total Space = '.$space_headers[1].' Used Space = '.$space_headers[2].' Percent Used= '.$space_headers[4]);
                 echo $space_left;
                 echo '</span>';
+                } 
                 ?>
 
 
