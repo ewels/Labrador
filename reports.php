@@ -111,7 +111,7 @@ if(file_exists($data_root.$project['name'])){
 			}
 		}
 		if($count > 0 ){
-			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview">'.$output.'</select></label>';
+			echo '<label>Overview Reports: <select name="overview" class="select_report_dataset" class="input-xlarge" data-type="overview" style="width: 90%">'.$output.'</select></label>';
 		}
 	}
 
@@ -124,10 +124,10 @@ if(file_exists($data_root.$project['name'])){
 		if(mysqli_num_rows($datasets) > 0){
 			while ($dataset = mysqli_fetch_array($datasets)){
 				$ds_needles[$dataset['name']] = array($dataset['name']);
-				foreach(split(" ",$dataset['accession_geo']) as $geo){
+				foreach(preg_split(" ",$dataset['accession_geo']) as $geo){
 					array_push($ds_needles[$dataset['name']], $geo);
 				}
-				foreach(split(" ",$dataset['accession_sra']) as $sra){
+				foreach(preg_split(" ",$dataset['accession_sra']) as $sra){
 					array_push($ds_needles[$dataset['name']], $sra);
 				}
 			}
@@ -164,7 +164,8 @@ if(file_exists($data_root.$project['name'])){
 									$optgroup .= ' selected="selected"';
 									$dataset_name = $dsname;
 								}
-								$optgroup .= '>'.report_naming($path, $type).'</option>';
+								#$optgroup .= '>'.report_naming($path, $type).'</option>';
+                                                                $optgroup .= '>'. $path .'</option>';
 								$count++;
 								break;
 							}
@@ -176,7 +177,7 @@ if(file_exists($data_root.$project['name'])){
 					}
 				}
 				if($count > 0 ){
-					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'">'.$output.'</select></label>';
+					echo '<label>'.$report_name.': <select name="'.$type.'" class="select_report_dataset" class="input-xlarge" data-type="'.$type.'" style="width: 90%">'.$output.'</select></label>';
 				}
 			}
 		}
@@ -229,12 +230,50 @@ if(file_exists($data_root.$project['name'])){
 		$fileinfo = pathinfo(basename($report_path));
 		$images = array('jpeg', 'jpg', 'png', 'gif');
 		$text = array('txt', 'out', 'log');
+                $markdown = array('md');
+                $pdf = array('pdf');
+                $excel = array('xlsx', 'xls');
 		if(in_array($fileinfo['extension'], $images)){
 			echo '<p style="text-align:center;"><img src="ajax/send_file.php?path='.$report_path.'"></p>';
 		} else if(in_array($fileinfo['extension'], $text)){
 			echo '<pre>'.file_get_contents($data_root.$report_path).'</pre>';
+                } else if(in_array($fileinfo['extension'], $markdown)){
+                        include('ParseDown/Parsedown.php');
+                        $Parsedown = new Parsedown();
+                        echo '<span>'.$Parsedown->text(file_get_contents($data_root.$report_path)).'</span>';
+                } else if(in_array($fileinfo['extension'], $excel)){
+                        require_once dirname(__FILE__) . '/PHPExcel/Classes/PHPExcel/IOFactory.php';
+                        $inputFileType = PHPExcel_IOFactory::identify ( $data_root.$report_path );
+                        $readerObj = PHPExcel_IOFactory::createReader ( $inputFileType );
+                        $excelFile = $readerObj->load ( $data_root.$report_path );
+                        $excelFile->setActiveSheetIndex ( 0 );
+                        $activeSheet = $excelFile->getActiveSheet();
+                        $highestRow = $activeSheet->getHighestRow();
+                        $highestColumn = $activeSheet->getHighestColumn();
+                        $highestColumn = ord(strtolower($highestColumn)) - 96;
+                        $currentRow = 1;
+                        echo '<pre>'.$report_path.' Rows='.$highestRow." Columns=".$highestColumn.'<BR><TABLE BORDER=1>';
+                        while ( $currentRow < $highestRow ) {
+
+                                $currentColumn = 0;
+                                echo '<TR>';
+                                while ( $currentColumn < $highestColumn ) {
+
+                        		$value = $activeSheet->getCellByColumnAndRow ( $currentColumn, $currentRow );
+                                        $value = $value."";
+                                        echo "<TD>".$value."</TD>";
+                                        $currentColumn++;
+                                      }
+                                echo '</TR>';
+                                $currentRow++;
+                              }
+                        echo "</TABLE></pre>";
+                } else if(in_array($fileinfo['extension'], $pdf)){
+                        // $url_short = $data_root_short;
+                        // echo '<pre><embed src="http://ctr-bfx.pdn.private.cam.ac.uk/'.$url_short.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>'; 
+                        echo '<pre><embed src="'.$labrador_url.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>';
 		} else {
-			echo '<iframe class="report" id="iframe_report" src="ajax/send_file.php?path='.$report_path.'"></iframe>';
+			echo $report_path.'<iframe class="report" id="iframe_report" src="ajax/send_file.php?path='.$report_path.'"></iframe>';
 		}
 	} // if(!$dataset_id){ } else { ?>
 

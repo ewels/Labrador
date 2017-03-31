@@ -38,12 +38,47 @@ include('includes/header.php');
 		</div>
 		<?php endif; ?>
 
+
+
+
  		<div class="pull-right visible-desktop home-lab">
 			<a data-toggle="modal" href="#tutorial_video_modal"><img src="img/screencast_thumb.png"></a>
 		</div>
-		<h1><?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
 
-		<p class="lead">You can use labrador to find and download processed data or request new datasets.
+                <h1>
+                <?php if(isset($logo) && !empty($logo)){ ?>
+                <img class="pull-left visible-desktop" src="<?php echo $logo; ?>" style="margin: 0 20px 10px 0;">
+                <?php } ?>
+
+		<?php echo $homepage_title; ?> <small><?php echo $homepage_subtitle; ?></small></h1>
+
+		<p class="lead">
+
+                <?php 
+                if(isset($data_root)){
+                    $data_root_base  = preg_split('/\//', $data_root);
+                    $space_left_cmd  = shell_exec ("df -h | grep $data_root_base[1]"); 
+                    $space_headers   = preg_split('/\s+/', $space_left_cmd);
+                    $available       = preg_replace("/P|T|G/", "", $space_headers[1]);
+                    $usednumber      = preg_replace("/P|T|G/", "", $space_headers[2]);
+
+                    if( is_numeric($available) & is_numeric($usednumber) & ($usednumber/$available < .25 )) { 
+                       $fontcol = "red"; } 
+                    else { 
+                       $fontcol = "green"; }
+                
+                    if( is_numeric($available) & is_numeric($usednumber)){
+                        echo 'System Status: <span style="color:'.$fontcol.'">';
+                        $space_left = ('Total Space = '.$space_headers[1].' Used Space = '.$space_headers[2].' Percent Used= '.$space_headers[4]);
+                        echo $space_left;
+                        echo '</span>';
+                    }
+                } 
+                ?>
+
+
+		<P>Please submit feature requests and bug reports at <A HREF="https://github.com/ewels/labrador/issues">https://github.com/ewels/labrador/issues</A>
+		You can use labrador to find and download processed data or request new datasets.
 		Projects are annotated with how they were processed. <a class="labrador_help_toggle" href="#labrador_help" title="Help"><i class="icon-question-sign"></i></a></p>
 
 		<div class="labrador_help" style="display:none;">
@@ -134,7 +169,7 @@ include('includes/header.php');
 			} else if($admin && isset($_GET['unassigned'])){
 				$sql .= " WHERE `assigned_to` IS NULL OR `assigned_to` = ''";
 			}
-			$sql .=  " ORDER BY `name`";
+			$sql .=  " ORDER BY `id` DESC";
 			$projects = mysqli_query($dblink, $sql);
 			if(mysqli_num_rows($projects) > 0){
 				while($project = mysqli_fetch_array($projects)){
@@ -236,8 +271,8 @@ include('includes/header.php');
 			</tbody>
 		</table>
 
-
-		<img class="pull-right visible-desktop" src="img/puppy.jpg" style="margin: 0 -20px -40px 0;">
+                <?php if(!isset($logo)) { $logo = "img/puppy.jpg"; } ?>
+		<img class="pull-right visible-desktop" src=<?php echo $logo; ?> style="margin: 0 -20px -40px 0;">
 		<div class="clearfix"></div>
 		<footer>
 			<hr>

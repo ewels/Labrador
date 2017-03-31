@@ -248,20 +248,26 @@ include('includes/header.php'); ?>
 						<th data-sort="int" style="width:10%;">File Size</th>
 						<th data-sort="string-ins" style="width:15%;">Genome</th>
 						<th data-sort="string-ins">Filename</th>
+                                                <th data-sort="string-ins" style="width:7.5%;">Links</th>
 					</tr>
 				</thead>
 				<tbody>
 				<?php
 				function find_genome($path){
+
+                                        if(!isset($samtools_path)){
+                                            $samtools_path = '';
+                                          }
+
 					$genome = '';
 					// Find genome from BAM or SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ($samtools_path.'samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
 								$genomes = explode(" ", substr($header, stripos($header, 'Genomes/') + 8));
-								$genomes2 = split("/", $genomes[0]);
+								$genomes2 = preg_split("/", $genomes[0]);
 								$genome = $genomes2[0].' - '.$genomes2[1];
 							}
 						}
@@ -272,7 +278,7 @@ include('includes/header.php'); ?>
 						$types = explode(": ", $type);
 						$type = $types[1];
 						if(substr($type,0,4) == 'gzip'){
-							$header = shell_exec ('zcat '.$path.' | head');
+							$header = shell_exec ('gunzip -c '.$path.' | head');
 						} else {
 							$header = shell_exec (escapeshellcmd ('head '.$path));
 						}
@@ -285,7 +291,7 @@ include('includes/header.php'); ?>
 				function find_parameters($path){
 					// BAM and SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ('samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ($samtools_path.'samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
@@ -295,11 +301,36 @@ include('includes/header.php'); ?>
 					}
 				}
 
+
+
+                function make_url_alias($labrador_url,$dataset_name,$data_alias,$path){
+
+                    if(isset($data_alias)){
+                        $url_split = parse_url($labrador_url,PHP_URL_HOST);
+                        $url_short = $url_split. '/'.$data_alias . '/' . $dataset_name . $path;
+                        return $url_short;
+                    }
+                    else { 
+                        return ($labrador_url.$dataset_name.$path);  }
+                }
+
+                function make_webstartlink($url_short,$genome){
+                    // BAM files
+                    $bam_web_link = "";
+                    if(substr($url_short, -4) == '.bam'){
+                       if(!isset($genome)){ $genome = 'hg38'; }
+                       $bam_web_link = '<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://' . $url_short . '&genome='.$genome.'">[Launch IGV]</a><FONT style="font-size:6pt">(Broken in Chrome)</FONT>';
+                    } // if BAM
+                    return $bam_web_link;
+                }
+
 				$j = 0;
 				foreach($datasets as $dataset){
 					$paths = $dataset['paths'];
 					ksort($paths);
 					foreach($paths as $raw_path => $size){
+
+						if($size > 750){
 						$j++;
 						$path = substr($raw_path, strlen($dir)); ?>
 					<tr>
@@ -308,8 +339,11 @@ include('includes/header.php'); ?>
 						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
 						<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+						<td><a href="http://<?php echo make_url_alias($labrador_url,$dataset['name'],$data_alias,$path); ?>">[Hard Link]</a>
+                                                    <?php echo make_webstartlink(make_url_alias($labrador_url,$dataset['name'],$data_alias,$path)); ?></td>
 					</tr>
 				<?php
+				        } // human_readable if statement
 					} //foreach path
 				} // foreach dataset
 				ksort($orphans);
@@ -322,6 +356,8 @@ include('includes/header.php'); ?>
 						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
 						<td><?php echo find_genome($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+                                                <td><a href="http://<?php echo make_url_alias($labrador_url,"",$data_alias,$path); ?>">[Hard Link]</a>
+                                                    <?php echo make_webstartlink(make_url_alias($labrador_url,"",$data_alias,$path)); ?></td>
 					</tr>
 				<?php } // foreach orhpans ?></tbody>
 			</table>

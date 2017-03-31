@@ -1,3 +1,5 @@
+use labrador;
+
 ALTER TABLE `projects` ADD `accession_custom` VARCHAR(50) AFTER `notes`;
 
 CREATE TABLE `config` (
@@ -5,3 +7,5 @@ CREATE TABLE `config` (
 	`option` VARCHAR(250) NOT NULL,
 	`value` VARCHAR(250)
 );
+
+ALTER TABLE datasets MODIFY notes VARCHAR(255);
