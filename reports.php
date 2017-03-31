@@ -269,8 +269,9 @@ if(file_exists($data_root.$project['name'])){
                               }
                         echo "</TABLE></pre>";
                 } else if(in_array($fileinfo['extension'], $pdf)){
-                        $url_short = $data_root_short;
-                        echo '<pre><embed src="http://ctr-bfx.pdn.private.cam.ac.uk/'.$url_short.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>'; 
+                        // $url_short = $data_root_short;
+                        // echo '<pre><embed src="http://ctr-bfx.pdn.private.cam.ac.uk/'.$url_short.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>'; 
+                        echo '<pre><embed src="'.$labrador_url.$report_path.'" width="100%" height="1000px" type="application/pdf"></pre>';
 		} else {
 			echo $report_path.'<iframe class="report" id="iframe_report" src="ajax/send_file.php?path='.$report_path.'"></iframe>';
 		}

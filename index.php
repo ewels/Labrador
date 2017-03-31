@@ -53,15 +53,15 @@ include('includes/header.php');
 
                 <?php 
 
-                if(isset($data_root_path)){
+                if(isset($data_root)){
 
                 echo 'System Status: &nbsp;';
 
-                $data_root_path_no_slash  = str_replace('/', '', $data_root_path);
-                $space_left_cmd           = shell_exec ("df -h | grep $data_root_path_no_slash"); 
-                $space_headers            = preg_split('/\s+/', $space_left_cmd);
-                $available                = str_replace("T|G", "", $space_headers[1]);
-                $usednumber               = str_replace("T|G", "", $space_headers[2]);
+                $data_root_base  = preg_split('/\//', $data_root);
+                $space_left_cmd  = shell_exec ("df -h | grep $data_root_base[1]"); 
+                $space_headers   = preg_split('/\s+/', $space_left_cmd);
+                $available       = str_replace("P|T|G", "", $space_headers[1]);
+                $usednumber      = str_replace("P|T|G", "", $space_headers[2]);
                 if ($usednumber/$available < .25 ) { $fontcol = "red"; } else { $fontcol = "green";  }
               
                 echo '<span style="color:'.$fontcol.'">';

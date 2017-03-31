@@ -248,7 +248,7 @@ include('includes/header.php'); ?>
 						<th data-sort="int" style="width:10%;">File Size</th>
 						<th data-sort="string-ins" style="width:15%;">Genome</th>
 						<th data-sort="string-ins">Filename</th>
-                                                <th data-sort="string-ins" style="width:5%;">Links</th>
+                                                <th data-sort="string-ins" style="width:7.5%;">Links</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -291,7 +291,7 @@ include('includes/header.php'); ?>
 				function find_parameters($path){
 					// BAM and SAM files
 					if(substr($path, -4) == '.bam' || substr($path, -4) == '.bam'){
-						$bam_header = shell_exec (escapeshellcmd ($samtools_path.'samtools-1.3.1/bin/samtools view -H '.$path));
+						$bam_header = shell_exec (escapeshellcmd ($samtools_path.'samtools view -H '.$path));
 						$bam_headers = explode("\n", $bam_header);
 						foreach($bam_headers as $header){
 							if(stripos($header, 'Genomes/')){
@@ -302,21 +302,27 @@ include('includes/header.php'); ?>
 				}
 
 
-                function make_webstartlink($path,$dir){
+
+                function make_url_alias($labrador_url,$dataset_name,$data_alias,$path){
+
+                    if(isset($data_alias)){
+                        $url_split = parse_url($labrador_url,PHP_URL_HOST);
+                        $url_short = $url_split. '/'.$data_alias . '/' . $dataset_name . $path;
+                        return $url_short;
+                    }
+                    else { 
+                        return ($labrador_url.$dataset_name.$path);  }
+                }
+
+                function make_webstartlink($url_short,$genome){
                     // BAM files
-                    $url_short = str_replace('/storage/', '', $dir);
                     $bam_web_link = "";
-                    if(substr($path, -4) == '.bam'){
-                       $bam_web_link = '<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL='.$server_url.'/' . $url_short . $path . '&genome=hg38">[Launch IGV]</a><FONT style="font-size:6pt">(Broken in Chrome)</FONT>';
+                    if(substr($url_short, -4) == '.bam'){
+                       if(!isset($genome)){ $genome = 'hg38'; }
+                       $bam_web_link = '<BR><a href="http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://' . $url_short . '&genome='.$genome.'">[Launch IGV]</a><FONT style="font-size:6pt">(Broken in Chrome)</FONT>';
                     } // if BAM
                     return $bam_web_link;
                 }
-
-                function make_urlshort($path,$dir){
-                    $tmp_url_short = str_replace('/storage/', '', $dir);
-                    $url_short = '<a href="'.$server_url.'"/' . $tmp_url_short . $path . '">[Hard Link]</a>';
-                    return $url_short;
-                 }
 
 				$j = 0;
 				foreach($datasets as $dataset){
@@ -333,8 +339,8 @@ include('includes/header.php'); ?>
 						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
 						<td><?php echo find_genome($raw_path); ?> <?php echo find_parameters($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
-						<td><?php echo make_urlshort($path,$dir); ?>
-                        <?php echo make_webstartlink($path,$dir); ?></td>
+						<td><a href="http://<?php echo make_url_alias($labrador_url,$dataset['name'],$data_alias,$path); ?>">[Hard Link]</a>
+                                                    <?php echo make_webstartlink(make_url_alias($labrador_url,$dataset['name'],$data_alias,$path)); ?></td>
 					</tr>
 				<?php
 				        } // human_readable if statement
@@ -350,6 +356,8 @@ include('includes/header.php'); ?>
 						<td data-sort-value="<?php echo $size; ?>"><?php echo human_filesize($size); ?></td>
 						<td><?php echo find_genome($raw_path); ?></td>
 						<td class="path"><a href="download_file.php?fn=<?php echo substr($raw_path, strlen($data_root)); ?>"><?php echo $path; ?></a></td>
+                                                <td><a href="http://<?php echo make_url_alias($labrador_url,"",$data_alias,$path); ?>">[Hard Link]</a>
+                                                    <?php echo make_webstartlink(make_url_alias($labrador_url,"",$data_alias,$path)); ?></td>
 					</tr>
 				<?php } // foreach orhpans ?></tbody>
 			</table>

@@ -33,12 +33,10 @@
 
 //// The base URL at which a browser can load Labrador
 $labrador_url = 'http://server/labrador/';
-$server_url = 'http://server';
+$data_alias   = '';
 
 //// The directory path at which data within Labrador should be accessed
 $data_root = '/data/Labrador/';
-$data_root_short = 'Labrador/';
-$data_root_path  = '/data';
 
 //// Support e-mail address. Will be notified when new unassigned projects are added.
 $support_email = 'bioinformatics@institute.ac.uk';
