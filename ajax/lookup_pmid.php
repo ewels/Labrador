@@ -93,7 +93,7 @@ function get_pmid_details ($PMID) {
 }
 
 // Script is being called directly (ajax)
-if(__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
+if(basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
 	if(isset($_GET['PMID']) && is_numeric($_GET['PMID'])){
 		$details = get_pmid_details ($_GET['PMID']);
 		echo json_encode($details, JSON_FORCE_OBJECT);
