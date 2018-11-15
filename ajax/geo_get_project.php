@@ -162,7 +162,7 @@ function get_geo_project ($acc, $editing = false) {
 }
 
 // Script is being called directly (ajax)
-if(__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
+if(basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
 	if(isset($_GET['acc'])){
 		if(isset($_GET['editing'])){
 			$results = get_geo_project ($_GET['acc'], $_GET['editing']);
