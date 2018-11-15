@@ -168,7 +168,7 @@ function get_geo_datasets ($acc) {
 }
 
 // Script is being called directly (ajax)
-if(__FILE__ == $_SERVER['SCRIPT_FILENAME']) {
+if(basename(__FILE__) == basename($_SERVER['SCRIPT_FILENAME'])) {
 	if(isset($_GET['acc'])){
 		$results = get_geo_datasets ($_GET['acc']);
 		echo json_encode($results, JSON_FORCE_OBJECT);
