@@ -46,9 +46,11 @@ if(isset($_POST['contents']) && isset($_POST['project_id']) && is_numeric($_POST
 
 	// Check the directory exists
 	if(!is_dir($dir)){
-		if(!mkdir($dir, 0775)){
+		$old_umask = umask(0);
+		if(!mkdir($dir, 0777)){
 			die("can't create directory $dir");
 		}
+		umask($old_umask);
 	}
 
 	// Write file
