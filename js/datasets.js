@@ -36,6 +36,8 @@ $('#sra-links-modal').on('show', function () {
 		file += "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+acc.substring(0,3)+"/"+acc.substring(0,6)+"/"+acc+"/"+acc+".sra";
 		var name = $(this).closest('tr').find('.dataset_name').text();
 	        name = name.replace(/[\s:\?\/]+/g,'_');
+	        name = name.replace(/[\(\)]+/g,'');
+									 
 		file += "\t"+name+"_"+acc+".sra <br>\n";
 	});
 	$('#sra-links-modal .modal-body pre').html(file);
