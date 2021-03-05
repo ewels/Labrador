@@ -132,7 +132,8 @@ An alternative and simple way to get Labrador working on your system is to run t
 1. Create the directories on your host machine where the MySQL and the data files should be hosted.
 
 2. Clone Labrador from GitHub:
-    git clone https://github.com/ewels/Labrador.git
+
+        git clone https://github.com/ewels/Labrador.git
 
     (These instructions were tested with git commit 233758f).
 
@@ -140,54 +141,55 @@ An alternative and simple way to get Labrador working on your system is to run t
 
 3. Create the Docker container, using the command below (remember to replace the MySQL, Data and Labrador folder paths to match that on your system):
 
-    sudo docker create --name labrador_website -t -p "8000:80" -p "13306:3306" -p "5870:587" -p "2500:25" -p "25250:2525" -p "4650:465" -v [Path to Labrador website files folder]:/app -v [Path to MySQL folder]:/var/lib/mysql -v [Path to Data folder]:/mnt mattrayner/lamp:latest-1404-php5
+        sudo docker create --name labrador_website -t -p "8000:80" -p "13306:3306" -p "5870:587" -p "2500:25" -p "25250:2525" -p "4650:465" -v [Path to Labrador website files folder]:/app -v [Path to MySQL folder]:/var/lib/mysql -v [Path to Data folder]:/mnt mattrayner/lamp:latest-1404-php5
 
     This creates a container named "labrador_website", based an a minimal Ubuntu OS running PHP5.  The command also exposes ports on the container useful for data exchange between the container and the host machine.
 
 4. Check the container was created:
 
-    sudo docker ps -a
+        sudo docker ps -a
 
 5. Start the container: 
 
-    sudo docker start labrador_website
+        sudo docker start labrador_website
 
 6. Check the container is running:
 
-    sudo docker ps
+        sudo docker ps
 
 7. You can enter the running container (opening a bash shell) with the command:
 
-    sudo docker exec -it labrador_website /bin/bash
+        sudo docker exec -it labrador_website /bin/bash
 
-You can navigate around the container now, or install software.  For example, to install the simple text editor nano:
+    You can navigate around the container now, or install software.  For example, to install the simple text editor nano:
 
-    apt-get install nano
+        apt-get install nano
 
 8. Configuring the email will depend on your requirements, host machine and local IT infrastructure.  The website uses sendmail.  To install, within the container enter: 
 
-    apt-get install sendmail 
-    apt-get install sendmail-cf
+        apt-get install sendmail 
+        apt-get install sendmail-cf
 
-You will need to configure sendmail:
+    You will need to configure sendmail:
 
-    myhostname=$(hostname)
-    echo "127.0.0.1 localhost.localdomain localhost $myhostname" >> /etc/hosts
-    sendmailconfig
-    service sendmail start
+        myhostname=$(hostname)
+        echo "127.0.0.1 localhost.localdomain localhost $myhostname" >> /etc/hosts
+        sendmailconfig
+        service sendmail start
 
 If required, please read [sendmail](https://www.proofpoint.com/us/products/email-protection/open-source-email-solution) documentation for further assistance.
 
 9.  To leave the container, type:
+
         exit
 
 10. Should you need to stop the webserver for some reason (e.g. adjusting configuration), enter:
-    
-    sudo docker stop labrador_website
 
-And if you wish to delete the container, you can with the command:
+        sudo docker stop labrador_website
+
+    And if you wish to delete the container, you can with the command:
     
-    sudo docker rm labrador_website
+        sudo docker rm labrador_website
 
 
 3 Normal Usage
