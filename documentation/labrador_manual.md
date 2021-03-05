@@ -124,7 +124,10 @@ Once you have all of these elements in place you should be able to go to `http:/
 
 ## 2.3 Docker Installation Walkthrough
 
-An alternative and simple way to get Labrador working on your system is to run the LAMP (Linux/Apache/MySQL/PHP) setup inside a [Docker](https://www.docker.com/) container.  While the LAMP setup is contained within the container, the actual website files, MySQL database and datasets are kept on your host machine.  To use this installation, follow the steps below.  You will need Git and Docker installed on your machine for this to work, along with superuser (sudo) privileges.
+An alternative and simple way to get Labrador working on your system is to run the LAMP (Linux/Apache/MySQL/PHP) setup inside a [Docker](https://www.docker.com/) container.  While the LAMP setup is contained within the container, the actual website files, MySQL database and datasets are kept on your host machine.  To use this installation, follow the steps below.  You will need Git and Docker installed on your machine for this to work.
+
+> NOTE: Depending on your installation, you may need to run the following `docker` commands with superuser (`sudo`) privileges.
+> Just prefix `sudo` to each command. For example, `sudo docker ps -a`.
 
 1. Create the directories on your host machine where the MySQL and the data files should be hosted.
 
@@ -134,14 +137,14 @@ An alternative and simple way to get Labrador working on your system is to run t
     git clone https://github.com/ewels/Labrador.git
     ```
 
-    (These instructions were tested with git commit 233758f).
+    (These instructions were tested with git commit [`233758f`](https://github.com/ewels/Labrador/commit/233758f9a2c2f132cf7640189bc155fd7b452a8b)).
 
     Alternatively, download the latest release from GitHub and unzip/untar.
 
 3. Create the Docker container, using the command below (remember to replace the MySQL, Data and Labrador folder paths to match that on your system):
 
     ```bash
-    sudo docker create \
+    docker create \
       --name labrador_website \
       -t \
       -p "8000:80" -p "13306:3306" -p "5870:587" -p "2500:25" -p "25250:2525" -p "4650:465" \
@@ -156,25 +159,25 @@ An alternative and simple way to get Labrador working on your system is to run t
 4. Check the container was created:
 
     ```bash
-    sudo docker ps -a
+    docker ps -a
     ```
 
 5. Start the container:
 
     ```bash
-    sudo docker start labrador_website
+    docker start labrador_website
     ```
 
 6. Check the container is running:
 
     ```bash
-    sudo docker ps
+    docker ps
     ```
 
 7. You can enter the running container (opening a bash shell) with the command:
 
     ```bash
-    sudo docker exec -it labrador_website /bin/bash
+    docker exec -it labrador_website /bin/bash
     ```
 
     You can navigate around the container now, or install software.  For example, to install the simple text editor nano:
@@ -199,7 +202,7 @@ An alternative and simple way to get Labrador working on your system is to run t
     service sendmail start
     ```
 
-If required, please read [sendmail](https://www.proofpoint.com/us/products/email-protection/open-source-email-solution) documentation for further assistance.
+    If required, please read [sendmail](https://www.proofpoint.com/us/products/email-protection/open-source-email-solution) documentation for further assistance.
 
 9. To leave the container, type:
 
@@ -210,13 +213,13 @@ If required, please read [sendmail](https://www.proofpoint.com/us/products/email
 10. Should you need to stop the webserver for some reason (e.g. adjusting configuration), enter:
 
     ```bash
-    sudo docker stop labrador_website
+    docker stop labrador_website
     ```
 
     And if you wish to delete the container, you can with the command:```bash
 
     ```bash
-    sudo docker rm labrador_website
+    docker rm labrador_website
     ```
 
 # 3 Normal Usage
