@@ -7,7 +7,13 @@
 # email using the software sendmail.
 #
 # Edit the lines of below code needing ATTENTION
-# as described.
+# as described.  You need to provide your:
+# 1) admin email address (currently topdog@labrador.ac.uk)
+# 2) webserver name (currently mail.labrador.internal)
+# 3) admin username (currently topdog)
+# 
+# When the configuration takes place, reply Yes [Y] to
+# on-screen prompts.
 ######################################
 
 apt-get install -q -y ssmtp mailutils
@@ -16,7 +22,7 @@ apt-get install -q -y ssmtp mailutils
 
 ################################################################
 # ATTENTION: Change to your admin email address here
-echo "root=top.dog@labrador.ac.uk" >> /etc/ssmtp/ssmtp.conf      
+echo "root=topdog@labrador.ac.uk" >> /etc/ssmtp/ssmtp.conf      
 ################################################################
 
 ################################################################
@@ -39,7 +45,12 @@ echo "FromLineOverride=YES" >> /etc/ssmtp/ssmtp.conf
 
 ################################################################
 # ATTENTION: Change to your username:admin_email:mailserver
-echo "top.dog:top.dog@labradorac.uk:mail.lmb.internal" >> /etc/ssmtp/revaliases 
+echo "topdog:topdog@labrador.ac.uk:mail.lmb.internal" >> /etc/ssmtp/revaliases 
+################################################################
+
+################################################################
+# ATTENTION: Change to your username
+useradd -ms /bin/bash top.dog
 ################################################################
 
 sendmailconfig
@@ -47,5 +58,5 @@ service sendmail start
 
 ################################################################
 # ATTENTION: Change to the admin email address
-echo "Subject:Test mail 4\n\n Labrador test email\n" | sendmail top.dog@labrador.ac.uk
+echo "Subject:Test mail 4\n\n Labrador test email\n" | sendmail topdog@labrador.ac.uk
 ################################################################
