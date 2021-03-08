@@ -151,7 +151,7 @@ An alternative and simple way to get Labrador working on your system is to run t
     docker create \
       --name labrador_website \
       -t \
-      -p "8000:80" -p "13306:3306" -p "5870:587" -p "2500:25" -p "25250:2525" -p "4650:465" \
+      -p "8000:80" -p "13306:3306" \
       -v [Path to Labrador website files folder]:/app \
       -v [Path to MySQL folder]:/var/lib/mysql \
       -v [Path to Data folder]:/mnt \
@@ -178,7 +178,7 @@ An alternative and simple way to get Labrador working on your system is to run t
     docker ps
     ```
 
-9.  If you need to create a new MySQl database, then do so with the command below.  Note: do not do this if you wish to use an existing Labrador database, as this will overwrite your data.
+9.  If you need to create a new MySQl database, then do so with the command below.  Note: do NOT do this if you wish to use an existing Labrador database, as this will overwrite your data.
     
     ```bash
     mysql -u root -p < labrador_database.sql
@@ -196,14 +196,7 @@ An alternative and simple way to get Labrador working on your system is to run t
     apt-get install nano
     ```
 
-11. The website uses sendmail, which should be installed within the container as follows:
-
-    ```bash
-    apt-get install sendmail
-    apt-get install sendmail-cf
-    ```
-
-12. Still within the container, configure sendmail:
+11. Still within the container, install and configure sendmail:
     ```bash
     bash /app/conf/sendmail_config.sh
     ```
@@ -212,13 +205,13 @@ An alternative and simple way to get Labrador working on your system is to run t
 
     If required, please read [sendmail](https://www.proofpoint.com/us/products/email-protection/open-source-email-solution) documentation for further assistance.
 
-13. To leave the container, type:
+12. To leave the container, type:
 
     ```bash
     exit
     ```
 
-14. Should you need to stop the webserver for some reason (e.g. adjusting configuration), enter:
+13. Should you need to stop the webserver for some reason (e.g. adjusting configuration), enter:
 
     ```bash
     docker stop labrador_website
