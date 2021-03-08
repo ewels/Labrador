@@ -141,13 +141,17 @@ An alternative and simple way to get Labrador working on your system is to run t
 
     Alternatively, download the latest release from GitHub and unzip/untar.
 
-3. Create the Docker container, using the command below (remember to replace the MySQL, Data and Labrador folder paths to match that on your system):
+3.  In order to connect to your database and find your data Labrador needs to know some information about your setup.  All of the pieces of information the system needs are configured in a file called `labrador_config.php` which is in the conf directory of your Labrador installation.  A template configuration file called `labrador_config.php.example` is provided, and you should copy this to a file called `labrador_config.php` in the same directory and then edit this to include the correct information for your site. Hopefully all the pieces of information in there are self-explanatory, and you need to ensure that they reflect your local environment (i.e. within the container).
+
+4. Configuring the email may depend on your requirements, host machine and local IT infrastructure.  However the configuration file `sendmail_config.sh.example` (also in the conf directory) should work for most systems.  Open this file in a text editor and edit as required and save as `sendmail_config.sh`.  The instructions in the file will tell you what needs editing.
+
+5. Create the Docker container, using the command below (remember to replace the MySQL, Data and Labrador folder paths to match that on your host system):
 
     ```bash
     docker create \
       --name labrador_website \
       -t \
-      -p "8000:80" -p "13306:3306" -p "5870:587" -p "2500:25" -p "25250:2525" -p "4650:465" \
+      -p "8000:80" -p "13306:3306" \
       -v [Path to Labrador website files folder]:/app \
       -v [Path to MySQL folder]:/var/lib/mysql \
       -v [Path to Data folder]:/mnt \
@@ -156,25 +160,31 @@ An alternative and simple way to get Labrador working on your system is to run t
 
     This creates a container named `labrador_website`, based an a minimal Ubuntu OS running PHP5.  The command also exposes ports on the container useful for data exchange between the container and the host machine.
 
-4. Check the container was created:
+6. Check the container was created:
 
     ```bash
     docker ps -a
     ```
 
-5. Start the container:
+7. Start the container:
 
     ```bash
     docker start labrador_website
     ```
 
-6. Check the container is running:
+8. Check the container is running:
 
     ```bash
     docker ps
     ```
 
-7. You can enter the running container (opening a bash shell) with the command:
+9.  If you need to create a new MySQl database, then do so with the command below.  Note: do NOT do this if you wish to use an existing Labrador database, as this will overwrite your data.
+    
+    ```bash
+    mysql -u root -p < labrador_database.sql
+    ```
+
+10. You can enter the running container (opening a bash shell) with the command:
 
     ```bash
     docker exec -it labrador_website /bin/bash
@@ -186,37 +196,28 @@ An alternative and simple way to get Labrador working on your system is to run t
     apt-get install nano
     ```
 
-8. Configuring the email will depend on your requirements, host machine and local IT infrastructure.  The website uses sendmail.  To install, within the container enter:
-
+11. Still within the container, install and configure sendmail:
     ```bash
-    apt-get install sendmail
-    apt-get install sendmail-cf
+    bash /app/conf/sendmail_config.sh
     ```
 
-    You will need to configure sendmail:
-
-    ```bash
-    myhostname=$(hostname)
-    echo "127.0.0.1 localhost.localdomain localhost $myhostname" >> /etc/hosts
-    sendmailconfig
-    service sendmail start
-    ```
+    This should send a test message to the admin email address to verify that everything is working.
 
     If required, please read [sendmail](https://www.proofpoint.com/us/products/email-protection/open-source-email-solution) documentation for further assistance.
 
-9. To leave the container, type:
+12. To leave the container, type:
 
     ```bash
     exit
     ```
 
-10. Should you need to stop the webserver for some reason (e.g. adjusting configuration), enter:
+13. Should you need to stop the webserver for some reason (e.g. adjusting configuration), enter:
 
     ```bash
     docker stop labrador_website
     ```
 
-    And if you wish to delete the container, you can with the command:```bash
+    And if you wish to delete the container, you can with the command:
 
     ```bash
     docker rm labrador_website
