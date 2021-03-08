@@ -20,7 +20,7 @@ apt-get update
 apt-get install -y sendmail
 apt-get install -y sendmail-cf
 apt-get install -q -y ssmtp mailutils
-#apt-get install -y net-tools #Appears not to installed already
+#apt-get install -y net-tools #Appears installed already
 
 echo "include(\`/etc/mail/tls/starttls.m4')dnl" >> /etc/mail/sendmail.mc
 myhostname=$(hostname)
