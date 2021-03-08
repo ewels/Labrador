@@ -20,6 +20,7 @@ apt-get update
 apt-get install -y sendmail
 apt-get install -y sendmail-cf
 apt-get install -q -y ssmtp mailutils
+#apt-get install -y net-tools #Appears not to installed already
 
 echo "include(\`/etc/mail/tls/starttls.m4')dnl" >> /etc/mail/sendmail.mc
 myhostname=$(hostname)
@@ -61,7 +62,6 @@ useradd -ms /bin/bash top.dog
 ################################################################
 
 sendmailconfig
-service sendmail start
 
 ################################################################
 # ATTENTION: Change to the admin email address
